@@ -52,12 +52,12 @@ let allDocs=[];
 async function loadData(){
  document.getElementById('tbody').innerHTML='<tr><td colspan=9>Loading...</td></tr>';
  try{
-  const res = await fetch(`https://fra.cloud.appwrite.io/v1/tablesdb/${DATABASE_ID}/tables/${TABLE_ID}/rows?queries[]=${encodeURIComponent('limit(100)')}&queries[]=${encodeURIComponent('orderDesc($createdAt)')}`, {
-    headers: { 'X-Appwrite-Project': PROJECT_ID }
+  const res = await fetch(`https://fra.cloud.appwrite.io/v1/tablesdb/illumilight-db/tables/membership_applications/rows`, {
+    headers: { 'X-Appwrite-Project': '6ae27aad00007b481204' }
   });
   const data = await res.json();
   console.log(data);
-  document.getElementById('debug').textContent = 'Status: '+res.status+' - '+JSON.stringify(data).substring(0,200);
+  document.getElementById('debug').textContent = 'Status: '+res.status+' - Total: '+(data.total||0);
   if(!res.ok) throw new Error(data.message || 'Failed');
   allDocs = data.rows || data.documents || [];
   render(allDocs);
