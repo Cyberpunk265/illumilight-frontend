@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Member Login | Illumilight</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+  body { background: #0a0a0a; color: #e8e0c8; font-family: 'Segoe UI', Arial, sans-serif; }
+  .login-container { max-width: 480px; margin: 60px auto; background: #141410; padding: 35px; border-radius: 12px; border: 1px solid #2a2a1e; text-align: center; }
+  h1 { color: #d4c98a; margin-bottom: 8px; font-size: 28px; }
+  .subtitle { color: #888; font-size: 14px; margin-bottom: 30px; }
+  label { display: block; text-align: left; margin-top: 18px; color: #d4c98a; font-weight: 600; font-size: 14px; }
+  input { width: 100%; padding: 13px; margin-top: 6px; background: #1e1e1a; border: 1px solid #333; border-radius: 6px; color: #fff; box-sizing: border-box; text-transform: uppercase; }
+  input::placeholder { text-transform: none; }
+  #emailInput { text-transform: none; }
+  .btn-login { width: 100%; padding: 14px; margin-top: 25px; background: #e8d98a; color: #000; border: none; font-weight: 700; cursor: pointer; border-radius: 6px; font-size: 15px; }
+  .btn-login:disabled { opacity: 0.6; }
+  .btn-back { margin-top: 15px; background: transparent; border: 1px solid #555; color: #aaa; padding: 10px 20px; border-radius: 6px; cursor: pointer; width: 100%; }
+  #result { margin-top: 25px; text-align: left; display: none; }
+  .status-card { background: #1a1a16; border: 1px solid #333; padding: 20px; border-radius: 10px; }
+  .status-badge { display: inline-block; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 13px; text-transform: uppercase; }
+  .status-pending { background: #3a2f00; color: #e8d98a; border: 1px solid #e8d98a; }
+  .status-approved { background: #0f2e0f; color: #8bc98a; border: 1px solid #8bc98a; }
+  .status-rejected { background: #3a0f0f; color: #e57373; border: 1px solid #e57373; }
+  .member-card { background: linear-gradient(135deg, #1a1a10, #2a2410); border: 1px solid #d4c98a; padding: 22px; border-radius: 10px; margin-top: 15px; text-align: center; }
+  .member-card h3 { color: #d4c98a; margin: 0; letter-spacing: 2px; }
+  .member-code { font-size: 22px; font-weight: 800; color: #fff; letter-spacing: 1px; margin: 10px 0; }
+  .detail-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #222; font-size: 14px; }
+  .detail-row b { color: #d4c98a; }
+  #errorMsg { color: #e57373; margin-top: 15px; font-weight: 600; display: none; }
+  .hint { font-size: 12px; color: #666; margin-top: 20px; }
+</style>
+</head>
+<body>
+<div class="login-container">
+  <h1>✦ ILLUMILIGHT</h1>
+  <p class="subtitle">Member Status Check</p>
+
+  <form id="loginForm">
+    <label>Membership Code *</label>
+    <input type="text" id="codeInput" required placeholder="ILL-2026-XXXX">
+    <label>Email (optional)</label>
+    <input type="email" id="emailInput" placeholder="you@example.com">
+    <button type="submit" class="btn-login" id="loginBtn">Check Status →</button>
+    <button type="button" class="btn-back" onclick="window.location.href='../index.html'">← Back to Home</button>
+  </form>
+
+  <div id="errorMsg"></div>
+
+  <div id="result">
+    <div class="status-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="color:#888;font-size:13px;">APPLICATION STATUS</span>
+        <span id="statusBadge" class="status-badge status-pending">Pending</span>
+      </div>
+      <div class="member-card">
+        <h3>ILLUMILIGHT MEMBER</h3>
+        <div class="member-code" id="displayCode">ILL-2026-XXXX</div>
+        <div id="displayName" style="color:#e8e0c8;font-weight:600;">-</div>
+      </div>
+      <div style="margin-top:15px;">
+        <div class="detail-row"><span>Full Name</span><b id="dName">-</b></div>
+        <div class="detail-row"><span>Email</span><b id="dEmail">-</b></div>
+        <div class="detail-row"><span>Gender</span><b id="dGender">-</b></div>
+        <div class="detail-row"><span>DOB</span><b id="dDob">-</b></div>
+        <div class="detail-row"><span>Country</span><b id="dCountry">-</b></div>
+        <div class="detail-row"><span>Status</span><b id="dStatus">-</b></div>
+      </div>
+      <p id="statusMessage" style="font-size:13px;color:#aaa;margin-top:15px;line-height:1.5;"></p>
+    </div>
+  </div>
+  <p class="hint">Lost your code? Check your email after registration or contact support.<br>Codes are format ILL-2026-XXXX</p>
+</div>
+
+<script>
+const PROJECT_ID = "6ae27aad00007b481204";
+const DATABASE_ID = "illumilight-db";
+const TABLE_ID = "membership_applications";
+
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const code = document.getElementById('codeInput').value.trim().toUpperCase();
+  const email = document.getElementById('emailInput').value.trim().toLowerCase();
+  const btn = document.getElementById('loginBtn');
+  const err = document.getElementById('errorMsg');
+  const result = document.getElementById('result');
+  btn.disabled = true; btn.textContent = "Checking...";
+  err.style.display = "none"; result.style.display = "none";
+
+  try {
+    // Query by membership_code
+    const query = encodeURIComponent(`equal("membership_code", "${code}")`);
+    const res = await fetch(`https://fra.cloud.appwrite.io/v1/tablesdb/${DATABASE_ID}/tables/${TABLE_ID}/rows?queries[]=${query}&limit=5`, {
+      headers: { 'X-Appwrite-Project': PROJECT_ID }
+    });
+    const data = await res.json();
+    console.log(data);
+    let rows = data.rows || data.documents || [];
+
+    // Fallback: fetch all and filter if query didn't work
+    if(rows.length === 0){
+      const res2 = await fetch(`https://fra.cloud.appwrite.io/v1/tablesdb/${DATABASE_ID}/tables/${TABLE_ID}/rows?limit=100`, {
+        headers: { 'X-Appwrite-Project': PROJECT_ID }
+      });
+      const data2 = await res2.json();
+      const all = data2.rows || data2.documents || [];
+      rows = all.filter(r => (r.membership_code||"").toUpperCase() === code);
+    }
+
+    if(rows.length === 0) throw new Error("No member found with code " + code + ". Check spelling.");
+
+    let member = rows[0];
+    // If email provided, verify it matches
+    if(email && member.email && member.email.toLowerCase() !== email){
+      throw new Error("Email does not match this membership code.");
+    }
+
+    const statusRaw = (member.status || "Pending").toLowerCase();
+    const badge = document.getElementById('statusBadge');
+    badge.textContent = member.status || "Pending";
+    badge.className = "status-badge " + (statusRaw.includes("approv") ? "status-approved" : statusRaw.includes("reject") ? "status-rejected" : "status-pending");
+
+    document.getElementById('displayCode').textContent = member.membership_code || code;
+    document.getElementById('displayName').textContent = member.full_name || "-";
+    document.getElementById('dName').textContent = member.full_name || "-";
+    document.getElementById('dEmail').textContent = member.email || "-";
+    document.getElementById('dGender').textContent = member.gender || "-";
+    document.getElementById('dDob').textContent = member.date_of_birth || "-";
+    document.getElementById('dCountry').textContent = ((member.country||"") + " " + (member.city||"")).trim() || "-";
+    document.getElementById('dStatus').textContent = member.status || "Pending";
+
+    const msg = document.getElementById('statusMessage');
+    if(statusRaw.includes("approv")) msg.textContent = "🎉 Congratulations! Your membership has been approved. Welcome to Illumilight. Keep your code safe — it is your official member ID.";
+    else if(statusRaw.includes("reject")) msg.textContent = "Your application was not approved at this time. You may re-apply or contact support for more information.";
+    else msg.textContent = "Your application is under review. Please check back in 24-48 hours. You will see Approved here once reviewed.";
+
+    result.style.display = "block";
+  } catch(error){
+    err.textContent = error.message;
+    err.style.display = "block";
+  } finally {
+    btn.disabled = false; btn.textContent = "Check Status →";
+  }
+});
+</script>
+</body>
+</html>
