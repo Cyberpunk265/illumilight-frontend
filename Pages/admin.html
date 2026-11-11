@@ -52,7 +52,7 @@ let allDocs=[];
 async function loadData(){
  document.getElementById('tbody').innerHTML='<tr><td colspan=9>Loading...</td></tr>';
  try{
-  const res = await fetch(`https://cloud.appwrite.io/v1/tablesdb/${DATABASE_ID}/tables/${TABLE_ID}/rows?queries[]=${encodeURIComponent('limit(100)')}&queries[]=${encodeURIComponent('orderDesc($createdAt)')}`, {
+  const res = await fetch(`https://fra.cloud.appwrite.io/v1/tablesdb/${DATABASE_ID}/tables/${TABLE_ID}/rows?queries[]=${encodeURIComponent('limit(100)')}&queries[]=${encodeURIComponent('orderDesc($createdAt)')}`, {
     headers: { 'X-Appwrite-Project': PROJECT_ID }
   });
   const data = await res.json();
