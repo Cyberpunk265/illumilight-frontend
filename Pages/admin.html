@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Illumilight Admin</title>
+<style>
+body{background:#0a0a0a;color:#fff;font-family:Arial;padding:20px}
+h1{color:#d4af37}
+#loginBox{max-width:400px;margin:100px auto;background:#111;padding:30px;border-radius:10px;text-align:center;border:1px solid #d4af37}
+input{width:90%;padding:12px;margin:10px 0;background:#222;color:#fff;border:1px solid #444;border-radius:5px}
+button{background:#d4af37;color:#000;padding:12px 25px;border:none;border-radius:5px;font-weight:bold;cursor:pointer}
+table{width:100%;border-collapse:collapse;margin-top:20px;font-size:12px}
+th,td{border:1px solid #333;padding:8px;text-align:left}
+th{background:#1a1a1a;color:#d4af37}
+.search{margin:20px 0}
+</style>
+</head>
+<body>
+<div id="loginBox">
+<h1>Illumilight Admin</h1>
+<input type="password" id="pw" placeholder="Password">
+<button onclick="login()">Login</button>
+<p id="err" style="color:red"></p>
+</div>
+
+<div id="main" style="display:none">
+<h1>Members - <span id="count">0</span></h1>
+<input class="search" id="search" placeholder="Search name, code, email..." onkeyup="filterT()" style="width:300px;padding:10px;background:#222;color:#fff;border:1px solid #444">
+<button onclick="loadData()">Refresh</button>
+<div style="overflow-x:auto">
+<table>
+<thead><tr>
+<th>Code</th><th>Full Name</th><th>Email</th><th>Phone</th><th>DOB</th><th>Gender</th><th>Reason</th><th>Status</th><th>Date</th>
+</tr></thead>
+<tbody id="tbody"></tbody>
+</table>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
+<script>
+const PROJECT_ID = "6ae27aad00007b481204"; // <-- PASTE FROM APPWRITE
+const DATABASE_ID = "illumilight-db";
+const COLLECTION_ID = "membership_applications";
+
+function login(){
+ if(document.getElementById('pw').value==='illumi2026'){
+  document.getElementById('loginBox').style.display='none';
+  document.getElementById('main').style.display='block';
+  loadData();
+ } else { document.getElementById('err').textContent='Wrong password'; }
+}
+let allDocs=[];
+async function loadData(){
+ const { Client, Databases, Query } = Appwrite;
+ const client = new Client().setEndpoint('https://cloud.appwrite.io/v1').setProject(PROJECT_ID);
+ const db = new Databases(client);
+ try{
+  const res = await db.listDocuments(DATABASE_ID, COLLECTION_ID, [Query.limit(100), Query.orderDesc('$createdAt')]);
+  allDocs=res.documents;
+  render(allDocs);
+ }catch(e){ document.getElementById('tbody').innerHTML='<tr><td colspan=9>Error: '+e.message+' - Check PROJECT/DATABASE IDs at top of file</td></tr>'; }
+}
+function render(docs){
+ document.getElementById('count').textContent=docs.length;
+ document.getElementById('tbody').innerHTML=docs.map(d=>`<tr>
+  <td><b style="color:#d4af37">${d.membership_code||d.membershipCode||'NO CODE'}</b></td>
+  <td>${d.full_name||d.fullName||''}</td>
+  <td>${d.email||''}</td>
+  <td>${d.phone||''}</td>
+  <td>${d.date_of_birth||d.dob||''}</td>
+  <td>${d.gender||''}</td>
+  <td>${d.reason||d.motivation||''}</td>
+  <td>${d.status||'pending'}</td>
+  <td>${new Date(d.$createdAt).toLocaleDateString()}</td>
+ </tr>`).join('');
+}
+function filterT(){
+ const q=document.getElementById('search').value.toLowerCase();
+ render(allDocs.filter(d=>JSON.stringify(d).toLowerCase().includes(q)));
+}
+</script>
+</body>
+</html>
