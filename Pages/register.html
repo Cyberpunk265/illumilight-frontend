@@ -1,170 +1,174 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Membership Application | Illuminati</title>
-
-  <!-- Existing website design -->
-  <link rel="stylesheet" href="../style.css">
-
-  <!-- Registration page styles -->
-  <link rel="stylesheet" href="register.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Membership Application | Illumilight</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+  body { background: #0a0a0a; color: #e8e0c8; font-family: 'Segoe UI', Arial, sans-serif; }
+  .form-container { max-width: 700px; margin: 40px auto; background: #141410; padding: 35px; border-radius: 12px; border: 1px solid #2a2a1e; }
+  h1 { color: #d4c98a; text-align: center; margin-bottom: 10px; }
+  .subtitle { text-align: center; color: #888; margin-bottom: 30px; }
+  label { display: block; margin-top: 18px; color: #d4c98a; font-weight: 600; font-size: 14px; }
+  input, select, textarea { width: 100%; padding: 12px; margin-top: 6px; background: #1e1e1a; border: 1px solid #333; border-radius: 6px; color: #fff; box-sizing: border-box; }
+  textarea { min-height: 90px; resize: vertical; }
+  .row { display: flex; gap: 15px; }
+  .row > div { flex: 1; }
+  .checkbox-group { margin-top: 25px; }
+  .checkbox-group label { display: flex; gap: 10px; align-items: flex-start; color: #ccc; font-weight: 400; cursor: pointer; margin-top: 12px; }
+  .checkbox-group input { width: auto; margin-top: 3px; }
+  .disclaimer { font-size: 12px; color: #888; margin-top: 20px; line-height: 1.5; }
+  .btn-row { display: flex; justify-content: space-between; margin-top: 30px; gap: 15px; }
+  .btn-back { padding: 14px 28px; background: transparent; border: 1px solid #d4c98a; color: #d4c98a; cursor: pointer; border-radius: 4px; }
+  .btn-submit { padding: 14px 28px; background: #e8d98a; color: #000; border: none; font-weight: 700; cursor: pointer; border-radius: 4px; }
+  .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+  #message { text-align: center; margin-top: 20px; font-weight: 600; min-height: 20px; }
+  #message.success { color: #8bc98a; }
+  #message.error { color: #e57373; }
+  .summary { background: #1a1a16; border: 1px solid #333; padding: 20px; border-radius: 8px; margin-top: 20px; display: none; }
+  .summary p { margin: 8px 0; font-size: 14px; border-bottom: 1px solid #222; padding-bottom: 8px; }
+  .summary b { color: #d4c98a; }
+</style>
 </head>
 <body>
 
- <a href="../index.html" class="brand">
-  <img
-    src="../images/illumilight-logo.png"
-    alt="Illumilight"
-    class="brand-logo"
-  >
-</a>
-  </header>
+<div class="form-container">
+  <h1>Membership Application</h1>
+  <p class="subtitle">Illumilight — Official Application Form</p>
 
-  <main class="section-padding registration-page">
-    <div class="section-label">MEMBERSHIP / APPLICATION</div>
-
-    <div class="registration-heading">
-      <h1>Your next chapter<br>
-        <span class="gold-text">starts here.</span>
-      </h1>
-      <p>Complete your membership application in a few simple steps.</p>
+  <form id="registerForm">
+    <div class="row">
+      <div><label>First name *</label><input type="text" id="firstName" required placeholder="John"></div>
+      <div><label>Last name *</label><input type="text" id="lastName" required placeholder="Doe"></div>
     </div>
 
-    <div class="registration-card">
-
-      <div class="progress-area">
-        <div class="progress-text">
-          <span id="stepLabel">STEP 1 OF 4</span>
-          <span id="stepPercent">25%</span>
-        </div>
-        <div class="progress-track">
-          <div id="progressBar"></div>
-        </div>
-      </div>
-
-      <form id="membershipForm">
-
-        <!-- STEP 1: PERSONAL DETAILS -->
-        <section class="form-step active">
-          <h2>Personal details</h2>
-          <p class="step-description">Tell us a little about yourself.</p>
-
-          <label for="fullName">Full legal name *</label>
-          <input type="text" id="fullName" name="full_name"
-            placeholder="Enter your full name" required>
-
-          <label for="dob">Date of birth *</label>
-          <input type="date" id="dob" name="date_of_birth" required>
-
-          <label for="nationality">Nationality *</label>
-          <input type="text" id="nationality" name="nationality"
-            placeholder="Your nationality" required>
-
-          <label for="country">Country of residence *</label>
-          <input type="text" id="country" name="country"
-            placeholder="Country where you live" required>
-
-          <label for="city">City *</label>
-          <input type="text" id="city" name="city"
-            placeholder="Your city" required>
-        </section>
-
-        <!-- STEP 2: CONTACT DETAILS -->
-        <section class="form-step">
-          <h2>Contact information</h2>
-          <p class="step-description">How can we reach you?</p>
-
-          <label for="email">Email address *</label>
-          <input type="email" id="email" name="email"
-            placeholder="you@example.com" required>
-
-          <label for="phone">Mobile number *</label>
-          <input type="tel" id="phone" name="phone"
-            placeholder="+27..." required>
-
-          <label for="whatsapp">WhatsApp number (optional)</label>
-          <input type="tel" id="whatsapp" name="whatsapp"
-            placeholder="WhatsApp number">
-
-          <label for="contactMethod">Preferred contact method *</label>
-          <select id="contactMethod" name="contact_method" required>
-            <option value="">Choose one</option>
-            <option value="Email">Email</option>
-            <option value="Phone">Phone</option>
-            <option value="WhatsApp">WhatsApp</option>
-          </select>
-        </section>
-
-        <!-- STEP 3: MEMBERSHIP DETAILS -->
-        <section class="form-step">
-          <h2>Membership details</h2>
-          <p class="step-description">Help us understand your interest.</p>
-
-          
-
-          <label for="occupation">Occupation *</label>
-          <input type="text" id="occupation" name="occupation"
-            placeholder="Your occupation" required>
-
-          <label for="reason">Why would you like to join Illuminati? *</label>
-          <textarea id="reason" name="reason" rows="4"
-            placeholder="Tell us about your interest..." required></textarea>
-
-          <label for="heardAbout">How did you hear about us?</label>
-          <input type="text" id="heardAbout" name="heard_about"
-            placeholder="Optional">
-        </section>
-
-        <!-- STEP 4: REVIEW AND CONSENT -->
-        <section class="form-step">
-          <h2>Review and submit</h2>
-          <p class="step-description">
-            Please confirm that your information is accurate.
-          </p>
-
-          <div id="reviewDetails"></div>
-
-          <label class="consent-option">
-            <input type="checkbox" id="confirmAccuracy" required>
-            I confirm that the information provided is accurate.
-          </label>
-
-          <label class="consent-option">
-            <input type="checkbox" id="agreeTerms" required>
-            I agree to the membership terms and privacy policy.
-          </label>
-
-          <p class="review-note">
-            Your application will be reviewed by the Illuminati team.
-            Submission does not guarantee membership approval.
-          </p>
-        </section>
-
-        <div class="form-navigation">
-          <button type="button" id="backButton"
-            class="button button-outline" disabled>
-            Back
-          </button>
-
-          <button type="button" id="nextButton"
-            class="button button-gold">
-            Continue ↗
-          </button>
-
-          <button type="submit" id="submitButton"
-            class="button button-gold" hidden>
-            Submit application ↗
-          </button>
-        </div>
-
-        <p id="formMessage" role="status"></p>
-      </form>
+    <div class="row">
+      <div><label>Country of residence *</label><input type="text" id="country" required placeholder="South Africa"></div>
+      <div><label>City *</label><input type="text" id="city" required placeholder="Johannesburg"></div>
     </div>
-  </main>
 
-  <script src="register.js" defer></script>
+    <label>Email address *</label>
+    <input type="email" id="email" required placeholder="you@example.com">
+
+    <label>Mobile number *</label>
+    <input type="tel" id="phone" required placeholder="0821234567">
+
+    <label>Preferred contact method</label>
+    <select id="contactMethod">
+      <option>Email</option>
+      <option>WhatsApp</option>
+      <option>Phone Call</option>
+    </select>
+
+    <label>Occupation</label>
+    <input type="text" id="occupation" placeholder="e.g. Student, Engineer">
+
+    <label>Why would you like to join Illuminati? *</label>
+    <textarea id="motivation" required placeholder="Tell us why..."></textarea>
+
+    <label>How did you hear about us?</label>
+    <input type="text" id="hearAbout" placeholder="e.g. Friend, Google">
+
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="confirm1" required> I confirm that the information provided is accurate.</label>
+      <label><input type="checkbox" id="confirm2" required> I agree to the membership terms and privacy policy.</label>
+    </div>
+
+    <p class="disclaimer">Your application will be reviewed by the Illuminati team. Submission does not guarantee membership approval.</p>
+
+    <div class="btn-row">
+      <button type="button" class="btn-back" onclick="window.location.href='../index.html'">Back</button>
+      <button type="submit" class="btn-submit" id="submitBtn">Submit application ↗</button>
+    </div>
+
+    <div id="message"></div>
+
+    <div id="summaryBox" class="summary"></div>
+  </form>
+</div>
+
+<script>
+const APPWRITE_FUNCTION_URL = "https://starter-function-2d0q.fra.appwrite.run/";
+
+document.getElementById('registerForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('submitBtn');
+  const msg = document.getElementById('message');
+  const summaryBox = document.getElementById('summaryBox');
+  
+  btn.disabled = true;
+  btn.textContent = "Submitting...";
+  msg.className = "";
+  msg.textContent = "";
+
+  const payload = {
+    firstName: document.getElementById('firstName').value.trim(),
+    lastName: document.getElementById('lastName').value.trim(),
+    country: document.getElementById('country').value.trim(),
+    city: document.getElementById('city').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    phone: document.getElementById('phone').value.trim(),
+    contactMethod: document.getElementById('contactMethod').value,
+    occupation: document.getElementById('occupation').value.trim(),
+    motivation: document.getElementById('motivation').value.trim(),
+    hearAbout: document.getElementById('hearAbout').value.trim()
+  };
+
+  try {
+    const response = await fetch(APPWRITE_FUNCTION_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await response.json();
+    console.log("Appwrite response:", data);
+
+    if (!response.ok) {
+      throw new Error(data.message || data.error || "Submission failed");
+    }
+
+    // --- FIXED: Handle every possible reference format ---
+    // Appwrite returns it in different places depending on your backend code
+    let ref = "Received";
+    if (data.reference) ref = data.reference;
+    else if (data.ref) ref = data.ref;
+    else if (data.referenceNumber) ref = data.referenceNumber;
+    else if (data.data && data.data.reference) ref = data.data.reference;
+    else if (data.data && data.data.$id) ref = data.data.$id;
+    else if (data.$id) ref = data.$id;
+    else if (typeof data === 'string') ref = data;
+
+    msg.className = "success";
+    msg.textContent = `Application submitted successfully! Reference: ${ref}`;
+
+    // Show summary like your screenshot
+    summaryBox.style.display = "block";
+    summaryBox.innerHTML = `
+      <p><b>Country of residence:</b> ${payload.country}</p>
+      <p><b>City:</b> ${payload.city}</p>
+      <p><b>Email address:</b> ${payload.email}</p>
+      <p><b>Mobile number:</b> ${payload.phone}</p>
+      <p><b>Preferred contact method:</b> ${payload.contactMethod}</p>
+      <p><b>Occupation:</b> ${payload.occupation}</p>
+      <p><b>Why would you like to join Illuminati?:</b> ${payload.motivation}</p>
+      <p><b>How did you hear about us?:</b> ${payload.hearAbout}</p>
+      <p style="color:#8bc98a; border:none;"><b>Reference:</b> ${ref}</p>
+    `;
+
+    document.getElementById('registerForm').reset();
+
+  } catch (err) {
+    console.error(err);
+    msg.className = "error";
+    msg.textContent = "Unable to submit: " + err.message + " — Please try again or WhatsApp us.";
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Submit application ↗";
+  }
+});
+</script>
+
 </body>
 </html>
