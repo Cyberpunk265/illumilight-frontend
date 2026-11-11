@@ -57,10 +57,9 @@
     <label>Why would you like to join Illuminati? *</label><textarea id="motivation" required placeholder="Tell us why..."></textarea>
     <label>How did you hear about us?</label><input type="text" id="hearAbout" placeholder="e.g. Friend, Google">
     <div class="checkbox-group">
-      <label><input type="checkbox" id="confirm1" required> I confirm that the information provided is accurate.</label>
-      <label><input type="checkbox" id="confirm2" required> I agree to the membership terms and privacy policy.</label>
+      <label><input type="checkbox" required> I confirm that the information provided is accurate.</label>
+      <label><input type="checkbox" required> I agree to the membership terms and privacy policy.</label>
     </div>
-    <p style="font-size:12px;color:#888;margin-top:20px">Your application will be reviewed. Submission does not guarantee approval.</p>
     <div class="btn-row">
       <button type="button" class="btn-back" onclick="window.location.href='../index.html'">Back</button>
       <button type="submit" class="btn-submit" id="submitBtn">Submit application ↗</button>
@@ -87,19 +86,23 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
   const fullName = firstName + ' ' + lastName;
   const dobVal = document.getElementById('dob').value;
   const genderVal = document.getElementById('gender').value;
-
-  // Generate code like ILL-2026-0016
   const code = "ILL-2026-" + String(Math.floor(1000 + Math.random()*9000));
 
+  // EXACT column names from your screenshot
   const rowData = {
     full_name: fullName,
     email: document.getElementById('email').value.trim(),
     phone: document.getElementById('phone').value.trim(),
     gender: genderVal,
     date_of_birth: dobVal,
+    country: document.getElementById('country').value.trim(),
+    city: document.getElementById('city').value.trim(),
+    contact_method: document.getElementById('contactMethod').value,
+    occupation: document.getElementById('occupation').value.trim(),
     reason: document.getElementById('motivation').value.trim(),
+    heard_about: document.getElementById('hearAbout').value.trim(),
     membership_code: code,
-    status: "pending"
+    status: "Pending"
   };
 
   try {
@@ -110,25 +113,16 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     });
     const data = await res.json();
     console.log(data);
-    if(!res.ok) throw new Error(data.message || "Failed to submit");
+    if(!res.ok) throw new Error(data.message || "Failed");
 
     msg.className = "success";
     msg.textContent = `Application submitted successfully! Your Code: ${code}`;
     summaryBox.style.display = "block";
-    summaryBox.innerHTML = `
-      <p><b>Full Name:</b> ${fullName}</p>
-      <p><b>DOB:</b> ${dobVal} | <b>Gender:</b> ${genderVal}</p>
-      <p><b>Email:</b> ${rowData.email}</p>
-      <p><b>Phone:</b> ${rowData.phone}</p>
-      <p><b>Country:</b> ${document.getElementById('country').value} - ${document.getElementById('city').value}</p>
-      <p><b>Reason:</b> ${rowData.reason}</p>
-      <p style="color:#8bc98a"><b>Your Membership Code:</b> ${code} (Pending approval)</p>
-    `;
+    summaryBox.innerHTML = `<p><b>Full Name:</b> ${fullName}</p><p><b>DOB:</b> ${dobVal} | <b>Gender:</b> ${genderVal}</p><p><b>Email:</b> ${rowData.email}</p><p style="color:#8bc98a"><b>Your Membership Code:</b> ${code} (Pending)</p>`;
     document.getElementById('registerForm').reset();
   } catch(err){
-    console.error(err);
     msg.className = "error";
-    msg.textContent = "Unable to submit: " + err.message + " — Turn VPN OFF and try again.";
+    msg.textContent = "Unable to submit: " + err.message;
   } finally {
     btn.disabled = false; btn.textContent = "Submit application ↗";
   }
