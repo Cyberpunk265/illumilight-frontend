@@ -106,7 +106,7 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     const res = await fetch(`https://fra.cloud.appwrite.io/v1/tablesdb/${DATABASE_ID}/tables/${TABLE_ID}/rows`, {
       method: 'POST',
       headers: { 'X-Appwrite-Project': PROJECT_ID, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ data: rowData })
+      body: JSON.stringify({ rowId: "unique()", data: rowData })
     });
     const data = await res.json();
     console.log(data);
