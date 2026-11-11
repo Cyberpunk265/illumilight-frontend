@@ -13,7 +13,6 @@ button{background:#d4af37;color:#000;padding:12px 25px;border:none;border-radius
 table{width:100%;border-collapse:collapse;margin-top:20px;font-size:12px}
 th,td{border:1px solid #333;padding:8px;text-align:left}
 th{background:#1a1a1a;color:#d4af37}
-.search{margin:20px 0}
 </style>
 </head>
 <body>
@@ -26,23 +25,21 @@ th{background:#1a1a1a;color:#d4af37}
 
 <div id="main" style="display:none">
 <h1>Members - <span id="count">0</span></h1>
-<input class="search" id="search" placeholder="Search name, code, email..." onkeyup="filterT()" style="width:300px;padding:10px;background:#222;color:#fff;border:1px solid #444">
+<input id="search" placeholder="Search name, code, email..." onkeyup="filterT()" style="width:300px;padding:10px;background:#222;color:#fff;border:1px solid #444">
 <button onclick="loadData()">Refresh</button>
 <div style="overflow-x:auto">
 <table>
-<thead><tr>
-<th>Code</th><th>Full Name</th><th>Email</th><th>Phone</th><th>DOB</th><th>Gender</th><th>Reason</th><th>Status</th><th>Date</th>
-</tr></thead>
+<thead><tr><th>Code</th><th>Full Name</th><th>Email</th><th>Phone</th><th>DOB</th><th>Gender</th><th>Reason</th><th>Status</th><th>Date</th></tr></thead>
 <tbody id="tbody"></tbody>
 </table>
 </div>
+<p id="debug" style="color:#888;font-size:11px;margin-top:20px"></p>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
 <script>
-const PROJECT_ID = "6ae27aad00007b481204"; // <-- PASTE FROM APPWRITE
+const PROJECT_ID = "6ae27aad00007b481204";
 const DATABASE_ID = "illumilight-db";
-const COLLECTION_ID = "membership_applications";
+const TABLE_ID = "membership_applications";
 
 function login(){
  if(document.getElementById('pw').value==='illumi2026'){
@@ -53,14 +50,20 @@ function login(){
 }
 let allDocs=[];
 async function loadData(){
- const { Client, Databases, Query } = Appwrite;
- const client = new Client().setEndpoint('https://cloud.appwrite.io/v1').setProject(PROJECT_ID);
- const db = new Databases(client);
+ document.getElementById('tbody').innerHTML='<tr><td colspan=9>Loading...</td></tr>';
  try{
-  const res = await db.listDocuments(DATABASE_ID, COLLECTION_ID, [Query.limit(100), Query.orderDesc('$createdAt')]);
-  allDocs=res.documents;
+  const res = await fetch(`https://cloud.appwrite.io/v1/tablesdb/${DATABASE_ID}/tables/${TABLE_ID}/rows?queries[]=${encodeURIComponent('limit(100)')}&queries[]=${encodeURIComponent('orderDesc($createdAt)')}`, {
+    headers: { 'X-Appwrite-Project': PROJECT_ID }
+  });
+  const data = await res.json();
+  console.log(data);
+  document.getElementById('debug').textContent = 'Status: '+res.status+' - '+JSON.stringify(data).substring(0,200);
+  if(!res.ok) throw new Error(data.message || 'Failed');
+  allDocs = data.rows || data.documents || [];
   render(allDocs);
- }catch(e){ document.getElementById('tbody').innerHTML='<tr><td colspan=9>Error: '+e.message+' - Check PROJECT/DATABASE IDs at top of file</td></tr>'; }
+ }catch(e){
+  document.getElementById('tbody').innerHTML='<tr><td colspan=9>Error: '+e.message+'</td></tr>';
+ }
 }
 function render(docs){
  document.getElementById('count').textContent=docs.length;
@@ -73,8 +76,8 @@ function render(docs){
   <td>${d.gender||''}</td>
   <td>${d.reason||d.motivation||''}</td>
   <td>${d.status||'pending'}</td>
-  <td>${new Date(d.$createdAt).toLocaleDateString()}</td>
- </tr>`).join('');
+  <td>${d.$createdAt ? new Date(d.$createdAt).toLocaleDateString() : ''}</td>
+ </tr>`).join('') || '<tr><td colspan=9>No rows</td></tr>';
 }
 function filterT(){
  const q=document.getElementById('search').value.toLowerCase();
