@@ -1,0 +1,104 @@
+
+.member-register-container {
+  max-width: 520px;
+  margin: 80px auto;
+  padding: 25px;
+}
+
+.member-register-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.member-register-header h1 {
+  color: var(--gold);
+}
+
+.member-register-header p {
+  color: var(--muted);
+}
+
+.member-register-panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 30px;
+}
+
+.member-register-panel h2 {
+  color: var(--gold);
+}
+
+.member-register-panel > p {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+#memberRegisterForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 25px;
+}
+
+#memberRegisterForm label {
+  color: var(--gold);
+  font-weight: 600;
+}
+
+#memberRegisterForm input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 13px;
+  background: #080808;
+  color: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  outline: none;
+}
+
+#memberRegisterForm input:focus {
+  border-color: var(--gold);
+}
+
+#registerButton {
+  margin-top: 12px;
+  padding: 14px;
+  background: var(--gold);
+  color: var(--black);
+  border: 1px solid var(--gold);
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#registerButton:hover {
+  background: var(--bright-gold);
+}
+
+#registerMessage {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.login-link {
+  margin-top: 25px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.login-link a {
+  color: var(--gold);
+  text-decoration: none;
+}
+
+@media (max-width: 600px) {
+  .member-register-container {
+    margin: 35px auto;
+    padding: 15px;
+  }
+
+  .member-register-panel {
+    padding: 22px;
+  }
+}

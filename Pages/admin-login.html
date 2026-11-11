@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login | Illumilight</title>
+
+  <link rel="stylesheet" href="../style.css">
+
+  <style>
+    .admin-login {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 20px;
+    }
+
+    .admin-card {
+      width: 100%;
+      max-width: 440px;
+      padding: 42px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+
+    .admin-heading {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .admin-heading h1 {
+      color: var(--bright-gold);
+      margin-bottom: 10px;
+    }
+
+    .admin-heading p {
+      color: var(--muted);
+    }
+
+    .admin-label {
+      display: block;
+      margin: 18px 0 8px;
+      color: var(--gold);
+    }
+
+    .admin-input {
+      width: 100%;
+      padding: 14px;
+      color: var(--white);
+      background: var(--black);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      outline: none;
+    }
+
+    .admin-input:focus {
+      border-color: var(--gold);
+    }
+
+    .admin-button {
+      width: 100%;
+      margin-top: 26px;
+      padding: 15px;
+      background: var(--gold);
+      color: var(--black);
+      border: none;
+      border-radius: 7px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .admin-button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    #loginMessage {
+      margin-top: 18px;
+      text-align: center;
+      color: var(--bright-gold);
+      overflow-wrap: anywhere;
+    }
+
+    .admin-back {
+      display: block;
+      margin-top: 24px;
+      text-align: center;
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    @media (max-width: 480px) {
+      .admin-card {
+        padding: 28px 22px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="admin-login">
+    <section class="admin-card">
+
+      <div class="admin-heading">
+        <h1>ILLUMILIGHT</h1>
+        <p>Administration Portal</p>
+      </div>
+
+      <form id="adminLoginForm">
+
+        <label class="admin-label" for="adminEmail">
+          Administrator Email
+        </label>
+
+        <input
+          class="admin-input"
+          type="email"
+          id="adminEmail"
+          placeholder="Enter admin email"
+          required
+        >
+
+        <label class="admin-label" for="adminPassword">
+          Password
+        </label>
+
+        <input
+          class="admin-input"
+          type="password"
+          id="adminPassword"
+          placeholder="Enter password"
+          required
+        >
+
+        <button class="admin-button" id="adminLoginButton" type="submit">
+          Sign In ↗
+        </button>
+
+        <p id="loginMessage" role="status"></p>
+
+      </form>
+
+      <a href="../index.html" class="admin-back">
+        ← Back to Illumilight
+      </a>
+
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/appwrite@21.0.0"></script>
+<script src="admin-login.js"></script>
+
+</body>
+</html>

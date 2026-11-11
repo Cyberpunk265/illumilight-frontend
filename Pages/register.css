@@ -1,0 +1,251 @@
+
+/* =================================
+   ILLUMILIGHT REGISTRATION PAGE
+================================= */
+
+.registration-page {
+  min-height: 100vh;
+  padding-top: 140px;
+  padding-bottom: 80px;
+}
+
+.registration-heading {
+  text-align: center;
+  margin: 30px auto 50px;
+}
+
+.registration-heading h1 {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  line-height: 1.2;
+}
+
+.registration-heading p {
+  color: var(--muted);
+  margin-top: 18px;
+}
+
+.registration-card {
+  width: min(100%, 720px);
+  margin: 0 auto;
+  padding: 35px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+/* PROGRESS BAR */
+
+.progress-area {
+  margin-bottom: 35px;
+}
+
+.progress-text {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  color: var(--gold);
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+.progress-track {
+  width: 100%;
+  height: 5px;
+  background: rgba(214, 179, 106, 0.15);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+#progressBar {
+  width: 25%;
+  height: 100%;
+  background: var(--gold);
+  transition: width 0.3s ease;
+}
+
+/* FORM STEPS */
+
+.form-step {
+  display: none;
+}
+
+.form-step.active {
+  display: block;
+}
+
+.form-step h2 {
+  color: var(--white);
+  font-family: inherit;
+  font-size: 25px;
+  margin-bottom: 10px;
+}
+
+.step-description {
+  color: var(--muted);
+  margin-bottom: 30px;
+  font-size: 14px;
+}
+
+/* INPUTS */
+
+.form-step label {
+  display: block;
+  color: var(--gold);
+  font-size: 13px;
+  margin: 20px 0 9px;
+}
+
+.form-step input,
+.form-step select,
+.form-step textarea {
+  display: block;
+  width: 100%;
+  padding: 14px 15px;
+  background: var(--black);
+  color: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  outline: none;
+  font-family: inherit;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+.form-step input:focus,
+.form-step select:focus,
+.form-step textarea:focus {
+  border-color: var(--gold);
+}
+
+.form-step input::placeholder,
+.form-step textarea::placeholder {
+  color: var(--muted);
+  opacity: 0.7;
+}
+
+.form-step textarea {
+  resize: vertical;
+  min-height: 110px;
+}
+
+.form-step input[type="date"] {
+  color-scheme: dark;
+}
+
+/* REVIEW SECTION */
+
+#reviewDetails {
+  padding: 20px;
+  margin: 20px 0;
+  background: var(--black);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+#reviewDetails p {
+  color: var(--muted);
+  font-size: 13px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  overflow-wrap: anywhere;
+}
+
+#reviewDetails strong {
+  color: var(--gold);
+}
+
+.consent-option {
+  display: flex !important;
+  align-items: flex-start;
+  gap: 12px;
+  color: var(--muted) !important;
+  line-height: 1.6;
+  margin: 18px 0 !important;
+}
+
+.consent-option input {
+  width: auto;
+  margin-top: 4px;
+  accent-color: var(--gold);
+}
+
+.review-note {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+  margin-top: 25px;
+}
+
+/* NAVIGATION BUTTONS */
+
+.form-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-top: 35px;
+  padding-top: 25px;
+  border-top: 1px solid var(--border);
+}
+
+.form-navigation button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.form-navigation button[hidden] {
+  display: none !important;
+}
+
+#formMessage {
+  color: var(--gold);
+  font-size: 13px;
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* MOBILE RESPONSIVE */
+
+@media (max-width: 600px) {
+  .registration-page {
+    padding-top: 110px;
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .registration-card {
+    padding: 22px 18px;
+  }
+
+  .registration-heading {
+    margin-bottom: 35px;
+  }
+
+  .form-navigation {
+    gap: 10px;
+  }
+
+  .form-navigation button {
+    padding: 12px 16px;
+    font-size: 12px;
+  }
+}
+
+/* BACK BUTTON — DARKER STYLE */
+
+#backButton {
+  background: transparent;
+  color: var(--gold);
+  border: 1px solid var(--gold);
+  opacity: 1;
+}
+
+#backButton:hover:not(:disabled) {
+  background: rgba(214, 179, 106, 0.10);
+  color: var(--bright-gold);
+}
+
+#backButton:disabled {
+  opacity: 0.4;
+}

@@ -1,0 +1,413 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Illumilight | Admin Dashboard</title>
+  <link rel="stylesheet" href="../style.css">
+
+  <style>
+    .admin-container {
+      max-width: 1100px;
+      margin: 80px auto;
+      padding: 30px;
+    }
+
+    .admin-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 20px;
+      margin-bottom: 30px;
+    }
+
+    .admin-panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 25px;
+    }
+
+    .admin-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 20px;
+    }
+
+    #logoutButton {
+      background: transparent;
+      color: var(--gold);
+      border: 1px solid var(--gold);
+      padding: 10px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    #statusMessage {
+      color: var(--muted);
+    }
+
+    .application-item {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 15px;
+    }
+
+    .application-item h3 {
+      color: var(--gold);
+      margin-top: 0;
+    }
+
+    .application-item p {
+      margin: 7px 0;
+    }
+
+    .application-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    .application-buttons button {
+      padding: 10px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .approve-button {
+      background: var(--gold);
+      color: var(--black);
+      border: 1px solid var(--gold);
+    }
+
+    .reject-button {
+      background: transparent;
+      color: #e58b8b;
+      border: 1px solid #e58b8b;
+    }
+
+    .application-buttons button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .membership-code {
+      color: var(--gold);
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="admin-container">
+
+    <div class="admin-actions">
+      <button id="logoutButton" type="button">Sign Out</button>
+    </div>
+
+    <header class="admin-header">
+      <h1>Illumilight Administration</h1>
+      <p>Membership Management Portal</p>
+    </header>
+
+    <section class="admin-panel">
+      <h2>Membership Applications</h2>
+      <p id="statusMessage">Verifying administrator access...</p>
+      <div id="applicationsList"></div>
+    </section>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/appwrite@21.0.0"></script>
+
+  <script>
+    const client = new Appwrite.Client();
+
+    client
+      .setEndpoint("https://fra.cloud.appwrite.io/v1")
+      .setProject("6ae27aad00007b481204");
+
+    const account = new Appwrite.Account(client);
+    const functions = new Appwrite.Functions(client);
+
+    const statusMessage = document.getElementById("statusMessage");
+    const logoutButton = document.getElementById("logoutButton");
+    const applicationsList = document.getElementById("applicationsList");
+
+
+    // Run a protected administrator action.
+    async function runAdminAction(action, rowId = null) {
+      const jwtResponse = await account.createJWT();
+
+      const execution = await functions.createExecution(
+        "verify-admin",
+        JSON.stringify({
+          jwt: jwtResponse.jwt,
+          action: action,
+          rowId: rowId
+        }),
+        false,
+        "/",
+        "POST"
+      );
+
+      let result;
+
+      try {
+        result = JSON.parse(execution.responseBody || "{}");
+      } catch (error) {
+        throw new Error("The server returned an invalid response.");
+      }
+
+      if (
+        execution.responseStatusCode < 200 ||
+        execution.responseStatusCode >= 300 ||
+        !result.success
+      ) {
+        throw new Error(result.message || "Administrator request failed.");
+      }
+
+      return result;
+    }
+
+
+    // Verify the logged-in administrator.
+    async function verifyAdministrator() {
+      try {
+        await account.getSession("current");
+        await runAdminAction("verify_admin");
+
+        statusMessage.textContent =
+          "Administrator verified. Loading applications...";
+
+        return true;
+
+      } catch (error) {
+        console.error("Dashboard verification failed:", error);
+
+        statusMessage.textContent =
+          "Access denied. Redirecting to administrator login...";
+
+        try {
+          await account.deleteSession("current");
+        } catch (sessionError) {
+          console.log("No active session to clear.");
+        }
+
+        setTimeout(() => {
+          window.location.href = "admin-login.html";
+        }, 1500);
+
+        return false;
+      }
+    }
+
+
+    // Approve or reject a membership application.
+    async function processApplication(rowId, action, button) {
+      const actionName = action === "approve" ? "approve" : "reject";
+
+      const confirmed = confirm(
+        `Are you sure you want to ${actionName} this application?`
+      );
+
+      if (!confirmed) return;
+
+      button.disabled = true;
+      statusMessage.textContent = `Processing ${actionName} request...`;
+
+      try {
+        const result = await runAdminAction(action, rowId);
+
+        if (action === "approve") {
+          const membershipCode =
+            result.application?.membership_code || "Not returned";
+
+          alert(
+            `Application approved!\nMembership ID: ${membershipCode}`
+          );
+        } else {
+          alert("Application rejected successfully.");
+        }
+
+        await loadApplications();
+
+      } catch (error) {
+        console.error("Application processing error:", error);
+
+        alert(error.message || "Could not process application.");
+
+        button.disabled = false;
+        statusMessage.textContent = error.message;
+      }
+    }
+
+
+    // Load and display membership applications.
+    async function loadApplications() {
+      const result = await runAdminAction("get_applications");
+      const applications = result.applications || [];
+
+      applicationsList.innerHTML = "";
+
+      if (applications.length === 0) {
+        statusMessage.textContent = "No membership applications found.";
+        return;
+      }
+
+      statusMessage.textContent =
+        `Successfully loaded ${applications.length} application(s).`;
+
+      applications.forEach(application => {
+        const item = document.createElement("div");
+        item.className = "application-item";
+
+        const heading = document.createElement("h3");
+        heading.textContent =
+          application.full_name || "Unnamed applicant";
+
+        const email = document.createElement("p");
+        email.textContent =
+          "Email: " + (application.email || "Not provided");
+
+        const status = document.createElement("p");
+        status.textContent =
+          "Status: " + (application.status || "Unknown");
+
+        const category = document.createElement("p");
+        category.textContent =
+          "Membership category: " +
+          (application.membership_category || "Not provided");
+
+        const occupation = document.createElement("p");
+        occupation.textContent =
+          "Occupation: " + (application.occupation || "Not provided");
+
+        const submitted = document.createElement("p");
+        submitted.textContent =
+          "Submitted: " +
+          (application.$createdAt
+            ? new Date(application.$createdAt).toLocaleString()
+            : "Date unavailable");
+
+        // Full application details.
+        const details = document.createElement("details");
+        const summary = document.createElement("summary");
+
+        summary.textContent = "View full application";
+
+        const fields = [
+          ["Date of birth", application.date_of_birth],
+          ["Nationality", application.nationality],
+          ["Country", application.country],
+          ["City", application.city],
+          ["Phone", application.phone],
+          ["WhatsApp", application.whatsapp],
+          ["Preferred contact", application.contact_method],
+          ["Reason for applying", application.reason],
+          ["Heard about us", application.heard_about]
+        ];
+
+        fields.forEach(([label, value]) => {
+          const paragraph = document.createElement("p");
+          paragraph.textContent =
+            `${label}: ${value || "Not provided"}`;
+
+          details.appendChild(paragraph);
+        });
+
+        details.prepend(summary);
+
+        item.append(
+          heading,
+          email,
+          status,
+          category,
+          occupation,
+          submitted,
+          details
+        );
+
+        // Add action buttons only to pending applications.
+        if ((application.status || "").toLowerCase() === "pending") {
+          const buttons = document.createElement("div");
+          buttons.className = "application-buttons";
+
+          const approveButton = document.createElement("button");
+          approveButton.textContent = "Approve";
+          approveButton.className = "approve-button";
+
+          approveButton.addEventListener("click", () => {
+            processApplication(
+              application.$id,
+              "approve",
+              approveButton
+            );
+          });
+
+          const rejectButton = document.createElement("button");
+          rejectButton.textContent = "Reject";
+          rejectButton.className = "reject-button";
+
+          rejectButton.addEventListener("click", () => {
+            processApplication(
+              application.$id,
+              "reject",
+              rejectButton
+            );
+          });
+
+          buttons.append(approveButton, rejectButton);
+          item.appendChild(buttons);
+        }
+
+        // Display membership ID when one exists.
+        if (application.membership_code) {
+          const membershipCode = document.createElement("p");
+
+          membershipCode.className = "membership-code";
+          membershipCode.textContent =
+            "Membership ID: " + application.membership_code;
+
+          item.appendChild(membershipCode);
+        }
+
+        applicationsList.appendChild(item);
+      });
+    }
+
+
+    // Sign out administrator.
+    logoutButton.addEventListener("click", async () => {
+      logoutButton.disabled = true;
+
+      try {
+        await account.deleteSession("current");
+      } catch (error) {
+        console.error("Sign out error:", error);
+      }
+
+      window.location.href = "admin-login.html";
+    });
+
+
+    // Start the dashboard.
+    async function initializeDashboard() {
+      const verified = await verifyAdministrator();
+
+      if (!verified) return;
+
+      try {
+        await loadApplications();
+      } catch (error) {
+        console.error("Application loading error:", error);
+        statusMessage.textContent = error.message;
+      }
+    }
+
+    initializeDashboard();
+  </script>
+</body>
+</html>

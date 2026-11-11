@@ -1,0 +1,170 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Membership Application | Illuminati</title>
+
+  <!-- Existing website design -->
+  <link rel="stylesheet" href="../style.css">
+
+  <!-- Registration page styles -->
+  <link rel="stylesheet" href="register.css">
+</head>
+<body>
+
+ <a href="../index.html" class="brand">
+  <img
+    src="../images/illumilight-logo.png"
+    alt="Illumilight"
+    class="brand-logo"
+  >
+</a>
+  </header>
+
+  <main class="section-padding registration-page">
+    <div class="section-label">MEMBERSHIP / APPLICATION</div>
+
+    <div class="registration-heading">
+      <h1>Your next chapter<br>
+        <span class="gold-text">starts here.</span>
+      </h1>
+      <p>Complete your membership application in a few simple steps.</p>
+    </div>
+
+    <div class="registration-card">
+
+      <div class="progress-area">
+        <div class="progress-text">
+          <span id="stepLabel">STEP 1 OF 4</span>
+          <span id="stepPercent">25%</span>
+        </div>
+        <div class="progress-track">
+          <div id="progressBar"></div>
+        </div>
+      </div>
+
+      <form id="membershipForm">
+
+        <!-- STEP 1: PERSONAL DETAILS -->
+        <section class="form-step active">
+          <h2>Personal details</h2>
+          <p class="step-description">Tell us a little about yourself.</p>
+
+          <label for="fullName">Full legal name *</label>
+          <input type="text" id="fullName" name="full_name"
+            placeholder="Enter your full name" required>
+
+          <label for="dob">Date of birth *</label>
+          <input type="date" id="dob" name="date_of_birth" required>
+
+          <label for="nationality">Nationality *</label>
+          <input type="text" id="nationality" name="nationality"
+            placeholder="Your nationality" required>
+
+          <label for="country">Country of residence *</label>
+          <input type="text" id="country" name="country"
+            placeholder="Country where you live" required>
+
+          <label for="city">City *</label>
+          <input type="text" id="city" name="city"
+            placeholder="Your city" required>
+        </section>
+
+        <!-- STEP 2: CONTACT DETAILS -->
+        <section class="form-step">
+          <h2>Contact information</h2>
+          <p class="step-description">How can we reach you?</p>
+
+          <label for="email">Email address *</label>
+          <input type="email" id="email" name="email"
+            placeholder="you@example.com" required>
+
+          <label for="phone">Mobile number *</label>
+          <input type="tel" id="phone" name="phone"
+            placeholder="+27..." required>
+
+          <label for="whatsapp">WhatsApp number (optional)</label>
+          <input type="tel" id="whatsapp" name="whatsapp"
+            placeholder="WhatsApp number">
+
+          <label for="contactMethod">Preferred contact method *</label>
+          <select id="contactMethod" name="contact_method" required>
+            <option value="">Choose one</option>
+            <option value="Email">Email</option>
+            <option value="Phone">Phone</option>
+            <option value="WhatsApp">WhatsApp</option>
+          </select>
+        </section>
+
+        <!-- STEP 3: MEMBERSHIP DETAILS -->
+        <section class="form-step">
+          <h2>Membership details</h2>
+          <p class="step-description">Help us understand your interest.</p>
+
+          
+
+          <label for="occupation">Occupation *</label>
+          <input type="text" id="occupation" name="occupation"
+            placeholder="Your occupation" required>
+
+          <label for="reason">Why would you like to join Illuminati? *</label>
+          <textarea id="reason" name="reason" rows="4"
+            placeholder="Tell us about your interest..." required></textarea>
+
+          <label for="heardAbout">How did you hear about us?</label>
+          <input type="text" id="heardAbout" name="heard_about"
+            placeholder="Optional">
+        </section>
+
+        <!-- STEP 4: REVIEW AND CONSENT -->
+        <section class="form-step">
+          <h2>Review and submit</h2>
+          <p class="step-description">
+            Please confirm that your information is accurate.
+          </p>
+
+          <div id="reviewDetails"></div>
+
+          <label class="consent-option">
+            <input type="checkbox" id="confirmAccuracy" required>
+            I confirm that the information provided is accurate.
+          </label>
+
+          <label class="consent-option">
+            <input type="checkbox" id="agreeTerms" required>
+            I agree to the membership terms and privacy policy.
+          </label>
+
+          <p class="review-note">
+            Your application will be reviewed by the Illuminati team.
+            Submission does not guarantee membership approval.
+          </p>
+        </section>
+
+        <div class="form-navigation">
+          <button type="button" id="backButton"
+            class="button button-outline" disabled>
+            Back
+          </button>
+
+          <button type="button" id="nextButton"
+            class="button button-gold">
+            Continue ↗
+          </button>
+
+          <button type="submit" id="submitButton"
+            class="button button-gold" hidden>
+            Submit application ↗
+          </button>
+        </div>
+
+        <p id="formMessage" role="status"></p>
+      </form>
+    </div>
+  </main>
+
+  <script src="register.js" defer></script>
+</body>
+</html>

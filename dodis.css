@@ -1,0 +1,569 @@
+/* =================================
+   DODIS - DEPARTMENT OF DISTRIBUTION
+   Uses variables from style.css
+================================= */
+
+/* HERO */
+
+.dodis-hero {
+  text-align: center;
+  padding-bottom: 40px;
+}
+
+.dodis-hero h1 {
+  font-family: "Cinzel", serif;
+  font-weight: 400;
+  font-size: clamp(42px, 6vw, 72px);
+  line-height: 1.1;
+  margin: 18px 0 14px;
+  color: var(--white);
+}
+
+.dodis-hero p {
+  color: var(--muted);
+  max-width: 560px;
+  margin: 0 auto;
+  line-height: 1.8;
+  font-size: 14px;
+}
+
+.dodis-badge {
+  display: inline-block;
+  padding: 9px 14px;
+  border: 1px solid var(--border);
+  color: var(--gold);
+  font-size: 9px;
+  letter-spacing: 2px;
+  border-radius: 2px;
+}
+
+.store-note {
+  color: #807969;
+  font-size: 8px;
+  letter-spacing: 1.8px;
+  margin-top: 22px;
+  text-transform: uppercase;
+}
+
+/* CONTROLS - SEARCH + FILTER */
+
+.dodis-controls {
+  max-width: 720px;
+  margin: 40px auto 0;
+}
+
+#searchInput {
+  width: 100%;
+  background: #0a0a08;
+  border: 1px solid var(--border);
+  color: var(--white);
+  padding: 15px 18px;
+  font: inherit;
+  font-size: 14px;
+  outline: none;
+  border-radius: 6px;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#searchInput:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 18px rgba(214, 179, 106, 0.15);
+}
+
+#searchInput::placeholder {
+  color: var(--muted);
+  opacity: 0.7;
+}
+
+.filter-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+.filter-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 9px 18px;
+  border-radius: 30px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: inherit;
+}
+
+.filter-btn.active,
+.filter-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: rgba(214, 179, 106, 0.08);
+}
+
+/* PRODUCT GRID */
+
+.dodis-grid-wrap {
+  padding: 0 9% 100px;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.product-card {
+  background: linear-gradient(145deg, #13120f, #0a0a09);
+  border: 1px solid var(--border);
+  padding: 28px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 8px;
+}
+
+.product-card:hover {
+  border-color: var(--gold);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(214, 179, 106, 0.12);
+}
+
+.product-card::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -80%;
+  width: 45%;
+  height: 200%;
+  background: linear-gradient(90deg, transparent, rgba(245, 217, 152, 0.25), transparent);
+  transform: skewX(-25deg);
+  pointer-events: none;
+}
+
+.product-card:hover::after {
+  animation: goldenShimmer 0.65s ease-in-out;
+}
+
+@keyframes goldenShimmer {
+  0% { left: -80%; }
+  100% { left: 130%; }
+}
+
+.product-thumb {
+  width: 100%;
+  height: 180px;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle, rgba(214, 179, 106, 0.12), transparent 70%);
+  border: 1px solid rgba(214, 179, 106, 0.15);
+  font-family: "Cinzel", serif;
+  font-size: 64px;
+  color: var(--gold);
+  margin-bottom: 20px;
+  border-radius: 6px;
+}
+
+.product-cat {
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+.product-card h3 {
+  font-family: "Cinzel", serif;
+  font-weight: 400;
+  font-size: 20px;
+  margin: 10px 0 8px;
+  color: var(--white);
+  line-height: 1.3;
+}
+
+.product-card p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+  min-height: 42px;
+}
+
+.product-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.price {
+  font-weight: 600;
+  color: var(--bright-gold);
+  font-size: 15px;
+}
+
+.view-btn {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--gold);
+  border-bottom: 1px solid var(--gold);
+  padding-bottom: 2px;
+  text-transform: uppercase;
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--muted);
+  padding: 60px 0;
+  font-size: 14px;
+}
+
+/* MODAL */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(6px);
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.modal[hidden] {
+  display: none !important;
+}
+
+.modal-card {
+  background: #11100e;
+  border: 1px solid var(--border);
+  max-width: 680px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  position: relative;
+  animation: fadeIn 0.3s ease;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+.modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid var(--border);
+  color: var(--gold);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 2;
+  font-size: 13px;
+  display: grid;
+  place-items: center;
+}
+
+.modal-symbol {
+  display: grid;
+  place-items: center;
+  font-family: "Cinzel", serif;
+  font-size: 90px;
+  color: #100d08;
+  background: linear-gradient(145deg, #e1c17c, #6e4a16);
+  min-height: 280px;
+}
+
+.modal-info {
+  padding: 32px 28px;
+}
+
+.modal-category {
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+.modal-info h2 {
+  font-family: "Cinzel", serif;
+  font-weight: 400;
+  font-size: 28px;
+  margin: 10px 0;
+  color: var(--white);
+  line-height: 1.2;
+}
+
+.modal-desc {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.modal-price-row {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.modal-price {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--bright-gold);
+}
+
+.modal-stock {
+  font-size: 11px;
+  color: #7fb069;
+  letter-spacing: 0.5px;
+}
+
+.modal-note {
+  font-size: 11px;
+  color: #82745b;
+  margin-top: 14px;
+  line-height: 1.6;
+}
+
+/* BUTTONS - for cart + modal */
+
+.button-outline {
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  padding: 14px 18px;
+  border-radius: 6px;
+  font-size: 12px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: flex;
+  transition: all 0.25s ease;
+  box-sizing: border-box;
+}
+
+.button-outline:hover {
+  background: rgba(214, 179, 106, 0.1);
+  color: var(--bright-gold);
+  border-color: var(--bright-gold);
+}
+
+#whatsappOrder {
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* CART FAB + DRAWER */
+
+.cart-fab {
+  position: fixed;
+  bottom: 26px;
+  right: 26px;
+  z-index: 150;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: #100d08;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 8px 30px rgba(214, 179, 106, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  transition: transform 0.2s ease;
+}
+
+.cart-fab:hover {
+  transform: scale(1.05);
+}
+
+.cart-fab span {
+  font-size: 12px;
+  font-weight: 700;
+  background: #000;
+  color: var(--gold);
+  border-radius: 20px;
+  padding: 2px 7px;
+  margin-left: 2px;
+}
+
+.cart-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(380px, 90vw);
+  background: #0d0c0a;
+  border-left: 1px solid var(--border);
+  z-index: 180;
+  display: flex;
+  flex-direction: column;
+  animation: slideIn 0.3s ease;
+  box-sizing: border-box;
+}
+
+.cart-drawer[hidden] {
+  display: none !important;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); }
+  to { transform: none; }
+}
+
+.cart-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px;
+  border-bottom: 1px solid var(--border);
+}
+
+.cart-head h3 {
+  font-family: "Cinzel", serif;
+  font-weight: 400;
+  color: var(--white);
+  font-size: 20px;
+  margin: 0;
+}
+
+.cart-head button {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--gold);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+#cartItems {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px;
+}
+
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 13px;
+  color: var(--white);
+}
+
+.cart-item small {
+  color: var(--muted);
+  display: block;
+  margin-top: 4px;
+}
+
+.cart-item > div:last-child {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.cart-remove {
+  color: #c0392b;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 4px 0;
+  font-family: inherit;
+}
+
+.cart-remove:hover {
+  text-decoration: underline;
+}
+
+.cart-foot {
+  padding: 20px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.cart-total {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  font-weight: 600;
+  color: var(--white);
+  font-size: 15px;
+}
+
+.cart-total span:last-child {
+  color: var(--bright-gold);
+}
+
+.clear-cart {
+  display: block;
+  margin: 14px auto 0;
+  font-size: 12px;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.clear-cart:hover {
+  color: var(--white);
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .modal-card {
+    grid-template-columns: 1fr;
+  }
+  .modal-symbol {
+    height: 180px;
+    min-height: 180px;
+    font-size: 70px;
+  }
+}
+
+@media (max-width: 560px) {
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+  .dodis-grid-wrap {
+    padding: 0 6% 80px;
+  }
+  .dodis-hero {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+  .cart-fab {
+    bottom: 18px;
+    right: 18px;
+  }
+}
