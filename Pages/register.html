@@ -4,40 +4,65 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Membership Application | Illumilight</title>
+<meta name="description" content="Apply for Illumilight membership.">
 <link rel="stylesheet" href="../style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  body { background: #0a0a0a; color: #e8e0c8; font-family: 'Segoe UI', Arial, sans-serif; }
-  .form-container { max-width: 700px; margin: 40px auto; background: #141410; padding: 35px; border-radius: 12px; border: 1px solid #2a2a1e; }
-  h1 { color: #d4c98a; text-align: center; margin-bottom: 10px; }
-  .subtitle { text-align: center; color: #888; margin-bottom: 30px; }
-  label { display: block; margin-top: 18px; color: #d4c98a; font-weight: 600; font-size: 14px; }
-  input, select, textarea { width: 100%; padding: 12px; margin-top: 6px; background: #1e1e1a; border: 1px solid #333; border-radius: 6px; color: #fff; box-sizing: border-box; }
-  textarea { min-height: 90px; resize: vertical; }
-  .row { display: flex; gap: 15px; } .row > div { flex: 1; }
-  .checkbox-group label { display: flex; gap: 10px; align-items: flex-start; color: #ccc; font-weight: 400; cursor: pointer; margin-top: 12px; }
-  .checkbox-group input { width: auto; margin-top: 3px; }
-  .btn-row { display: flex; justify-content: space-between; margin-top: 30px; gap: 15px; }
-  .btn-back { padding: 14px 28px; background: transparent; border: 1px solid #d4c98a; color: #d4c98a; cursor: pointer; border-radius: 4px; }
-  .btn-submit { padding: 14px 28px; background: #e8d98a; color: #000; border: none; font-weight: 700; cursor: pointer; border-radius: 4px; }
-  .btn-submit:disabled { opacity: 0.6; }
-  #message { text-align: center; margin-top: 20px; font-weight: 600; min-height: 20px; }
-  #message.success { color: #8bc98a; } #message.error { color: #e57373; }
-  .summary { background: #1a1a16; border: 1px solid #333; padding: 20px; border-radius: 8px; margin-top: 20px; display: none; }
-  .summary p { margin: 8px 0; font-size: 14px; border-bottom: 1px solid #222; padding-bottom: 8px; }
-  .summary b { color: #d4c98a; }
+  body{background:var(--black)}
+  .form-wrap{max-width:720px;margin:50px auto;padding:0 20px}
+  .form-container{background:linear-gradient(145deg,#13120f,#0a0a09);padding:40px 35px;border-radius:4px;border:1px solid var(--border);box-shadow:0 0 50px rgba(214,179,106,.06)}
+  .form-container h1{font-family:"Cinzel",serif;font-weight:400;font-size:32px;color:var(--white);text-align:center}
+  .form-container h1 span{color:var(--gold)}
+  .subtitle{text-align:center;color:var(--muted);font-size:12px;letter-spacing:2px;margin:12px 0 30px}
+  .gold-divider{width:60px;height:1px;background:var(--gold);margin:0 auto 30px}
+  label{display:block;margin-top:18px;color:var(--gold);font-weight:500;font-size:11px;letter-spacing:1px;text-transform:uppercase}
+  input,select,textarea{width:100%;padding:13px 14px;margin-top:7px;background:#0d0c0a;border:1px solid rgba(255,255,255,.12);border-radius:2px;color:var(--white);font-family:"Inter",sans-serif;font-size:14px;box-sizing:border-box;transition:border-color .25s}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
+  textarea{min-height:90px;resize:vertical}
+  .row{display:flex;gap:15px}.row>div{flex:1}
+  .checkbox-group{margin-top:22px;border-top:1px solid rgba(255,255,255,.07);padding-top:18px}
+  .checkbox-group label{display:flex;gap:10px;align-items:flex-start;color:#ccc;font-weight:400;cursor:pointer;margin-top:12px;text-transform:none;letter-spacing:0;font-size:13px}
+  .checkbox-group input{width:auto;margin-top:3px;accent-color:var(--gold)}
+  .btn-row{display:flex;justify-content:space-between;margin-top:32px;gap:15px}
+  .btn-back{padding:14px 26px;background:transparent;border:1px solid var(--border);color:var(--gold);cursor:pointer;font-size:11px;letter-spacing:1px;transition:.25s}
+  .btn-back:hover{border-color:var(--gold)}
+  .btn-submit{padding:14px 28px;background:var(--gold);color:#100d08;border:none;font-weight:700;cursor:pointer;font-size:11px;letter-spacing:1px;transition:.25s}
+  .btn-submit:hover{background:var(--bright-gold);transform:translateY(-2px)}
+  .btn-submit:disabled{opacity:.6;transform:none}
+  #message{text-align:center;margin-top:20px;font-weight:600;min-height:20px;font-size:13px;line-height:1.6}
+  #message.success{color:#8bc98a}#message.error{color:#e57373}
+  .summary{background:#0d0c0a;border:1px solid var(--gold);padding:22px;border-radius:2px;margin-top:20px;display:none}
+  .summary p{margin:8px 0;font-size:14px;border-bottom:1px solid #222;padding-bottom:8px}
+  .summary b{color:var(--gold)}
+  .code-big{font-family:"Cinzel",serif;font-size:22px;letter-spacing:2px;color:var(--bright-gold)!important}
+  @media(max-width:560px){.row{flex-direction:column;gap:0}.form-container{padding:28px 20px}.btn-row{flex-direction:column-reverse}.btn-row button{width:100%}}
 </style>
 </head>
 <body>
+<div class="ambient-glow"></div>
+
+<header class="navbar">
+  <a href="../index.html" class="brand"><img src="../images/illumilight-logo.png" alt="Illumilight" class="brand-logo" width="150" height="40"></a>
+  <nav class="nav-links" style="display:flex">
+    <a href="../index.html">Home</a>
+    <a href="login.html">Member Login</a>
+  </nav>
+</header>
+
+<div class="form-wrap">
 <div class="form-container">
-  <h1>Membership Application</h1>
-  <p class="subtitle">Illuminati — Official Application Form</p>
-  <form id="registerForm">
+  <h1>Become <span>Illuminated</span></h1>
+  <p class="subtitle">MEMBERSHIP APPLICATION · SUBJECT TO APPROVAL</p>
+  <div class="gold-divider"></div>
+
+  <form id="registerForm" novalidate>
     <div class="row">
-      <div><label>First name *</label><input type="text" id="firstName" required placeholder="John"></div>
-      <div><label>Last name *</label><input type="text" id="lastName" required placeholder="Doe"></div>
+      <div><label>First name *</label><input type="text" id="firstName" required placeholder="John" autocomplete="given-name"></div>
+      <div><label>Last name *</label><input type="text" id="lastName" required placeholder="Doe" autocomplete="family-name"></div>
     </div>
     <div class="row">
-      <div><label>Date of Birth *</label><input type="date" id="dob" required></div>
+      <div><label>Date of Birth *</label><input type="date" id="dob" required max="2010-01-01"></div>
       <div><label>Gender *</label>
         <select id="gender" required>
           <option value="">Select Gender...</option>
@@ -49,24 +74,26 @@
       <div><label>Country *</label><input type="text" id="country" required placeholder="South Africa"></div>
       <div><label>City *</label><input type="text" id="city" required placeholder="Johannesburg"></div>
     </div>
-    <label>Email *</label><input type="email" id="email" required placeholder="you@example.com">
-    <label>Mobile *</label><input type="tel" id="phone" required placeholder="+27">
+    <label>Email *</label><input type="email" id="email" required placeholder="you@example.com" autocomplete="email">
+    <label>Mobile *</label><input type="tel" id="phone" required placeholder="+27 ..." autocomplete="tel">
     <label>Preferred contact method</label>
     <select id="contactMethod"><option>Email</option><option>WhatsApp</option><option>Phone Call</option></select>
     <label>Occupation</label><input type="text" id="occupation" placeholder="e.g. Student, Engineer">
-    <label>Why would you like to join Illuminati? *</label><textarea id="motivation" required placeholder="Tell us why..."></textarea>
+    <label>Why would you like to join? *</label><textarea id="motivation" required placeholder="Tell us why you want to find your light..."></textarea>
     <label>How did you hear about us?</label><input type="text" id="hearAbout" placeholder="e.g. Friend, Google, Facebook">
     <div class="checkbox-group">
-      <label><input type="checkbox" required> I confirm that the information provided is accurate.</label>
-      <label><input type="checkbox" required> I agree to the membership terms and privacy policy.</label>
+      <label><input type="checkbox" id="check1" required> I confirm that the information provided is accurate.</label>
+      <label><input type="checkbox" id="check2" required> I agree to the membership terms and privacy policy.</label>
     </div>
     <div class="btn-row">
-      <button type="button" class="btn-back" onclick="window.location.href='../index.html'">Back</button>
+      <button type="button" class="btn-back" onclick="window.location.href='../index.html'">← BACK</button>
       <button type="submit" class="btn-submit" id="submitBtn">Submit application ↗</button>
     </div>
     <div id="message"></div>
     <div id="summaryBox" class="summary"></div>
   </form>
+</div>
+<p style="text-align:center;color:#666;font-size:11px;margin-top:18px">© <span id="year">2026</span> Illumilight. All applications are reviewed manually.</p>
 </div>
 
 <script>
@@ -74,24 +101,38 @@ const PROJECT_ID = "6ae27aad00007b481204";
 const DATABASE_ID = "illumilight-db";
 const TABLE_ID = "membership_applications";
 
+document.getElementById('year').textContent = new Date().getFullYear();
+
 document.getElementById('registerForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const btn = document.getElementById('submitBtn');
   const msg = document.getElementById('message');
   const summaryBox = document.getElementById('summaryBox');
-  btn.disabled = true; btn.textContent = "Submitting..."; msg.textContent = "";
-
+  
   const firstName = document.getElementById('firstName').value.trim();
   const lastName = document.getElementById('lastName').value.trim();
-  const fullName = firstName + ' ' + lastName;
+  const emailVal = document.getElementById('email').value.trim();
   const dobVal = document.getElementById('dob').value;
   const genderVal = document.getElementById('gender').value;
+
+  // Validation
+  if(!firstName || !lastName || !emailVal || !dobVal || !genderVal){
+    msg.className="error"; msg.textContent="Please fill all required fields *"; return;
+  }
+  if(!document.getElementById('check1').checked || !document.getElementById('check2').checked){
+    msg.className="error"; msg.textContent="Please accept both confirmations to continue."; return;
+  }
+  // Age check 16+
+  const age = new Date().getFullYear() - new Date(dobVal).getFullYear();
+  if(age < 16){ msg.className="error"; msg.textContent="You must be 16+ to apply."; return; }
+
+  btn.disabled = true; btn.textContent = "Submitting..."; msg.textContent = "";
+  const fullName = firstName + ' ' + lastName;
   const code = "ILL-2026-" + String(Math.floor(1000 + Math.random()*9000));
 
-  // EXACT column names from your screenshot
   const rowData = {
     full_name: fullName,
-    email: document.getElementById('email').value.trim(),
+    email: emailVal,
     phone: document.getElementById('phone').value.trim(),
     gender: genderVal,
     date_of_birth: dobVal,
@@ -112,14 +153,14 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
       body: JSON.stringify({ rowId: "unique()", data: rowData })
     });
     const data = await res.json();
-    console.log(data);
     if(!res.ok) throw new Error(data.message || "Failed");
 
     msg.className = "success";
-    msg.textContent = `Application submitted successfully! Your Code: ${code}`;
+    msg.textContent = `Application submitted successfully!`;
     summaryBox.style.display = "block";
-    summaryBox.innerHTML = `<p><b>Full Name:</b> ${fullName}</p><p><b>DOB:</b> ${dobVal} | <b>Gender:</b> ${genderVal}</p><p><b>Email:</b> ${rowData.email}</p><p style="color:#8bc98a"><b>Your Membership Code:</b> ${code} (Pending)</p>`;
+    summaryBox.innerHTML = `<p style="text-align:center"><b style="font-size:11px;letter-spacing:2px">YOUR MEMBERSHIP CODE</b><br><span class="code-big">${code}</span><br><span style="color:#8bc98a;font-size:12px">● PENDING APPROVAL</span></p><p><b>Full Name:</b> ${fullName}</p><p><b>DOB:</b> ${dobVal} | <b>Gender:</b> ${genderVal}</p><p><b>Email:</b> ${rowData.email}</p><p style="font-size:12px;color:#888;border:none">Save your code. Use it to check status on the Member Login page.</p>`;
     document.getElementById('registerForm').reset();
+    window.scrollTo({top: document.getElementById('message').offsetTop - 100, behavior:'smooth'});
   } catch(err){
     msg.className = "error";
     msg.textContent = "Unable to submit: " + err.message;
