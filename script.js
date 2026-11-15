@@ -1,104 +1,65 @@
 const menuToggle = document.getElementById("menuToggle");
 const navLinks = document.getElementById("navLinks");
 
-// Mobile navigation
-menuToggle.addEventListener("click", () => {
+if (menuToggle && navLinks) {
+  menuToggle.addEventListener("click", () => {
     const isOpen = navLinks.classList.toggle("open");
-
     menuToggle.setAttribute("aria-expanded", String(isOpen));
     menuToggle.textContent = isOpen ? "✕" : "☰";
-});
-
-// Close the mobile menu after selecting a link
-navLinks.querySelectorAll("a").forEach((link) => {
+  });
+  navLinks.querySelectorAll("a").forEach(link => {
     link.addEventListener("click", () => {
-        navLinks.classList.remove("open");
-        menuToggle.setAttribute("aria-expanded", "false");
-        menuToggle.textContent = "☰";
+      navLinks.classList.remove("open");
+      menuToggle.setAttribute("aria-expanded", "false");
+      menuToggle.textContent = "☰";
     });
-});
-
-// Automatically update the copyright year
-document.getElementById("year").textContent =
-    new Date().getFullYear();
-
-// Reveal the page content as it enters the screen
-const revealElements = document.querySelectorAll(
-    ".feature-card, .dodis-panel, .membership-content"
-);
-
-if ("IntersectionObserver" in window) {
-    const observer = new IntersectionObserver(
-        (entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add("revealed");
-                    observer.unobserve(entry.target);
-                }
-            });
-        },
-        { threshold: 0.12 }
-    );
-
-    revealElements.forEach((element) => {
-        element.classList.add("reveal");
-        observer.observe(element);
-    });
+  });
 }
 
-document.querySelectorAll(".feature-card").forEach(card => {
-    card.addEventListener("click", () => {
-        document.querySelectorAll(".feature-card").forEach(item => {
-            item.classList.remove("selected");
-        });
+const yearEl = document.getElementById("year");
+if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-        card.classList.add("selected");
+// Single loop for all card interactions
+document.querySelectorAll(".feature-card").forEach(card => {
+  card.addEventListener("click", (e) => {
+    document.querySelectorAll(".feature-card").forEach(c => c.classList.remove("selected"));
+    card.classList.add("selected");
+
+    const rect = card.getBoundingClientRect();
+    const ripple = document.createElement("span");
+    ripple.className = "ripple-effect";
+    const size = Math.max(rect.width, rect.height) * 2;
+    ripple.style.width = ripple.style.height = size + "px";
+    ripple.style.left = (e.clientX - rect.left - size / 2) + "px";
+    ripple.style.top = (e.clientY - rect.top - size / 2) + "px";
+    card.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 650);
+  });
+
+  // Tilt only on desktop with rAF throttle
+  if (window.matchMedia("(pointer:fine)").matches) {
+    let ticking = false;
+    card.addEventListener("mousemove", e => {
+      if (ticking) return; ticking = true;
+      requestAnimationFrame(() => {
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5;
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        card.style.transform = `perspective(800px) rotateX(${-y * 6}deg) rotateY(${x * 6}deg) translateY(-3px)`;
+        ticking = false;
+      });
     });
+    card.addEventListener("mouseleave", () => { card.style.transform = ""; });
+  }
 });
 
-// Golden click ripple effect
-document.querySelectorAll(".feature-card").forEach(card => {
-    card.addEventListener("click", (event) => {
-        const rect = card.getBoundingClientRect();
-
-        const ripple = document.createElement("span");
-        ripple.classList.add("ripple-effect");
-
-        const size = Math.max(rect.width, rect.height) * 2;
-
-        ripple.style.width = `${size}px`;
-        ripple.style.height = `${size}px`;
-
-        ripple.style.left = `${event.clientX - rect.left - size / 2}px`;
-        ripple.style.top = `${event.clientY - rect.top - size / 2}px`;
-
-        card.appendChild(ripple);
-
-        setTimeout(() => {
-            ripple.remove();
-        }, 700);
+// Reveal on scroll
+const revealEls = document.querySelectorAll(".feature-card, .dodis-panel, .membership-content");
+if ("IntersectionObserver" in window) {
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if (en.isIntersecting) { en.target.classList.add("revealed"); io.unobserve(en.target); }
     });
-});
-
-// 3D mouse-follow card tilt
-document.querySelectorAll(".feature-card").forEach(card => {
-    card.addEventListener("mousemove", event => {
-        const rect = card.getBoundingClientRect();
-
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
-
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-
-        const rotateY = ((x - centerX) / centerX) * 6;
-        const rotateX = ((centerY - y) / centerY) * 6;
-
-        card.style.transform =
-            `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-3px)`;
-    });
-
-    card.addEventListener("mouseleave", () => {
-        card.style.transform = "";
-    });
-});
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => { el.classList.add("reveal"); io.observe(el); });
+}
