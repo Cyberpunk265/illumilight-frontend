@@ -12,11 +12,10 @@
   .btn-refresh { background:#d4c98a; color:#000; }
   .btn-clean { background:#333; color:#aaa; }
   .table-wrap { overflow-x:auto; border:1px solid #333; border-radius:8px; background:#111; }
-  table { width:100%; border-collapse:collapse; min-width:1100px; }
+  table { width:100%; border-collapse:collapse; min-width:1150px; }
   th { background:#1a1a10; color:#d4c98a; padding:12px; text-align:left; font-size:13px; }
-  td { padding:11px; border-bottom:1px solid #222; font-size:13px; vertical-align:top; }
+  td { padding:11px; border-bottom:1px solid #222; font-size:13px; vertical-align:middle; }
   tr:hover { background:#141410; }
-  /* STICKY ACTIONS */
   th:last-child, td:last-child {
     position: sticky; right: 0;
     background:#1e1a10; min-width:200px;
@@ -32,7 +31,7 @@
   #loginBox input { width:100%; padding:12px; margin:10px 0; background:#1e1e1a; border:1px solid #333; color:#fff; border-radius:6px; box-sizing:border-box; }
   #loginBox button { width:100%; background:#e8d98a; color:#000; padding:12px; }
   #searchInput { flex:1; padding:12px; background:#1e1e1a; border:1px solid #333; color:#fff; border-radius:6px; min-width:200px; }
-  .debug { font-size:11px; color:#888; margin-top:10px; }
+  .debug { font-size:11px; color:#888; margin-top:10px; word-break:break-all; }
 </style>
 </head>
 <body>
@@ -43,7 +42,7 @@
   <input type="password" id="adminPass" placeholder="Password">
   <button onclick="checkPass()">Login</button>
   <p id="loginErr" style="color:red"></p>
-  <p style="font-size:12px;color:#666">Hint: Illumilight2026</p>
+  <p style="font-size:12px;color:#666">Illumilight2026 or admin123</p>
 </div>
 
 <div id="adminContent" style="display:none">
@@ -51,7 +50,6 @@
   <div class="topbar">
     <input id="searchInput" placeholder="Search name, code, email..." oninput="renderTable()">
     <button class="btn-refresh" onclick="loadData()">🔄 Refresh</button>
-    <button class="btn-clean" onclick="alert('Duplicates cleaning disabled for safety')">Duplicates Safe</button>
   </div>
   <div class="table-wrap">
     <table>
@@ -78,39 +76,38 @@ function checkPass(){
     document.getElementById('adminContent').style.display='block';
     loadData();
   } else { 
-    document.getElementById('loginErr').innerText="Wrong password - try Illumilight2026";
+    document.getElementById('loginErr').innerText="Wrong password";
   }
 }
-
-// Allow Enter key
 document.getElementById('adminPass').addEventListener('keypress', function(e){ if(e.key==='Enter') checkPass(); });
 
 async function loadData(){
   document.getElementById('title').innerText = "Members - Loading...";
   try {
     const url = `${ENDPOINT}/tablesdb/${DATABASE_ID}/tables/${TABLE_ID}/rows?limit=100`;
-    console.log("Fetching:", url);
-    const res = await fetch(url, {
-      headers: { 'X-Appwrite-Project': PROJECT_ID }
-    });
+    const res = await fetch(url, { headers: { 'X-Appwrite-Project': PROJECT_ID } });
     const data = await res.json();
-    console.log("DATA:", data);
-    document.getElementById('debugText').innerText = "Raw response: " + JSON.stringify(data).substring(0,300);
+    console.log(data);
+    document.getElementById('debugText').innerText = "Total: " + (data.total||0) + " | " + JSON.stringify(data).substring(0,200);
     allRows = data.rows || data.documents || [];
-    // if tablesdb fails, try old databases API
-    if(allRows.length===0 && data.message){
-      const res2 = await fetch(`${ENDPOINT}/databases/${DATABASE_ID}/collections/${TABLE_ID}/documents?limit=100`, {
-        headers: { 'X-Appwrite-Project': PROJECT_ID }
-      });
-      const data2 = await res2.json();
-      console.log("Fallback DATA2:", data2);
-      allRows = data2.documents || [];
-    }
     renderTable();
   } catch(err){
-    console.error(err);
-    document.getElementById('title').innerText = "Error loading: " + err.message;
+    document.getElementById('title').innerText = "Error: " + err.message;
   }
+}
+
+function getFields(r){
+  const raw = r;
+  return {
+    code: raw.membership_code || raw.code || "No Code",
+    fullname: raw.full_name || raw.fullname || "-",
+    email: raw.email || "",
+    phone: raw.phone || raw.whatsapp || "",
+    dob: raw.date_of_birth || raw.dob || "",
+    gender: raw.gender || "-",
+    reason: raw.reason || raw.motivation || "",
+    status: (raw.status || "pending").toLowerCase()
+  };
 }
 
 function renderTable(){
@@ -118,26 +115,20 @@ function renderTable(){
   let pending = 0;
   let html = "";
   let filtered = allRows.filter(r=>{
-    const d = r.data || r;
-    return ((d.code||"")+" "+(d.fullname||"")+" "+(d.email||"")).toLowerCase().includes(q);
+    const f = getFields(r);
+    return (f.code+" "+f.fullname+" "+f.email).toLowerCase().includes(q);
   });
   if(filtered.length===0){
-    html = `<tr><td colspan="10" style="text-align:center;padding:30px;">No members found. Register a new member first, then click Refresh.<br><br>Check debug line below table.</td></tr>`;
+    html = `<tr><td colspan="10" style="text-align:center;padding:30px;">No members found.</td></tr>`;
   } else {
     filtered.forEach(r=>{
-      const d = r.data || r; 
+      const f = getFields(r);
       const id = r.$id;
-      const status = (d.status||"pending").toLowerCase();
-      if(status==="pending") pending++;
+      if(f.status==="pending") pending++;
       html += `<tr>
-        <td><span class="code">${d.code||"No Code"}</span></td>
-        <td>${d.fullname||"-"}</td>
-        <td>${d.email||""}</td>
-        <td>${d.phone||""}</td>
-        <td>${d.dob||""}</td>
-        <td>${d.gender||"-"}</td>
-        <td>${(d.reason||"").substring(0,25)}</td>
-        <td class="status-${status}">${status}</td>
+        <td><span class="code">${f.code}</span></td>
+        <td>${f.fullname}</td><td>${f.email}</td><td>${f.phone}</td><td>${f.dob}</td><td>${f.gender}</td><td>${f.reason.substring(0,25)}</td>
+        <td class="status-${f.status}">${f.status}</td>
         <td>${(r.$createdAt||"").substring(0,10)}</td>
         <td><button class="btn-approve" onclick="updateStatus('${id}','approved')">Approve</button><button class="btn-reject" onclick="updateStatus('${id}','rejected')">Reject</button></td>
       </tr>`;
@@ -148,17 +139,57 @@ function renderTable(){
 }
 
 async function updateStatus(id, status){
+  console.log("Updating", id, status);
+  const row = allRows.find(r => r.$id === id);
+  let newCode = row ? (row.membership_code || "PENDING") : "PENDING";
+
+  // GENERATE CODE WHEN APPROVING
+  if(status === 'approved'){
+    // Count already approved to get next number
+    const approvedCount = allRows.filter(r => {
+      const s = (r.status || "").toLowerCase();
+      return s === 'approved';
+    }).length;
+    // Next number = total rows + 1, to avoid duplicates
+    const nextNum = allRows.length + 1;
+    newCode = "ILL-2026-" + String(nextNum).padStart(4, '0');
+    // If row already has a real code, keep it
+    if(row && row.membership_code && row.membership_code.startsWith("ILL-")){
+      newCode = row.membership_code;
+    }
+    if(row) row.membership_code = newCode;
+    if(row) row.status = status;
+    renderTable();
+    console.log("Generated code:", newCode);
+  } else {
+    if(row) row.status = status;
+    renderTable();
+  }
+
   try{
-    const res = await fetch(`${ENDPOINT}/tablesdb/${DATABASE_ID}/tables/${TABLE_ID}/rows/${id}`, {
-      method:'PATCH',
-      headers:{ 'X-Appwrite-Project': PROJECT_ID, 'Content-Type':'application/json' },
-      body: JSON.stringify({ data:{ status: status } })
-    });
+    // CORRECT FORMAT FOR APPWRITE TABLEDB - NOT {data:{...}}
+    let payload = { status: status };
+    if(status === 'approved'){
+      payload.membership_code = newCode;
+    }
+   const res = await fetch(`${ENDPOINT}/tablesdb/${DATABASE_ID}/tables/${TABLE_ID}/rows/${id}`, {
+  method:'PATCH',
+  headers:{ 'X-Appwrite-Project': PROJECT_ID, 'Content-Type':'application/json' },
+  body: JSON.stringify({ data: payload })
+});
     const out = await res.json();
-    console.log(out);
-    alert("Updated to "+status);
+    console.log("Appwrite response:", out);
+    if(!res.ok){
+      alert("Appwrite BLOCKED: " + JSON.stringify(out).substring(0,400) + "\n\nFIX: Go to Appwrite Console > illumilight-db > membership_applications > Settings > Permissions > Add Role: Any - Update");
+      loadData();
+    } else {
+      alert(status === 'approved' ? "Approved! Code: " + newCode : "Updated to " + status);
+      setTimeout(loadData, 500);
+    }
+  }catch(e){ 
+    alert("Error: "+e.message); 
     loadData();
-  }catch(e){ alert("Error: "+e.message); }
+  }
 }
 </script>
 </body>
