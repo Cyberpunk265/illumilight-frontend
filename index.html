@@ -10,6 +10,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="images/illumilight-logo.png">
+    <style>
+      /* ONLY ADDITION - makes DISCOVER look clickable, no design change */
+      .feature-card { text-decoration:none; color:inherit; display:block; }
+      .feature-card.clickable:hover { border-color:#d4c98a !important; transform:translateY(-3px); }
+      .feature-card .card-link { color:#d4c98a; font-size:13px; margin-top:14px; display:inline-block; border-bottom:1px solid #d4c98a; padding-bottom:3px; }
+    </style>
 </head>
 <body>
     <div class="ambient-glow"></div>
@@ -63,8 +69,20 @@
             <h2>More than a website.<br><span class="gold-text">A world of possibilities.</span></h2>
             <p class="section-description">Illumilight brings discovery, community, and shopping together in one destination. Whether you're exploring our platform or discovering something new through DODIS, your journey begins here.</p>
             <div class="feature-grid">
-                <article class="feature-card"><div class="feature-icon">✧</div><h3>Discover</h3><p>Explore content, announcements, and new experiences across Illumilight.</p></article>
-                <article class="feature-card"><div class="feature-icon">◎</div><h3>Commerce</h3><p>Discover products through our dedicated Department of Distribution (DODIS).</p><a href="dodis" class="text-link" style="margin-top:14px;display:inline-block">Explore DODIS ↗</a></article>
+                <!-- DISCOVER - NOW CLICKABLE TO MEDIA - ONLY CHANGE -->
+                <a href="Pages/media.html" class="feature-card clickable">
+                  <div class="feature-icon">✧</div>
+                  <h3>Discover</h3>
+                  <p>Explore content, announcements, and new experiences across Illumilight.</p>
+                  <span class="card-link">Explore Media ↗</span>
+                </a>
+                <article class="feature-card"><div class="feature-icon">◎</div><h3>Commerce</h3><p>Discover products through our dedicated Department of Distribution (DODIS).</p><a href="Pages/dodis.html" class="text-link" style="margin-top:14px;display:inline-block">Explore DODIS ↗</a></article>
+                <a href="Pages/community.html" class="feature-card clickable">
+  <div class="feature-icon">◇</div>
+  <h3>Community</h3>
+  <p>A platform designed to support membership, interaction, and community.</p>
+  <span class="card-link">Enter Member Dashboard ↗</span>
+</a>
                 <article class="feature-card"><div class="feature-icon">◇</div><h3>Community</h3><p>A platform designed to support membership, interaction, and community.</p></article>
             </div>
         </section>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Member Login | Illumilight</title>
+<meta name="description" content="Check your Illumilight membership status with your ILL code.">
+<link rel="stylesheet" href="../style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  .form-wrap{max-width:520px;margin:60px auto;padding:0 20px}
+  .form-container{background:linear-gradient(145deg,#13120f,#0a0a09);padding:40px 35px;border:1px solid var(--border);box-shadow:0 0 50px rgba(214,179,106,.06);text-align:center}
+  .form-container h1{font-family:"Cinzel",serif;font-weight:400;font-size:32px}
+  .form-container h1 span{color:var(--gold)}
+  .subtitle{color:var(--muted);font-size:11px;letter-spacing:2px;margin:12px 0 30px}
+  .gold-divider{width:60px;height:1px;background:var(--gold);margin:0 auto 30px}
+  label{display:block;text-align:left;margin-top:18px;color:var(--gold);font-size:11px;letter-spacing:1px;text-transform:uppercase}
+  input{width:100%;padding:14px;margin-top:7px;background:#0d0c0a;border:1px solid rgba(255,255,255,.12);color:var(--white);font-size:15px;letter-spacing:1px;text-align:center;text-transform:uppercase}
+  input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
+  .btn-submit{width:100%;padding:15px;margin-top:25px;background:var(--gold);color:#100d08;border:none;font-weight:700;cursor:pointer;font-size:11px;letter-spacing:1px}
+  .btn-submit:hover{background:var(--bright-gold)}
+  .btn-submit:disabled{opacity:.6}
+  .btn-back{width:100%;padding:14px;margin-top:12px;background:transparent;border:1px solid var(--border);color:var(--gold);cursor:pointer;font-size:11px;letter-spacing:1px}
+  #message{margin-top:20px;font-size:13px;min-height:20px;line-height:1.6}
+  #message.success{color:#8bc98a}#message.error{color:#e57373}
+  .status-card{display:none;margin-top:25px;background:#0d0c0a;border:1px solid var(--gold);padding:22px;text-align:left}
+  .status-card p{margin:8px 0;font-size:14px;border-bottom:1px solid #222;padding-bottom:8px}
+  .status-card b{color:var(--gold)}
+  .status-badge{padding:4px 10px;border:1px solid var(--gold);font-size:10px;letter-spacing:2px}
+  .status-badge.Pending{color:#f5d998}.status-badge.Approved{color:#8bc98a;border-color:#8bc98a}.status-badge.Rejected{color:#e57373;border-color:#e57373}
+</style>
+</head>
+<body>
+<div class="ambient-glow"></div>
+<header class="navbar">
+  <a href="../index.html" class="brand"><img src="../images/illumilight-logo.png" alt="Illumilight" class="brand-logo" width="150" height="40"></a>
+  <nav class="nav-links" style="display:flex">
+    <a href="../index.html">Home</a>
+    <a href="register.html">Apply</a>
+  </nav>
+</header>
+
+<div class="form-wrap">
+<div class="form-container">
+  <h1>Welcome <span>Back</span></h1>
+  <p class="subtitle">CHECK STATUS WITH ILL CODE</p>
+  <div class="gold-divider"></div>
+  <form id="loginForm">
+    <label>Your ILL Code *</label>
+    <input type="text" id="illCode" required placeholder="ILL-2026-XXXX" autocomplete="off">
+    <button type="submit" class="btn-submit" id="submitBtn">Check Status ↗</button>
+    <button type="button" class="btn-back" onclick="window.location.href='../index.html'">← BACK HOME</button>
+    <div id="message"></div>
+    <div id="statusBox" class="status-card"></div>
+  </form>
+  <p style="margin-top:22px;font-size:12px;color:#888">Don't have a code? <a href="register.html" style="color:var(--gold);border-bottom:1px solid var(--gold)">Apply for membership</a></p>
+</div>
+<p style="text-align:center;color:#666;font-size:11px;margin-top:18px">© <span id="year">2026</span> Illumilight</p>
+</div>
+
+<script>
+const PROJECT_ID = "6ae27aad00007b481204";
+const DATABASE_ID = "illumilight-db";
+const TABLE_ID = "membership_applications";
+
+document.getElementById('year').textContent = new Date().getFullYear();
+
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('submitBtn');
+  const msg = document.getElementById('message');
+  const box = document.getElementById('statusBox');
+  const code = document.getElementById('illCode').value.trim().toUpperCase();
+
+  if(!code){ msg.className="error"; msg.textContent="Please enter your ILL code."; return; }
+
+  btn.disabled = true; btn.textContent = "Checking..."; msg.textContent=""; box.style.display="none";
+
+  try {
+    const res = await fetch(`https://fra.cloud.appwrite.io/v1/tablesdb/${DATABASE_ID}/tables/${TABLE_ID}/rows?queries[]=${encodeURIComponent('equal("membership_code", ["'+code+'"])')}`, {
+      headers: { 'X-Appwrite-Project': PROJECT_ID }
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.message || "Failed to fetch");
+    if(!data.rows || data.rows.length === 0){
+      msg.className="error"; msg.textContent="No application found for " + code + ". Check your code and try again.";
+      return;
+    }
+    const r = data.rows[0];
+    const d = r.data || r;
+    msg.className="success"; msg.textContent="Application found!";
+    box.style.display="block";
+    const status = d.status || "Pending";
+    box.innerHTML = `<p style="text-align:center"><span class="status-badge ${status}">${status.toUpperCase()}</span></p>
+    <p><b>Code:</b> ${d.membership_code || code}</p>
+    <p><b>Name:</b> ${d.full_name || ''}</p>
+    <p><b>Email:</b> ${d.email || ''}</p>
+    <p><b>City:</b> ${d.city || ''}, ${d.country || ''}</p>
+    <p style="border:none;font-size:12px;color:#888">${status === 'Approved' ? 'Welcome to the Circle. You will be contacted shortly.' : status === 'Rejected' ? 'Please contact support via application channel.' : 'Your application is under manual review. Please check back later.'}</p>`;
+  } catch(err){
+    msg.className="error"; msg.textContent="Unable to check: " + err.message;
+  } finally {
+    btn.disabled = false; btn.textContent="Check Status ↗";
+  }
+});
+</script>
+</body>
+</html>

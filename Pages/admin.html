@@ -5,33 +5,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Illumilight Admin</title>
 <style>
+    * { box-sizing: border-box; }
   body { background:#0a0a0a; color:#e8e0c8; font-family:Arial,sans-serif; margin:0; padding:20px; }
-  h1 { color:#d4c98a; font-size:28px; }
+  h1 { color:#d4c98a; font-size:26px; font-family: "Cinzel", serif; }
   .topbar { display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
   button { padding:10px 16px; border-radius:6px; cursor:pointer; font-weight:700; border:none; }
   .btn-refresh { background:#d4c98a; color:#000; }
-  .btn-clean { background:#333; color:#aaa; }
   .table-wrap { overflow-x:auto; border:1px solid #333; border-radius:8px; background:#111; }
   table { width:100%; border-collapse:collapse; min-width:1150px; }
   th { background:#1a1a10; color:#d4c98a; padding:12px; text-align:left; font-size:13px; }
   td { padding:11px; border-bottom:1px solid #222; font-size:13px; vertical-align:middle; }
   tr:hover { background:#141410; }
-  th:last-child, td:last-child {
-    position: sticky; right: 0;
-    background:#1e1a10; min-width:200px;
-    box-shadow: -12px 0 15px rgba(0,0,0,0.8);
-  }
   .code { color:#e8d98a; font-weight:700; }
   .btn-approve { background:#22c55e; color:#fff; padding:8px 14px; font-size:12px; margin-right:5px; border-radius:5px; border:none; cursor:pointer; }
   .btn-reject { background:#ef4444; color:#fff; padding:8px 14px; font-size:12px; border-radius:5px; border:none; cursor:pointer; }
-  .status-approved { color:#4ade80; font-weight:700; }
-  .status-pending { color:#e8d98a; font-weight:700; }
-  .status-rejected { color:#f87171; font-weight:700; }
+  .status-approved { color:#4ade80; font-weight:700; text-transform:capitalize; }
+  .status-pending { color:#e8d98a; font-weight:700; text-transform:capitalize; }
+  .status-rejected { color:#f87171; font-weight:700; text-transform:capitalize; }
   #loginBox { max-width:400px; margin:100px auto; text-align:center; background:#141410; padding:30px; border-radius:10px; border:1px solid #333; }
-  #loginBox input { width:100%; padding:12px; margin:10px 0; background:#1e1e1a; border:1px solid #333; color:#fff; border-radius:6px; box-sizing:border-box; }
-  #loginBox button { width:100%; background:#e8d98a; color:#000; padding:12px; }
+  #loginBox button.login-btn { width:100%; background:#e8d98a; color:#000; padding:12px; margin-top:10px; }
   #searchInput { flex:1; padding:12px; background:#1e1e1a; border:1px solid #333; color:#fff; border-radius:6px; min-width:200px; }
   .debug { font-size:11px; color:#888; margin-top:10px; word-break:break-all; }
+  .pass-wrap { position:relative; width:100%; margin:10px 0; }
+  .pass-wrap input { width:100%; padding:12px 44px 12px 12px; background:#1e1e1a; border:1px solid #333; color:#fff; border-radius:6px; }
+  .eye-btn { position:absolute; right:6px; top:50%; transform:translateY(-50%); background:none !important; border:none; cursor:pointer; width:36px !important; height:36px; display:flex; align-items:center; justify-content:center; padding:0 !important; }
+  .done-badge { font-size:12px; color:#888; }
 </style>
 </head>
 <body>
@@ -39,10 +37,15 @@
 <div id="loginBox">
   <h1>✦ ILLUMILIGHT ADMIN</h1>
   <p>Enter admin password</p>
-  <input type="password" id="adminPass" placeholder="Password">
-  <button onclick="checkPass()">Login</button>
-  <p id="loginErr" style="color:red"></p>
-  <p style="font-size:12px;color:#666">Illumilight2026 or admin123</p>
+  <div class="pass-wrap">
+    <input type="password" id="adminPass" placeholder="Password">
+    <button type="button" class="eye-btn" onclick="togglePass()">
+      <svg id="eyeClosed" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d4c98a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+      <svg id="eyeOpen" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d4c98a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+    </button>
+  </div>
+  <button class="login-btn" onclick="checkPass()">Login</button>
+  <p id="loginErr" style="color:red; min-height:18px;"></p>
 </div>
 
 <div id="adminContent" style="display:none">
@@ -50,6 +53,8 @@
   <div class="topbar">
     <input id="searchInput" placeholder="Search name, code, email..." oninput="renderTable()">
     <button class="btn-refresh" onclick="loadData()">🔄 Refresh</button>
+    <button onclick="filterPending()" style="background:#222; color:#e8d98a;">Show Pending Only</button>
+    <button onclick="filterAll()" style="background:#222; color:#fff;">Show All</button>
   </div>
   <div class="table-wrap">
     <table>
@@ -68,18 +73,30 @@ const DATABASE_ID = "illumilight-db";
 const TABLE_ID = "membership_applications";
 const ENDPOINT = "https://fra.cloud.appwrite.io/v1";
 let allRows = [];
+let showPendingOnly = false;
 
+function togglePass(){
+  const input = document.getElementById('adminPass');
+  const open = document.getElementById('eyeOpen');
+  const closed = document.getElementById('eyeClosed');
+  if(input.type === "password"){
+    input.type = "text"; closed.style.display="none"; open.style.display="block";
+  } else {
+    input.type = "password"; open.style.display="none"; closed.style.display="block";
+  }
+}
 function checkPass(){
   const val = document.getElementById('adminPass').value.trim();
-  if(val === "Illumilight2026" || val === "admin123"){
+  if(val === "Illumilight2026"){
     document.getElementById('loginBox').style.display='none';
     document.getElementById('adminContent').style.display='block';
     loadData();
-  } else { 
-    document.getElementById('loginErr').innerText="Wrong password";
-  }
+  } else { document.getElementById('loginErr').innerText="Wrong password"; }
 }
-document.getElementById('adminPass').addEventListener('keypress', function(e){ if(e.key==='Enter') checkPass(); });
+document.getElementById('adminPass').addEventListener('keypress', e=>{ if(e.key==='Enter') checkPass(); });
+
+function filterPending(){ showPendingOnly = true; renderTable(); }
+function filterAll(){ showPendingOnly = false; renderTable(); }
 
 async function loadData(){
   document.getElementById('title').innerText = "Members - Loading...";
@@ -87,27 +104,38 @@ async function loadData(){
     const url = `${ENDPOINT}/tablesdb/${DATABASE_ID}/tables/${TABLE_ID}/rows?limit=100`;
     const res = await fetch(url, { headers: { 'X-Appwrite-Project': PROJECT_ID } });
     const data = await res.json();
-    console.log(data);
-    document.getElementById('debugText').innerText = "Total: " + (data.total||0) + " | " + JSON.stringify(data).substring(0,200);
     allRows = data.rows || data.documents || [];
+    document.getElementById('debugText').innerText = "Total: " + (data.total||allRows.length);
     renderTable();
-  } catch(err){
-    document.getElementById('title').innerText = "Error: " + err.message;
-  }
+  } catch(err){ document.getElementById('title').innerText = "Error: " + err.message; }
 }
 
 function getFields(r){
-  const raw = r;
+  const raw = r.data || r;
   return {
-    code: raw.membership_code || raw.code || "No Code",
+    code: raw.membership_code || raw.code || "",
     fullname: raw.full_name || raw.fullname || "-",
     email: raw.email || "",
     phone: raw.phone || raw.whatsapp || "",
     dob: raw.date_of_birth || raw.dob || "",
     gender: raw.gender || "-",
     reason: raw.reason || raw.motivation || "",
-    status: (raw.status || "pending").toLowerCase()
+    status: (raw.status || "Pending").toLowerCase()
   };
+}
+
+// FIX: Get TRUE next code - max + 1, not length + 1
+function getNextCode(){
+  let max = 0;
+  allRows.forEach(r=>{
+    const f = getFields(r);
+    if(f.code && f.code.includes("ILL-2026-")){
+      const num = parseInt(f.code.split("-").pop());
+      if(!isNaN(num) && num > max) max = num;
+    }
+  });
+  // Your highest is 5607, so next will be 5608
+  return "ILL-2026-" + String(max + 1).padStart(4, '0');
 }
 
 function renderTable(){
@@ -116,6 +144,8 @@ function renderTable(){
   let html = "";
   let filtered = allRows.filter(r=>{
     const f = getFields(r);
+    if(f.status==="pending") pending++;
+    if(showPendingOnly && f.status!=="pending") return false;
     return (f.code+" "+f.fullname+" "+f.email).toLowerCase().includes(q);
   });
   if(filtered.length===0){
@@ -124,72 +154,57 @@ function renderTable(){
     filtered.forEach(r=>{
       const f = getFields(r);
       const id = r.$id;
-      if(f.status==="pending") pending++;
+      const displayCode = f.code || "PENDING";
+      let actionHtml = "";
+      if(f.status === "pending"){
+        actionHtml = `<button class="btn-approve" onclick="updateStatus('${id}','Approved')">Approve</button><button class="btn-reject" onclick="updateStatus('${id}','Rejected')">Reject</button>`;
+      } else if(f.status === "approved"){
+        actionHtml = `<span class="done-badge">✓ Done</span> <button class="btn-reject" onclick="updateStatus('${id}','Rejected')" style="padding:6px 10px;">Reject</button>`;
+      } else {
+        actionHtml = `<button class="btn-approve" onclick="updateStatus('${id}','Approved')">Approve</button>`;
+      }
       html += `<tr>
-        <td><span class="code">${f.code}</span></td>
-        <td>${f.fullname}</td><td>${f.email}</td><td>${f.phone}</td><td>${f.dob}</td><td>${f.gender}</td><td>${f.reason.substring(0,25)}</td>
+        <td><span class="code">${displayCode}</span></td>
+        <td>${f.fullname}</td><td>${f.email}</td><td>${f.phone}</td><td>${f.dob}</td><td>${f.gender}</td><td title="${f.reason}">${f.reason.substring(0,25)}</td>
         <td class="status-${f.status}">${f.status}</td>
         <td>${(r.$createdAt||"").substring(0,10)}</td>
-        <td><button class="btn-approve" onclick="updateStatus('${id}','approved')">Approve</button><button class="btn-reject" onclick="updateStatus('${id}','rejected')">Reject</button></td>
+        <td>${actionHtml}</td>
       </tr>`;
     });
   }
   document.getElementById('tbody').innerHTML = html;
-  document.getElementById('title').innerText = `Members - ${allRows.length} | Pending: ${pending}`;
+  document.getElementById('title').innerText = `Members - ${allRows.length} | Pending: ${pending} | Next Code: ${getNextCode()}`;
 }
 
 async function updateStatus(id, status){
-  console.log("Updating", id, status);
   const row = allRows.find(r => r.$id === id);
-  let newCode = row ? (row.membership_code || "PENDING") : "PENDING";
-
-  // GENERATE CODE WHEN APPROVING
-  if(status === 'approved'){
-    // Count already approved to get next number
-    const approvedCount = allRows.filter(r => {
-      const s = (r.status || "").toLowerCase();
-      return s === 'approved';
-    }).length;
-    // Next number = total rows + 1, to avoid duplicates
-    const nextNum = allRows.length + 1;
-    newCode = "ILL-2026-" + String(nextNum).padStart(4, '0');
-    // If row already has a real code, keep it
-    if(row && row.membership_code && row.membership_code.startsWith("ILL-")){
-      newCode = row.membership_code;
-    }
-    if(row) row.membership_code = newCode;
-    if(row) row.status = status;
-    renderTable();
-    console.log("Generated code:", newCode);
-  } else {
-    if(row) row.status = status;
-    renderTable();
+  const fields = row ? getFields(row) : null;
+  let newCode = fields ? fields.code : "";
+  
+  // Only generate new code if empty or PENDING, else keep existing
+  if(status === 'Approved' && (!newCode || newCode === "PENDING" || newCode === "")){
+    newCode = getNextCode();
   }
+
+  if(!confirm(`Set to ${status}` + (status==='Approved' ? ` with code ${newCode}?` : `?`))) return;
 
   try{
-    // CORRECT FORMAT FOR APPWRITE TABLEDB - NOT {data:{...}}
     let payload = { status: status };
-    if(status === 'approved'){
-      payload.membership_code = newCode;
-    }
-   const res = await fetch(`${ENDPOINT}/tablesdb/${DATABASE_ID}/tables/${TABLE_ID}/rows/${id}`, {
-  method:'PATCH',
-  headers:{ 'X-Appwrite-Project': PROJECT_ID, 'Content-Type':'application/json' },
-  body: JSON.stringify({ data: payload })
-});
+    if(status === 'Approved'){ payload.membership_code = newCode; }
+    const res = await fetch(`${ENDPOINT}/tablesdb/${DATABASE_ID}/tables/${TABLE_ID}/rows/${id}`, {
+      method:'PATCH',
+      headers:{ 'X-Appwrite-Project': PROJECT_ID, 'Content-Type':'application/json' },
+      body: JSON.stringify({ data: payload })
+    });
     const out = await res.json();
-    console.log("Appwrite response:", out);
     if(!res.ok){
-      alert("Appwrite BLOCKED: " + JSON.stringify(out).substring(0,400) + "\n\nFIX: Go to Appwrite Console > illumilight-db > membership_applications > Settings > Permissions > Add Role: Any - Update");
+      alert("Appwrite BLOCKED: " + JSON.stringify(out).substring(0,400));
       loadData();
     } else {
-      alert(status === 'approved' ? "Approved! Code: " + newCode : "Updated to " + status);
+      alert(status === 'Approved' ? "Approved! Code: " + newCode : "Updated to " + status);
       setTimeout(loadData, 500);
     }
-  }catch(e){ 
-    alert("Error: "+e.message); 
-    loadData();
-  }
+  }catch(e){ alert("Error: "+e.message); loadData(); }
 }
 </script>
 </body>

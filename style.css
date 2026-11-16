@@ -15,7 +15,12 @@ button{font:inherit}
 /* NAV */
 .navbar{min-height:92px;padding:18px 7%;display:flex;align-items:center;justify-content:space-between;gap:25px;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(8,8,8,.92);position:sticky;top:0;z-index:100;backdrop-filter:blur(18px)}
 .brand{display:flex;align-items:center}
-.brand-logo{display:block;width:150px;height:auto;object-fit:contain}
+.brand-logo{
+  width:150px;
+  height:auto;
+  object-fit:contain;
+  mix-blend-mode:screen;
+}
 .nav-links{display:flex;align-items:center;gap:27px}
 .nav-links>a{color:#c8c2b8;font-size:12px;transition:color .25s}
 .nav-links>a:hover{color:var(--bright-gold)}
@@ -81,7 +86,17 @@ button{font:inherit}
 .store-note{color:#807969;font-size:8px;letter-spacing:1.4px;margin-top:25px}
 .dodis-art{min-height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;position:relative}
 .product-orbit{position:absolute;width:230px;height:230px;border:1px solid rgba(214,179,106,.4);transform:rotate(45deg)}
-.dodis-logo-img{width:220px;height:auto;max-height:220px;object-fit:contain;filter:drop-shadow(0 0 30px rgba(214,179,106,.25));position:relative;z-index:2}
+.dodis-logo-img{
+  width:260px;
+  height:auto;
+  max-height:260px;
+  object-fit:contain;
+  background:transparent;
+  mix-blend-mode:screen;
+  filter:drop-shadow(0 0 30px rgba(214,179,106,.35));
+  position:relative;
+  z-index:2;
+}
 .product-caption{color:var(--gold);font-size:12px;letter-spacing:3px;text-align:center;position:relative;z-index:2}
 .product-caption span{display:block;margin-top:7px;color:var(--muted);font-size:8px;letter-spacing:2px}
 

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ILLUMILIGHT | Community</title>
+<link rel="stylesheet" href="../style.css">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+.wrap{max-width:900px;margin:0 auto;padding:40px 20px;}
+.center{text-align:center;}
+h1{font-family:'Cinzel',serif;color:#e8d98a;letter-spacing:3px;font-size:32px;}
+.sec-label{color:#888;font-size:11px;letter-spacing:4px;}
+.social-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0;}
+.soc{border:1px solid #222;background:#0f0f0f;padding:26px 18px;text-align:center;}
+.soc:hover{border-color:#d4c98a;}
+.soc h3{font-family:'Cinzel',serif;color:#e8e0c8;font-size:15px;letter-spacing:1px;margin-top:8px;}
+.soc p{color:#888;font-size:13px;}
+.dash-box{border:1px solid #222;background:#0d0d0d;padding:28px;margin-top:30px;}
+.dash-box h3{font-family:'Cinzel',serif;color:#e8e0c8;letter-spacing:1px;}
+.input{width:100%;background:#0a0a0a;border:1px solid #333;color:#fff;padding:12px;margin:10px 0;}
+.btn-gold{background:linear-gradient(135deg,#d4c98a,#b8a95a);color:#000;font-weight:700;padding:13px 20px;border:none;width:100%;cursor:pointer;letter-spacing:1px;}
+.chat-box{background:#0a0a0a;border:1px solid #222;height:220px;overflow-y:auto;padding:14px;margin:12px 0;}
+.msg{font-size:13px;margin-bottom:12px;line-height:1.5;color:#ccc;}
+.msg b{color:#d4c98a;}
+.locked{opacity:0.6;filter:blur(1px);pointer-events:none;user-select:none;}
+@media(max-width:700px){.social-grid{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+<header class="navbar">
+<a href="../index.html" class="brand"><img src="../images/illumilight-logo.png" style="height:40px;width:auto;"></a>
+<nav class="nav-links"><a href="../index.html">Home</a><a href="media.html">Media</a><a href="dodis.html">DODIS</a><a href="community.html" class="active">Community</a></nav>
+</header>
+
+<div class="wrap">
+  <div class="center">
+    <div class="sec-label">03 / COMMUNITY</div>
+    <h1>Find Your Light.<br>Find Your People.</h1>
+    <p style="color:#999;margin-top:10px;">Everyone can connect. Members can go deeper.</p>
+  </div>
+
+  <!-- 1. SOCIALS - EVERYONE -->
+  <div style="margin-top:32px;">
+    <div class="sec-label">✦ SOCIALS — OPEN TO ALL</div>
+    <div class="social-grid">
+      <a href="https://www.facebook.com/share/14u1EhmTz7R/" target="_blank" class="soc"><div style="font-size:24px;">◎</div><h3>Facebook</h3><p>Announcements & Circles</p></a>
+      <a href="https://wa.me/19304651058" target="_blank" class="soc"><div style="font-size:24px;">✦</div><h3>WhatsApp</h3><p>Direct line to team</p></a>
+      <a href="https://instagram.com/illumilight" target="_blank" class="soc"><div style="font-size:24px;">◇</div><h3>Instagram</h3><p>Visual drops</p></a>
+      <a href="https://tiktok.com/@illumilight" target="_blank" class="soc"><div style="font-size:24px;">○</div><h3>TikTok</h3><p>Light stories</p></a>
+    </div>
+  </div>
+
+  <!-- 2. DASHBOARD - APPROVED ONLY -->
+  <div class="dash-box" id="dashboardSection">
+    <div class="sec-label">✦ MEMBER DASHBOARD — APPROVED MEMBERS ONLY</div>
+    <h3 style="margin-top:10px;">Chat with Admin</h3>
+    <p style="color:#999;font-size:14px;">Enter your ILL code. If you are approved, chat unlocks. If not, you still keep socials above.</p>
+
+    <!-- LOGIN FORM -->
+    <div id="loginArea">
+      <input id="illCode" class="input" placeholder="Enter your ILL code e.g. ILL-2026-001">
+      <p id="loginError" style="display:none;color:#ff6b6b;font-size:13px;"></p>
+      <button class="btn-gold" onclick="tryLogin()">Unlock Dashboard</button>
+      <p style="font-size:13px;color:#777;margin-top:10px;">No code? <a href="register.html" style="color:#d4c98a;">Apply for Membership</a></p>
+    </div>
+
+    <!-- CHAT AREA - HIDDEN UNTIL APPROVED -->
+    <div id="chatArea" style="display:none;">
+      <p style="color:#7ddb8a;font-size:13px;">● Verified as <b id="showCode" style="color:#fff;"></b> — You can now chat with Admin</p>
+      <div class="chat-box" id="chatBox"></div>
+      <input id="chatInput" class="input" placeholder="Message Admin...">
+      <button class="btn-gold" onclick="sendMsg()">Send to Admin</button>
+      <button onclick="logoutDash()" style="background:none;border:none;color:#888;margin-top:10px;cursor:pointer;font-size:12px;text-decoration:underline;">Logout</button>
+    </div>
+
+    <!-- LOCKED PREVIEW FOR NON-APPROVED -->
+    <div id="lockedPreview" style="margin-top:16px;">
+      <div class="locked">
+        <div class="chat-box" style="height:80px;">Admin: Welcome to the private circle...<br>Admin: Your message here...</div>
+      </div>
+      <p style="color:#666;font-size:12px;text-align:center;margin-top:8px;">🔒 Locked — Approved members only. Socials above are always open to you.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function getApproved(){
+    // Admin approves codes here. For now test with ILL-2026-001
+    return JSON.parse(localStorage.getItem('illumilight_approved') || '["ILL-2026-001","ILL-TEST","ILL-1111"]');
+  }
+  function checkLogin(){
+    const code = localStorage.getItem('illumilight_code');
+    if(code && getApproved().includes(code)){
+      document.getElementById('loginArea').style.display='none';
+      document.getElementById('lockedPreview').style.display='none';
+      document.getElementById('chatArea').style.display='block';
+      document.getElementById('showCode').textContent = code;
+      loadMsgs();
+    }
+  }
+  checkLogin();
+
+  function tryLogin(){
+    const code = document.getElementById('illCode').value.trim();
+    const err = document.getElementById('loginError');
+    if(!code){ err.style.display='block'; err.textContent='Enter your ILL code'; return; }
+    if(!getApproved().includes(code)){
+      err.style.display='block';
+      err.textContent='⛔ Not approved yet. You still have full access to Socials above. Contact Admin on WhatsApp to get approved.';
+      return;
+    }
+    localStorage.setItem('illumilight_code', code);
+    checkLogin();
+  }
+  function logoutDash(){ localStorage.removeItem('illumilight_code'); location.reload(); }
+  function sendMsg(){
+    const inp=document.getElementById('chatInput'); const txt=inp.value.trim(); if(!txt) return;
+    const code=localStorage.getItem('illumilight_code')||'Member';
+    const msgs=JSON.parse(localStorage.getItem('illumilight_chats')||'[]');
+    msgs.push({from:code,text:txt,time:new Date().toLocaleString()});
+    localStorage.setItem('illumilight_chats',JSON.stringify(msgs));
+    inp.value=''; loadMsgs();
+  }
+  function loadMsgs(){
+    const msgs=JSON.parse(localStorage.getItem('illumilight_chats')||'[]');
+    const box=document.getElementById('chatBox');
+    box.innerHTML='<div class="msg"><b>Admin:</b> Welcome to the Circle 🕯️ You are verified.</div>';
+    msgs.forEach(m=>{ box.innerHTML+=`<div class="msg"><b>${m.from}:</b> ${m.text}<br><span style="color:#555;font-size:11px;">${m.time}</span></div>`; });
+    box.scrollTop=box.scrollHeight;
+  }
+</script>
+</body>
+</html>
