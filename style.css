@@ -278,3 +278,8 @@ button{font:inherit}
   .hamburger{ display:none!important; }
   .nav-links{ display:flex!important; position:static!important; flex-direction:row!important; background:transparent!important; border:none!important; padding:0!important; }
 }
+#nav-toggle:checked ~ .nav-links a{
+  padding:12px 22px!important;
+  line-height:1.2!important;
+}
+.nav-links{ gap:0!important; }
