@@ -121,15 +121,16 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
   const emailVal = document.getElementById('email').value.trim();
   const dobVal = document.getElementById('dob').value;
   const genderVal = document.getElementById('gender').value;
+  const phoneVal = document.getElementById('phone').value.trim();
+  const countryVal = document.getElementById('country').value.trim();
+  const cityVal = document.getElementById('city').value.trim();
 
-  // Validation
-  if(!firstName || !lastName || !emailVal || !dobVal || !genderVal){
+  if(!firstName || !lastName || !emailVal || !dobVal || !genderVal || !phoneVal){
     msg.className="error"; msg.textContent="Please fill all required fields *"; return;
   }
   if(!document.getElementById('check1').checked || !document.getElementById('check2').checked){
     msg.className="error"; msg.textContent="Please accept both confirmations to continue."; return;
   }
-  // Age check 16+
   const age = new Date().getFullYear() - new Date(dobVal).getFullYear();
   if(age < 16){ msg.className="error"; msg.textContent="You must be 16+ to apply."; return; }
 
@@ -140,16 +141,19 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
   const rowData = {
     full_name: fullName,
     email: emailVal,
-    phone: document.getElementById('phone').value.trim(),
+    phone: phoneVal,
+    whatsapp: phoneVal,
     gender: genderVal,
     date_of_birth: dobVal,
-    country: document.getElementById('country').value.trim(),
-    city: document.getElementById('city').value.trim(),
+    nationality: countryVal,
+    country: countryVal,
+    city: cityVal,
     contact_method: document.getElementById('contactMethod').value,
     occupation: document.getElementById('occupation').value.trim(),
     reason: document.getElementById('motivation').value.trim(),
     heard_about: document.getElementById('hearAbout').value.trim(),
     membership_code: code,
+    membership_category: "standard",
     status: "Pending"
   };
 
@@ -163,8 +167,8 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     if(!res.ok) throw new Error(data.message || "Failed");
 
     msg.className = "success";
-    msg.textContent = `Application submitted successfully!`;
-        const waMsg = `New Illumilight Application:%0AName: ${fullName}%0ACode: ${code}%0AEmail: ${rowData.email}%0APhone: ${rowData.phone}%0ACity: ${rowData.city}`;
+    msg.textContent = `Application submitted successfully! Saved to Appwrite ✅`;
+    const waMsg = `New Illumilight Application:%0AName: ${fullName}%0ACode: ${code}%0AEmail: ${rowData.email}%0APhone: ${rowData.phone}%0ACity: ${rowData.city}`;
     setTimeout(() => {
       window.open(`https://wa.me/19304651058?text=${waMsg}`, '_blank');
     }, 800);
@@ -175,59 +179,11 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
   } catch(err){
     msg.className = "error";
     msg.textContent = "Unable to submit: " + err.message;
+    console.log(err);
   } finally {
     btn.disabled = false; btn.textContent = "Submit application ↗";
   }
 });
-</script>
-<script>
-document.getElementById('menuBtn').addEventListener('click', function(e){
-  e.stopPropagation();
-  document.getElementById('navMenu').classList.toggle('active');
-});
-document.addEventListener('click', function(e){
-  const m = document.getElementById('navMenu');
-  if(m && !m.contains(e.target) && !document.getElementById('menuBtn').contains(e.target)){
-    m.classList.remove('active');
-  }
-});
-</script>
-<script src="https://cdn.jsdelivr.net/npm/appwrite@15.0.0"></script>
-<script>
-const { Client, Account, Databases, ID } = Appwrite;
-const client = new Client().setEndpoint('https://cloud.appwrite.io/v1').setProject('6ae27aad00007b481204');
-const account = new Account(client);
-const databases = new Databases(client);
-const DB_ID = 'illumilight-db';
-const COL = 'membership_applications';
-async function handleRegister(e){
-  if(e) e.preventDefault();
-  const v = (n) => document.querySelector(`[name="${n}"]`)?.value || document.querySelector('#'+n)?.value || '';
-  const full_name = v('full_name') || v('name') || v('reg-name');
-  const email = v('email') || v('reg-email');
-  const password = v('password') || v('reg-password');
-  if(!full_name || !email || !password){ alert('Fill name, email, password'); return; }
-  try{
-    const user = await account.create(ID.unique(), email, password, full_name);
-    await account.createEmailPasswordSession(email, password);
-    await databases.createDocument(DB_ID, COL, ID.unique(), {
-      full_name: full_name, email: email, status: 'Pending', user_id: user.$id,
-      membership_code: 'ILL-2026-' + Math.floor(1000 + Math.random()*9000),
-      date_of_birth: v('date_of_birth'), nationality: v('nationality'), country: v('country'), city: v('city'),
-      phone: v('phone'), whatsapp: v('whatsapp') || v('phone'), contact_method: v('contact_method') || 'whatsapp',
-      membership_category: v('membership_category') || 'standard', occupation: v('occupation'),
-      reason: v('reason'), heard_about: v('heard_about'), gender: v('gender')
-    });
-    alert('Welcome to ILLUMILIGHT ' + full_name + ' 💎');
-    window.location.href = '/';
-  }catch(err){ alert(err.message); console.log(err); }
-}
-setTimeout(()=>{
-  document.querySelectorAll('form').forEach(f=>{
-    if(f.innerHTML.toLowerCase().includes('member') || f.id.toLowerCase().includes('register'))
-      f.addEventListener('submit', handleRegister);
-  });
-}, 600);
 </script>
 </body>
 </html>
