@@ -46,6 +46,9 @@
   <a href="../index.html" class="brand"><img src="../images/illumilight-logo.png" alt="Illumilight" class="brand-logo" width="150" height="40"></a>
   <nav class="nav-links" style="display:flex">
     <a href="../index.html">Home</a>
+    <a href="dodis.html">DODIS</a>
+    <a href="media.html">Media</a>
+    <a href="community.html">Community</a>
     <a href="login.html">Member Login</a>
   </nav>
 </header>
@@ -157,6 +160,10 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
 
     msg.className = "success";
     msg.textContent = `Application submitted successfully!`;
+        const waMsg = `New Illumilight Application:%0AName: ${fullName}%0ACode: ${code}%0AEmail: ${rowData.email}%0APhone: ${rowData.phone}%0ACity: ${rowData.city}`;
+    setTimeout(() => {
+      window.open(`https://wa.me/19304651058?text=${waMsg}`, '_blank');
+    }, 800);
     summaryBox.style.display = "block";
     summaryBox.innerHTML = `<p style="text-align:center"><b style="font-size:11px;letter-spacing:2px">YOUR MEMBERSHIP CODE</b><br><span class="code-big">${code}</span><br><span style="color:#8bc98a;font-size:12px">● PENDING APPROVAL</span></p><p><b>Full Name:</b> ${fullName}</p><p><b>DOB:</b> ${dobVal} | <b>Gender:</b> ${genderVal}</p><p><b>Email:</b> ${rowData.email}</p><p style="font-size:12px;color:#888;border:none">Save your code. Use it to check status on the Member Login page.</p>`;
     document.getElementById('registerForm').reset();
