@@ -186,5 +186,42 @@ document.addEventListener('click', function(e){
   }
 });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/appwrite@15.0.0"></script>
+<script>
+const { Client, Account, Databases, ID } = Appwrite;
+const client = new Client().setEndpoint('https://cloud.appwrite.io/v1').setProject('6ae27aad00007b481204');
+const account = new Account(client);
+const databases = new Databases(client);
+const DB_ID = 'illumilight-db';
+const COL = 'membership_applications';
+async function handleRegister(e){
+  if(e) e.preventDefault();
+  const v = (n) => document.querySelector(`[name="${n}"]`)?.value || document.querySelector('#'+n)?.value || '';
+  const full_name = v('full_name') || v('name') || v('reg-name');
+  const email = v('email') || v('reg-email');
+  const password = v('password') || v('reg-password');
+  if(!full_name || !email || !password){ alert('Fill name, email, password'); return; }
+  try{
+    const user = await account.create(ID.unique(), email, password, full_name);
+    await account.createEmailPasswordSession(email, password);
+    await databases.createDocument(DB_ID, COL, ID.unique(), {
+      full_name: full_name, email: email, status: 'Pending', user_id: user.$id,
+      membership_code: 'ILL-2026-' + Math.floor(1000 + Math.random()*9000),
+      date_of_birth: v('date_of_birth'), nationality: v('nationality'), country: v('country'), city: v('city'),
+      phone: v('phone'), whatsapp: v('whatsapp') || v('phone'), contact_method: v('contact_method') || 'whatsapp',
+      membership_category: v('membership_category') || 'standard', occupation: v('occupation'),
+      reason: v('reason'), heard_about: v('heard_about'), gender: v('gender')
+    });
+    alert('Welcome to ILLUMILIGHT ' + full_name + ' 💎');
+    window.location.href = '/';
+  }catch(err){ alert(err.message); console.log(err); }
+}
+setTimeout(()=>{
+  document.querySelectorAll('form').forEach(f=>{
+    if(f.innerHTML.toLowerCase().includes('member') || f.id.toLowerCase().includes('register'))
+      f.addEventListener('submit', handleRegister);
+  });
+}, 600);
+</script>
 </body>
 </html>
