@@ -304,3 +304,6 @@ button{font:inherit}
     padding-top:20px!important;
   }
 }
+@media(max-width:768px){
+  header img, .logo img{ height:38px!important; width:auto!important; }
+}
