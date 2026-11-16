@@ -31,16 +31,15 @@
 <body>
 
 <header class="navbar">
-  <div class="nav-left">
-    <img src="../images/dodis-icon.png" class="nav-icon" alt="DODIS">
-    <div><span class="brand">ILLUMILIGHT</span><span class="brand-sub">Discover Media</span></div>
-  </div>
-  <nav class="nav-links">
+  <a href="../index.html" class="brand"><img src="../images/illumilight-logo.png" alt="Illumilight" class="brand-logo"></a>
+  <nav class="nav-links" id="navMenu">
     <a href="../index.html">Home</a>
     <a href="dodis.html">DODIS</a>
-    <a href="media.html" class="active">Media</a>
-    <a href="register.html">Membership</a>
+    <a href="media.html">Media</a>
+    <a href="community.html">Community</a>
+    <a href="login.html">Member Login</a>
   </nav>
+  <button class="hamburger" onclick="document.getElementById('navMenu').classList.toggle('active')">☰</button>
 </header>
 
 <section class="media-hero">

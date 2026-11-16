@@ -29,8 +29,15 @@ h1{font-family:'Cinzel',serif;color:#e8d98a;letter-spacing:3px;font-size:32px;}
 </head>
 <body>
 <header class="navbar">
-<a href="../index.html" class="brand"><img src="../images/illumilight-logo.png" style="height:40px;width:auto;"></a>
-<nav class="nav-links"><a href="../index.html">Home</a><a href="media.html">Media</a><a href="dodis.html">DODIS</a><a href="community.html" class="active">Community</a></nav>
+  <a href="../index.html" class="brand"><img src="../images/illumilight-logo.png" alt="Illumilight" class="brand-logo"></a>
+  <nav class="nav-links" id="navMenu">
+    <a href="../index.html">Home</a>
+    <a href="dodis.html">DODIS</a>
+    <a href="media.html">Media</a>
+    <a href="community.html">Community</a>
+    <a href="login.html">Member Login</a>
+  </nav>
+  <button class="hamburger" onclick="document.getElementById('navMenu').classList.toggle('active')">☰</button>
 </header>
 
 <div class="wrap">

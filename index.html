@@ -21,19 +21,16 @@
 <body>
     <div class="ambient-glow"></div>
     <header class="navbar">
-        <a href="index.html" class="brand" aria-label="Illumilight Home">
-            <img src="images/illumilight-logo.png" alt="Illumilight" class="brand-logo" width="150" height="40" fetchpriority="high">
-        </a>
-        <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
-      <nav class="nav-links">
-    <nav class="nav-links">
-  <a href="index.html" class="active">Home</a>
-  <a href="Pages/dodis.html">DODIS</a>
-  <a href="Pages/media.html">Media</a>
-  <a href="Pages/community.html">Community</a>
-    <a href="Pages/register.html" class="join-us-link">Join Us</a>
-</nav>
-    </header>
+  <a href="index.html" class="brand"><img src="images/illumilight-logo.png" alt="Illumilight" class="brand-logo"></a>
+  <nav class="nav-links" id="navMenu">
+    <a href="index.html">Home</a>
+    <a href="Pages/dodis.html">DODIS</a>
+    <a href="Pages/media.html">Media</a>
+    <a href="Pages/community.html">Community</a>
+    <a href="Pages/login.html">Member Login</a>
+  </nav>
+  <button class="hamburger" onclick="document.getElementById('navMenu').classList.toggle('active')">☰</button>
+</header>
     <main>
         <section class="hero" id="home">
             <div class="hero-content">
