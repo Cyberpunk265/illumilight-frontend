@@ -31,7 +31,9 @@
 <body>
 
 <header class="navbar">
-  <a href="../index.html" class="brand"><img src="../images/illumilight-logo.png" alt="Illumilight" class="brand-logo"></a>
+  <a href="../index.html" class="brand">
+    <img src="../images/illumilight-logo.png" alt="Illumilight" class="brand-logo">
+  </a>
   <nav class="nav-links" id="navMenu">
     <a href="../index.html">Home</a>
     <a href="dodis.html">DODIS</a>
@@ -39,7 +41,7 @@
     <a href="community.html">Community</a>
     <a href="login.html">Member Login</a>
   </nav>
-  <button class="hamburger" onclick="document.getElementById('navMenu').classList.toggle('active')">☰</button>
+  <button type="button" class="hamburger" id="menuBtn" aria-label="Menu">☰</button>
 </header>
 
 <section class="media-hero">
@@ -122,6 +124,18 @@ function showTab(cat, btn){
     else item.style.display='none';
   });
 }
+</script>
+<script>
+document.getElementById('menuBtn').addEventListener('click', function(e){
+  e.stopPropagation();
+  document.getElementById('navMenu').classList.toggle('active');
+});
+document.addEventListener('click', function(e){
+  const m = document.getElementById('navMenu');
+  if(m && !m.contains(e.target) && !document.getElementById('menuBtn').contains(e.target)){
+    m.classList.remove('active');
+  }
+});
 </script>
 </body>
 </html>

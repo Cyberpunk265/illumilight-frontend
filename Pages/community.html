@@ -29,7 +29,9 @@ h1{font-family:'Cinzel',serif;color:#e8d98a;letter-spacing:3px;font-size:32px;}
 </head>
 <body>
 <header class="navbar">
-  <a href="../index.html" class="brand"><img src="../images/illumilight-logo.png" alt="Illumilight" class="brand-logo"></a>
+  <a href="../index.html" class="brand">
+    <img src="../images/illumilight-logo.png" alt="Illumilight" class="brand-logo">
+  </a>
   <nav class="nav-links" id="navMenu">
     <a href="../index.html">Home</a>
     <a href="dodis.html">DODIS</a>
@@ -37,7 +39,7 @@ h1{font-family:'Cinzel',serif;color:#e8d98a;letter-spacing:3px;font-size:32px;}
     <a href="community.html">Community</a>
     <a href="login.html">Member Login</a>
   </nav>
-  <button class="hamburger" onclick="document.getElementById('navMenu').classList.toggle('active')">☰</button>
+  <button type="button" class="hamburger" id="menuBtn" aria-label="Menu">☰</button>
 </header>
 
 <div class="wrap">
@@ -137,6 +139,18 @@ h1{font-family:'Cinzel',serif;color:#e8d98a;letter-spacing:3px;font-size:32px;}
     msgs.forEach(m=>{ box.innerHTML+=`<div class="msg"><b>${m.from}:</b> ${m.text}<br><span style="color:#555;font-size:11px;">${m.time}</span></div>`; });
     box.scrollTop=box.scrollHeight;
   }
+</script>
+<script>
+document.getElementById('menuBtn').addEventListener('click', function(e){
+  e.stopPropagation();
+  document.getElementById('navMenu').classList.toggle('active');
+});
+document.addEventListener('click', function(e){
+  const m = document.getElementById('navMenu');
+  if(m && !m.contains(e.target) && !document.getElementById('menuBtn').contains(e.target)){
+    m.classList.remove('active');
+  }
+});
 </script>
 </body>
 </html>
