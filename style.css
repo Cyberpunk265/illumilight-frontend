@@ -248,30 +248,33 @@ button{font:inherit}
   .nav-links a{ border:none!important; padding:8px 12px!important; }
 }
 }
-/* LOGO PERFECT FIT - kills black box */
+/* === BULLETPROOF NAV - NO JS NEEDED === */
 .navbar{
-  height:64px!important;
-  overflow:visible!important;
+  display:flex!important; justify-content:space-between!important;
+  align-items:center!important; height:64px!important;
+  padding:0 16px!important; background:#0a0a09!important;
+  position:sticky!important; top:0!important; z-index:99999!important;
+  border-bottom:1px solid rgba(214,179,106,.25)!important;
 }
-.brand{
-  display:flex!important;
-  align-items:center!important;
-  height:64px!important;
-  overflow:hidden!important;
-  text-decoration:none!important;
-}
-.brand-logo{
-  height:58px!important;
-  width:auto!important;
-  max-width:160px!important;
-  object-fit:contain!important;
-  mix-blend-mode:lighten!important; /* this removes black background */
-  filter:brightness(1.05) contrast(1.1)!important;
-  display:block!important;
-}
+.brand{ display:flex!important; align-items:center!important; height:64px!important; }
+.brand-logo{ height:52px!important; width:auto!important; max-width:150px!important; object-fit:contain!important; mix-blend-mode:lighten!important; }
+#nav-toggle{ display:none!important; }
 .hamburger{
-  position:relative!important;
-  z-index:10000!important;
-  pointer-events:auto!important;
-  cursor:pointer!important;
+  display:flex!important; align-items:center!important; justify-content:center!important;
+  width:44px!important; height:44px!important; font-size:26px!important;
+  color:#d6b36a!important; border:1px solid #d6b36a!important;
+  cursor:pointer!important; z-index:100000!important; pointer-events:auto!important;
+  user-select:none!important; background:#0a0a09!important;
+}
+.nav-links{
+  display:none!important; position:absolute!important; top:64px!important;
+  left:0!important; right:0!important; background:#0f0e0c!important;
+  flex-direction:column!important; padding:0 0 20px 0!important;
+  border-bottom:1px solid #d6b36a!important;
+}
+#nav-toggle:checked ~ .nav-links{ display:flex!important; }
+.nav-links a{ padding:16px 22px!important; display:block!important; }
+@media(min-width:900px){
+  .hamburger{ display:none!important; }
+  .nav-links{ display:flex!important; position:static!important; flex-direction:row!important; background:transparent!important; border:none!important; padding:0!important; }
 }
