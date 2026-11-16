@@ -283,3 +283,24 @@ button{font:inherit}
   line-height:1.2!important;
 }
 .nav-links{ gap:0!important; }
+/* MOBILE DIAMOND - SMALL & PERFECT */
+@media(max-width:768px){
+  .dodis-panel{
+    flex-direction:column!important;
+    padding:30px 16px!important;
+    overflow:hidden!important;
+  }
+  /* Target your diamond div */
+  .dodis-panel div[style*="rotate(45deg)"]{
+    width:235px!important;
+    height:235px!important;
+    margin:35px auto!important;
+  }
+  .dodis-panel div[style*="rotate(45deg)"] img{
+    width:200px!important;
+  }
+  /* Fix MEET DODIS being cut by navbar */
+  .dodis-section{
+    padding-top:20px!important;
+  }
+}
