@@ -1,4 +1,4 @@
-// DODIS - FINAL - Appwrite Live + Local Products
+// DODIS - FINAL - Appwrite Live + Local Products + GALLERY
 const PROJECT_ID = "6ae27aad00007b481204";
 const DATABASE_ID = "illumilight-db";
 const TABLE_ID = "6afb96090029e4927ee3";
@@ -15,14 +15,11 @@ let PRODUCTS = [
 
 async function loadAppwriteProducts(){
   try{
-    // New Appwrite TablesDB API
     const url = `${APPWRITE_ENDPOINT}/tablesdb/${DATABASE_ID}/tables/${TABLE_ID}/rows`;
     const res = await fetch(url, { headers: { "X-Appwrite-Project": PROJECT_ID } });
     const data = await res.json();
-    console.log("DODIS Appwrite:", data);
     const rows = data.rows || data.documents || [];
     rows.forEach(doc => {
-      // Prevent duplicates on reload
       if(PRODUCTS.find(p => String(p.id) === String(doc.$id))) return;
       PRODUCTS.push({
         id: doc.$id,
@@ -30,16 +27,17 @@ async function loadAppwriteProducts(){
         category: (doc.category || "materials").toLowerCase(),
         price: Number(doc.price),
         symbol: "📖",
-        image: doc.image, // ../Images/testament1.jpg
+        image: doc.image,
         desc: doc.description || doc.name,
         stock: doc.stock ? doc.stock + " in stock" : "In Stock",
         details: doc.description || doc.name
       });
     });
+    // Put Testament with images first
+    PRODUCTS.sort((a,b) => (b.image ? 1 : 0) - (a.image ? 1 : 0));
     renderProducts();
   }catch(e){
-    console.log("Appwrite error, showing local only", e);
-    // Fallback to old collections API if tablesdb fails
+    console.log("Appwrite error", e);
     try{
       const res2 = await fetch(`${APPWRITE_ENDPOINT}/databases/${DATABASE_ID}/collections/${TABLE_ID}/documents`, { headers: { "X-Appwrite-Project": PROJECT_ID } });
       const data2 = await res2.json();
@@ -47,6 +45,7 @@ async function loadAppwriteProducts(){
         if(PRODUCTS.find(p=>String(p.id)===String(doc.$id))) return;
         PRODUCTS.push({ id: doc.$id, name: doc.name, category: (doc.category||"materials").toLowerCase(), price: Number(doc.price), symbol:"📖", image: doc.image, desc: doc.description||doc.name, stock: doc.stock+" in stock", details: doc.description||doc.name });
       });
+      PRODUCTS.sort((a,b) => (b.image ? 1 : 0) - (a.image ? 1 : 0));
       renderProducts();
     }catch(e2){ console.log(e2); }
   }
@@ -93,6 +92,7 @@ document.querySelectorAll(".filter-btn").forEach(btn => {
   });
 });
 
+// --- GALLERY LOGIC ---
 const modal = document.getElementById("productModal");
 let currentProduct = null;
 let galleryImages = [];
@@ -102,19 +102,14 @@ function openModal(id){
   currentProduct = PRODUCTS.find(p => String(p.id) === String(id));
   if(!currentProduct) return;
 
-  // BUILD GALLERY: If it's Testament, show all 3. If other, show 1.
+  // If Testament -> 3 images, else 1 image, else symbol
   if(currentProduct.image && currentProduct.name.toLowerCase().includes("testament")){
-    galleryImages = [
-      "../images/testament1.jpg",
-      "../images/testament2.jpg",
-      "../images/testament3.jpg"
-    ];
+    galleryImages = ["../images/testament1.jpg","../images/testament2.jpg","../images/testament3.jpg"];
   } else if(currentProduct.image){
     galleryImages = [currentProduct.image];
   } else {
     galleryImages = [];
   }
-
   galleryIndex = 0;
   updateGallery();
 
@@ -132,47 +127,44 @@ function updateGallery(){
   const thumbs = document.getElementById("thumbRow");
   const prevBtn = document.getElementById("prevImg");
   const nextBtn = document.getElementById("nextImg");
+  if(!modalImg) return;
 
   if(galleryImages.length === 0){
     modalImg.style.display = "none";
-    counter.textContent = "";
-    thumbs.innerHTML = `<div style="font-size:50px;">${currentProduct.symbol}</div>`;
-    prevBtn.style.display = "none";
-    nextBtn.style.display = "none";
+    if(counter) counter.textContent = "";
+    if(thumbs) thumbs.innerHTML = `<div style="font-size:50px;text-align:center;">${currentProduct.symbol}</div>`;
+    if(prevBtn) prevBtn.style.display = "none";
+    if(nextBtn) nextBtn.style.display = "none";
     return;
   }
 
   modalImg.style.display = "block";
   modalImg.src = galleryImages[galleryIndex];
-  counter.textContent = `${galleryIndex+1} / ${galleryImages.length}`;
+  if(counter) counter.textContent = `${galleryIndex+1} / ${galleryImages.length}`;
 
-  // Show/hide arrows if only 1 image
   if(galleryImages.length === 1){
-    prevBtn.style.display = "none";
-    nextBtn.style.display = "none";
+    if(prevBtn) prevBtn.style.display = "none";
+    if(nextBtn) nextBtn.style.display = "none";
   } else {
-    prevBtn.style.display = "block";
-    nextBtn.style.display = "block";
+    if(prevBtn) prevBtn.style.display = "block";
+    if(nextBtn) nextBtn.style.display = "block";
   }
 
-  // Thumbnails
-  thumbs.innerHTML = galleryImages.map((src, i) => `
-    <img src="${src}" data-idx="${i}" style="width:55px;height:55px;object-fit:cover;border-radius:6px;cursor:pointer;border:${i===galleryIndex?'2px solid #d6b36a':'1px solid #333'};">
-  `).join("");
-
-  thumbs.querySelectorAll("img").forEach(t => {
-    t.addEventListener("click", () => { galleryIndex = +t.dataset.idx; updateGallery(); });
-  });
+  if(thumbs){
+    thumbs.innerHTML = galleryImages.map((src, i) => `
+      <img src="${src}" data-idx="${i}" style="width:55px;height:55px;object-fit:cover;border-radius:6px;cursor:pointer;border:${i===galleryIndex?'2px solid #d6b36a':'1px solid #333'};">
+    `).join("");
+    thumbs.querySelectorAll("img").forEach(t => {
+      t.addEventListener("click", () => { galleryIndex = +t.dataset.idx; updateGallery(); });
+    });
+  }
 }
 
-document.getElementById("prevImg").addEventListener("click", () => {
-  galleryIndex = (galleryIndex - 1 + galleryImages.length) % galleryImages.length;
-  updateGallery();
-});
-document.getElementById("nextImg").addEventListener("click", () => {
-  galleryIndex = (galleryIndex + 1) % galleryImages.length;
-  updateGallery();
-});
+const prevBtnEl = document.getElementById("prevImg");
+const nextBtnEl = document.getElementById("nextImg");
+if(prevBtnEl) prevBtnEl.addEventListener("click", (e) => { e.stopPropagation(); galleryIndex = (galleryIndex - 1 + galleryImages.length) % galleryImages.length; updateGallery(); });
+if(nextBtnEl) nextBtnEl.addEventListener("click", (e) => { e.stopPropagation(); galleryIndex = (galleryIndex + 1) % galleryImages.length; updateGallery(); });
+
 document.getElementById("modalClose").addEventListener("click", () => modal.hidden = true);
 modal.addEventListener("click", e => { if(e.target === modal) modal.hidden = true; });
 document.getElementById("modalBuyBtn").addEventListener("click", () => { addToCart(currentProduct.id); modal.hidden = true; openCart(); });
