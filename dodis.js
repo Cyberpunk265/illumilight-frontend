@@ -4,13 +4,8 @@ const DATABASE_ID = "illumilight-db";
 const TABLE_ID = "6afb96090029e4927ee3";
 const APPWRITE_ENDPOINT = "https://cloud.appwrite.io/v1";
 
-let PRODUCTS = [
-  { id:1, name:"Illumilight Signature Candle", category:"light", price:349, symbol:"🕯️", image:"", desc:"Hand-poured signature candle. Find your light, in your space.", stock:"In Stock", details:"Premium soy wax, 45hr burn time. Signature Illumilight scent with amber and sandalwood." },
-  { id:2, name:"DODIS Discovery Box", category:"collection", price:899, symbol:"◇", image:"", desc:"A curated collection of discoveries from the Department.", stock:"Limited", details:"5 curated items from DODIS. Each box is unique and numbered." },
-  { id:3, name:"Golden Emblem Pin", category:"essentials", price:199, symbol:"✧", image:"", desc:"Carry the light with you. Solid gold-finish emblem.", stock:"In Stock", details:"Enamel pin, 25mm. Gold finish with presentation card." },
-  { id:4, name:"Illumilight Journal", category:"essentials", price:299, symbol:"◎", image:"", desc:"Your next chapter starts here. Premium bound journal.", stock:"In Stock", details:"192 pages, gold foil cover, dot grid interior." },
-  { id:5, name:"Orb Light Lamp", category:"light", price:1299, symbol:"◯", image:"", desc:"Ambient glow for your world. Dimmable orb lamp.", stock:"Pre-order", details:"Warm 2700K LED, touch dimmable, USB-C." },
-  { id:6, name:"DODIS Tote - EST. Collection", category:"collection", price:249, symbol:"D", image:"", desc:"Heavyweight canvas tote from the Department.", stock:"In Stock", details:"16oz canvas, interior pocket, gold DODIS print." },
+const PRODUCTS = [
+  { id:7, name:"Illuminatiam: The First Testament", category:"materials", price:750, symbol:"📖", image:"../Images/testament1.jpg", desc:"Illuminatiam: The First Testament - The Book of Light. 300 copies.", stock:"300 in stock", details:"Illuminatiam: The First Testament - Limited first edition. Blue cloth cover with gold foil. The Book of Light." }
 ];
 
 async function loadAppwriteProducts(){
@@ -104,7 +99,7 @@ function openModal(id){
 
   // If Testament -> 3 images, else 1 image, else symbol
   if(currentProduct.image && currentProduct.name.toLowerCase().includes("testament")){
-    galleryImages = ["../images/testament1.jpg","../images/testament2.jpg","../images/testament3.jpg"];
+    galleryImages = ["../Images/testament1.jpg","../images/testament2.jpg","../images/testament3.jpg"];
   } else if(currentProduct.image){
     galleryImages = [currentProduct.image];
   } else {
