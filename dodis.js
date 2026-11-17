@@ -2,7 +2,7 @@
 const PROJECT_ID = "6ae27aad00007b481204";
 const DATABASE_ID = "illumilight-db";
 const TABLE_ID = "6afb96090029e4927ee3";
-const APPWRITE_ENDPOINT = "https://cloud.appwrite.io/v1";
+const APPWRITE_ENDPOINT = "https://fra.cloud.appwrite.io/v1";
 
 const PRODUCTS = [
   { id:7, name:"Illuminatiam: The First Testament", category:"materials", price:750, symbol:"📖", image:"../Images/testament1.jpg", desc:"Illuminatiam: The First Testament - The Book of Light. 300 copies.", stock:"300 in stock", details:"Illuminatiam: The First Testament - Limited first edition. Blue cloth cover with gold foil. The Book of Light." }

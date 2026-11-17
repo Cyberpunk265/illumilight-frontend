@@ -167,7 +167,7 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     if(!res.ok) throw new Error(data.message || "Failed");
 
     msg.className = "success";
-    msg.textContent = `Application submitted successfully! Saved to Appwrite ✅`;
+    msg.textContent = `Application submitted successfully!✅`;
     const waMsg = `New Illumilight Application:%0AName: ${fullName}%0ACode: ${code}%0AEmail: ${rowData.email}%0APhone: ${rowData.phone}%0ACity: ${rowData.city}`;
     setTimeout(() => {
       window.open(`https://wa.me/19304651058?text=${waMsg}`, '_blank');
