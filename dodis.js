@@ -95,19 +95,29 @@ document.querySelectorAll(".filter-btn").forEach(btn => {
 
 const modal = document.getElementById("productModal");
 let currentProduct = null;
+let galleryImages = [];
+let galleryIndex = 0;
+
 function openModal(id){
   currentProduct = PRODUCTS.find(p => String(p.id) === String(id));
   if(!currentProduct) return;
-  const modalImg = document.getElementById("modalImage");
-  if(currentProduct.image){
-    modalImg.src = currentProduct.image;
-    modalImg.style.display = "block";
+
+  // BUILD GALLERY: If it's Testament, show all 3. If other, show 1.
+  if(currentProduct.image && currentProduct.name.toLowerCase().includes("testament")){
+    galleryImages = [
+      "../images/testament1.jpg",
+      "../images/testament2.jpg",
+      "../images/testament3.jpg"
+    ];
+  } else if(currentProduct.image){
+    galleryImages = [currentProduct.image];
   } else {
-    modalImg.style.display = "none";
+    galleryImages = [];
   }
-  // For old modalSymbol if still exists
-  const sym = document.getElementById("modalSymbol");
-  if(sym) sym.textContent = currentProduct.symbol || "D";
+
+  galleryIndex = 0;
+  updateGallery();
+
   document.getElementById("modalCategory").textContent = currentProduct.category.toUpperCase() + " · DODIS";
   document.getElementById("modalName").textContent = currentProduct.name;
   document.getElementById("modalDesc").textContent = currentProduct.details;
@@ -115,6 +125,54 @@ function openModal(id){
   document.getElementById("modalStock").textContent = "● " + currentProduct.stock;
   modal.hidden = false;
 }
+
+function updateGallery(){
+  const modalImg = document.getElementById("modalImage");
+  const counter = document.getElementById("imgCounter");
+  const thumbs = document.getElementById("thumbRow");
+  const prevBtn = document.getElementById("prevImg");
+  const nextBtn = document.getElementById("nextImg");
+
+  if(galleryImages.length === 0){
+    modalImg.style.display = "none";
+    counter.textContent = "";
+    thumbs.innerHTML = `<div style="font-size:50px;">${currentProduct.symbol}</div>`;
+    prevBtn.style.display = "none";
+    nextBtn.style.display = "none";
+    return;
+  }
+
+  modalImg.style.display = "block";
+  modalImg.src = galleryImages[galleryIndex];
+  counter.textContent = `${galleryIndex+1} / ${galleryImages.length}`;
+
+  // Show/hide arrows if only 1 image
+  if(galleryImages.length === 1){
+    prevBtn.style.display = "none";
+    nextBtn.style.display = "none";
+  } else {
+    prevBtn.style.display = "block";
+    nextBtn.style.display = "block";
+  }
+
+  // Thumbnails
+  thumbs.innerHTML = galleryImages.map((src, i) => `
+    <img src="${src}" data-idx="${i}" style="width:55px;height:55px;object-fit:cover;border-radius:6px;cursor:pointer;border:${i===galleryIndex?'2px solid #d6b36a':'1px solid #333'};">
+  `).join("");
+
+  thumbs.querySelectorAll("img").forEach(t => {
+    t.addEventListener("click", () => { galleryIndex = +t.dataset.idx; updateGallery(); });
+  });
+}
+
+document.getElementById("prevImg").addEventListener("click", () => {
+  galleryIndex = (galleryIndex - 1 + galleryImages.length) % galleryImages.length;
+  updateGallery();
+});
+document.getElementById("nextImg").addEventListener("click", () => {
+  galleryIndex = (galleryIndex + 1) % galleryImages.length;
+  updateGallery();
+});
 document.getElementById("modalClose").addEventListener("click", () => modal.hidden = true);
 modal.addEventListener("click", e => { if(e.target === modal) modal.hidden = true; });
 document.getElementById("modalBuyBtn").addEventListener("click", () => { addToCart(currentProduct.id); modal.hidden = true; openCart(); });
