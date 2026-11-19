@@ -1,21 +1,27 @@
-// DODIS - FINAL - Appwrite Live + Local Products + GALLERY + 2026 RAIL + 3 CATEGORIES
+// DODIS - FINAL 2026 - RAIL + FLIP + MEMBER PRICE + APPWRITE
 const PROJECT_ID = "6ae27aad00007b481204";
 const DATABASE_ID = "illumilight-db";
 const TABLE_ID = "6afb96090029e4927ee3";
 const APPWRITE_ENDPOINT = "https://fra.cloud.appwrite.io/v1";
 
-// --- CATEGORY MAPPER: old -> new 3 categories ---
 function normalizeCategory(cat){
   cat = (cat||"materials").toLowerCase().trim();
   if(cat==="materials"||cat==="material") return "materials";
   if(cat==="accessories"||cat==="accessory"||cat==="essentials"||cat==="collection") return "accessories";
-  if(cat==="books"||cat==="book"||cat==="light") return "books"; // light was your books before
+  if(cat==="books"||cat==="book"||cat==="light") return "books";
   return "materials";
 }
 
+// MEMBER LOGIC
+function isMember(){ return localStorage.getItem("illumi_member") === "ILL-2026"; }
+function memberPrice(p){
+  if(!isMember()) return Number(p.price);
+  if(p.category==="books") return 650;
+  return Math.round(Number(p.price)*0.9);
+}
+
 const PRODUCTS = [
-  { id:7, name:"Illuminatiam: The First Testament", category:"books", price:750, symbol:"📖", image:"../Images/testament1.jpg", desc:"Illuminatiam: The First Testament - The Book of Light. 300 copies.", stock:"300 in stock", details:"Illuminatiam: The First Testament - Limited first edition. Blue cloth cover with gold foil. The Book of Light." },
-  // ADD YOUR LOCAL FALLBACKS HERE - these show even if Appwrite is offline
+  { id:7, name:"Illuminatiam: The First Testament", category:"books", price:750, symbol:"📖", image:"../Images/testament1.jpg", images:["../Images/testament1.jpg","../Images/testament2.jpg","../Images/testament3.jpg"], desc:"Illuminatiam: The First Testament - The Book of Light. 300 copies.", stock:"300 in stock", details:"Illuminatiam: The First Testament - Limited first edition. Blue cloth cover with gold foil. The Book of Light." },
 ];
 
 async function loadAppwriteProducts(){
@@ -26,44 +32,26 @@ async function loadAppwriteProducts(){
     const rows = data.rows || data.documents || [];
     rows.forEach(doc => {
       if(PRODUCTS.find(p => String(p.id) === String(doc.$id))) return;
-      PRODUCTS.push({
-        id: doc.$id,
-        name: doc.name,
-        category: normalizeCategory(doc.category),
-        price: Number(doc.price),
-        symbol: "📖",
-        image: doc.image,
-        desc: doc.description || doc.name,
-        stock: doc.stock ? doc.stock + " in stock" : "In Stock",
-        details: doc.description || doc.name
-      });
+      let imgs = [];
+      if(doc.image) imgs.push(doc.image);
+      if(doc.image2) imgs.push(doc.image2);
+      if(doc.image3) imgs.push(doc.image3);
+      PRODUCTS.push({ id: doc.$id, name: doc.name, category: normalizeCategory(doc.category), price: Number(doc.price), symbol:"📖", image: doc.image, images: imgs.length?imgs:[doc.image], desc: doc.description||doc.name, stock: doc.stock?doc.stock+" in stock":"In Stock", details: doc.description||doc.name });
     });
     PRODUCTS.sort((a,b) => (b.image ? 1 : 0) - (a.image ? 1 : 0));
     renderProducts();
-  }catch(e){
-    console.log("Appwrite error", e);
-    try{
-      const res2 = await fetch(`${APPWRITE_ENDPOINT}/databases/${DATABASE_ID}/collections/${TABLE_ID}/documents`, { headers: { "X-Appwrite-Project": PROJECT_ID } });
-      const data2 = await res2.json();
-      (data2.documents||[]).forEach(doc=>{
-        if(PRODUCTS.find(p=>String(p.id)===String(doc.$id))) return;
-        PRODUCTS.push({ id: doc.$id, name: doc.name, category: normalizeCategory(doc.category), price: Number(doc.price), symbol:"📖", image: doc.image, desc: doc.description||doc.name, stock: doc.stock+" in stock", details: doc.description||doc.name });
-      });
-      renderProducts();
-    }catch(e2){ console.log(e2); }
-  }
+  }catch(e){ console.log("Appwrite error", e); }
 }
 
 let activeFilter = "all";
 let searchTerm = "";
 let cart = JSON.parse(localStorage.getItem("dodis_cart") || "[]");
-
 const grid = document.getElementById("productGrid");
 const emptyState = document.getElementById("emptyState");
 const searchInput = document.getElementById("searchInput");
-
 function formatPrice(n){ return "R " + Number(n).toLocaleString(); }
 
+// THIS IS YOUR LINE 67 - NEW VERSION WITH FLIP + MEMBER
 function renderProducts(){
   const filtered = PRODUCTS.filter(p => {
     const matchFilter = activeFilter === "all" || p.category === activeFilter;
@@ -71,23 +59,37 @@ function renderProducts(){
     return matchFilter && matchSearch;
   });
   emptyState.hidden = filtered.length > 0;
-  
-  // 2026 RAIL CARD
-  grid.innerHTML = filtered.map((p,i) => `
+  grid.innerHTML = filtered.map((p,i) => {
+    const mPrice = memberPrice(p);
+    const showMember = isMember() && mPrice !== Number(p.price);
+    return `
     <article class="product-card rail-card ${i===1?'active':''}" data-id="${p.id}">
       <div class="hanger"><span></span></div>
-      ${p.image ? `<img src="${p.image}" class="product-thumb-img rail-img" style="width:100%;height:300px;object-fit:contain;background:#000;border-radius:10px;display:block;">` : `<div class="product-thumb">${p.symbol}</div>`}
+      <div class="flip-wrap">
+        ${p.image ? `<img src="${p.image}" class="product-thumb-img rail-img" style="width:100%;height:300px;object-fit:contain;background:#000;border-radius:10px;display:block;">` : `<div class="product-thumb">${p.symbol}</div>`}
+        ${p.images && p.images.length>1 ? `<button class="flip-badge" data-id="${p.id}">FLIP ↻</button>` : ``}
+      </div>
       <span class="product-cat">${p.category.toUpperCase()} · ${String(p.stock).toUpperCase()}</span>
       <h3>${p.name}</h3>
       <p>${p.desc}</p>
-      <div class="product-foot"><span class="price">${formatPrice(p.price)}</span><span class="view-btn">VIEW DETAILS ↗</span></div>
+      <div class="product-foot">${showMember ? `<span class="price"><s style="opacity:.5;font-size:13px;">${formatPrice(p.price)}</s> <span style="color:#d6b36a;">${formatPrice(mPrice)} MEMBER</span></span>` : `<span class="price">${formatPrice(p.price)}</span>`}<span class="view-btn">VIEW DETAILS ↗</span></div>
+      ${!isMember() && p.category==="books" ? `<small style="color:#888;font-size:11px;">MEMBERS PAY R 650 — CODE ILL-2026</small>` : ``}
     </article>
-  `).join("");
+  `}).join("");
   document.querySelectorAll(".product-card").forEach(card => {
-    card.addEventListener("click", () => openModal(card.dataset.id));
+    card.addEventListener("click", (e)=>{ if(e.target.classList.contains("flip-badge")) return; openModal(card.dataset.id); });
   });
-  setupRailScroll();
-  updateRailCounter();
+  document.querySelectorAll(".flip-badge").forEach(btn=>{
+    btn.addEventListener("click",(e)=>{
+      e.stopPropagation();
+      const p = PRODUCTS.find(x=>String(x.id)===String(btn.dataset.id));
+      const imgEl = btn.parentElement.querySelector("img");
+      let cur = p.images.indexOf(imgEl.getAttribute("src"));
+      if(cur===-1) cur=0;
+      imgEl.src = p.images[(cur+1)%p.images.length];
+    });
+  });
+  setupRailScroll(); updateRailCounter();
 }
 
 function setupRailScroll(){
@@ -95,9 +97,7 @@ function setupRailScroll(){
   grid.onscroll = ()=>{
     let center = grid.scrollLeft + grid.offsetWidth/2;
     let closest = cards[0];
-    cards.forEach(c=>{
-      if(!closest || Math.abs(c.offsetLeft + c.offsetWidth/2 - center) < Math.abs(closest.offsetLeft + closest.offsetWidth/2 - center)) closest=c;
-    });
+    cards.forEach(c=>{ if(!closest || Math.abs(c.offsetLeft + c.offsetWidth/2 - center) < Math.abs(closest.offsetLeft + closest.offsetWidth/2 - center)) closest=c; });
     cards.forEach(c=>c.classList.remove("active"));
     if(closest) closest.classList.add("active");
     updateRailCounter();
@@ -110,7 +110,6 @@ function updateRailCounter(){
   const idx = cards.findIndex(c=>c.classList.contains("active"));
   el.textContent = `${cards.length? idx+1 : 0} / ${cards.length}`;
 }
-
 const prevRail = document.getElementById("railPrev");
 const nextRail = document.getElementById("railNext");
 if(prevRail) prevRail.onclick = ()=> grid.scrollBy({left:-280, behavior:"smooth"});
@@ -127,32 +126,28 @@ document.querySelectorAll(".filter-btn").forEach(btn => {
   });
 });
 
-// --- GALLERY LOGIC (YOUR ORIGINAL - KEPT) ---
 const modal = document.getElementById("productModal");
 let currentProduct = null;
 let galleryImages = [];
 let galleryIndex = 0;
-
 function openModal(id){
   currentProduct = PRODUCTS.find(p => String(p.id) === String(id));
   if(!currentProduct) return;
-  if(currentProduct.image && currentProduct.name.toLowerCase().includes("testament")){
-    galleryImages = ["../Images/testament1.jpg","../images/testament2.jpg","../images/testament3.jpg"];
-  } else if(currentProduct.image){
-    galleryImages = [currentProduct.image];
-  } else {
-    galleryImages = [];
-  }
+  galleryImages = (currentProduct.images && currentProduct.images.length>0) ? currentProduct.images : (currentProduct.image ? [currentProduct.image] : []);
   galleryIndex = 0;
   updateGallery();
   document.getElementById("modalCategory").textContent = currentProduct.category.toUpperCase() + " · DODIS";
   document.getElementById("modalName").textContent = currentProduct.name;
   document.getElementById("modalDesc").textContent = currentProduct.details;
-  document.getElementById("modalPrice").textContent = formatPrice(currentProduct.price);
+  const mp = memberPrice(currentProduct);
+  if(isMember() && mp !== Number(currentProduct.price)){
+    document.getElementById("modalPrice").innerHTML = `<s style="opacity:.5;font-size:15px;">${formatPrice(currentProduct.price)}</s> ${formatPrice(mp)} <small style="color:#d6b36a;">MEMBER</small>`;
+  } else {
+    document.getElementById("modalPrice").textContent = formatPrice(currentProduct.price);
+  }
   document.getElementById("modalStock").textContent = "● " + currentProduct.stock;
   modal.hidden = false;
 }
-
 function updateGallery(){
   const modalImg = document.getElementById("modalImage");
   const counter = document.getElementById("imgCounter");
@@ -183,12 +178,10 @@ function updateGallery(){
     thumbs.querySelectorAll("img").forEach(t => { t.addEventListener("click", () => { galleryIndex = +t.dataset.idx; updateGallery(); }); });
   }
 }
-
 const prevBtnEl = document.getElementById("prevImg");
 const nextBtnEl = document.getElementById("nextImg");
 if(prevBtnEl) prevBtnEl.addEventListener("click", (e) => { e.stopPropagation(); galleryIndex = (galleryIndex - 1 + galleryImages.length) % galleryImages.length; updateGallery(); });
 if(nextBtnEl) nextBtnEl.addEventListener("click", (e) => { e.stopPropagation(); galleryIndex = (galleryIndex + 1) % galleryImages.length; updateGallery(); });
-
 document.getElementById("modalClose").addEventListener("click", () => modal.hidden = true);
 modal.addEventListener("click", e => { if(e.target === modal) modal.hidden = true; });
 document.getElementById("modalBuyBtn").addEventListener("click", () => { addToCart(currentProduct.id); modal.hidden = true; openCart(); });
@@ -209,11 +202,12 @@ function updateCartUI(){
   } else {
     box.innerHTML = cart.map(item => {
       const p = PRODUCTS.find(x => String(x.id) === String(item.id));
-      return `<div class="cart-item"><div><strong>${p.name}</strong><small>${formatPrice(p.price)} × ${item.qty}</small></div><div><span>${formatPrice(p.price * item.qty)}</span><br><button class="cart-remove" data-id="${p.id}">Remove</button></div></div>`;
+      const priceToUse = memberPrice(p);
+      return `<div class="cart-item"><div><strong>${p.name}</strong><small>${formatPrice(priceToUse)} × ${item.qty}</small></div><div><span>${formatPrice(priceToUse * item.qty)}</span><br><button class="cart-remove" data-id="${p.id}">Remove</button></div></div>`;
     }).join("");
     document.querySelectorAll(".cart-remove").forEach(b => b.addEventListener("click", () => { cart = cart.filter(i => String(i.id) !== String(b.dataset.id)); saveCart(); }));
   }
-  const total = cart.reduce((s,i) => { const p = PRODUCTS.find(x => String(x.id) === String(i.id)); return s + p.price * i.qty; }, 0);
+  const total = cart.reduce((s,i) => { const p = PRODUCTS.find(x => String(x.id) === String(i.id)); return s + memberPrice(p) * i.qty; }, 0);
   document.getElementById("cartTotal").textContent = formatPrice(total);
 }
 function openCart(){ cartDrawer.hidden = false; }
@@ -221,6 +215,19 @@ document.getElementById("cartFab").addEventListener("click", () => cartDrawer.hi
 document.getElementById("cartClose").addEventListener("click", () => cartDrawer.hidden = true);
 document.getElementById("clearCart").addEventListener("click", () => { cart = []; saveCart(); });
 
+// MEMBER BAR
+const memberInput = document.getElementById("memberCode");
+const memberBtn = document.getElementById("applyMember");
+const memberStatus = document.getElementById("memberStatus");
+function refreshMemberUI(){ if(isMember()){ if(memberStatus) memberStatus.textContent = "● MEMBER UNLOCKED - R650 TESTAMENT"; if(memberInput) memberInput.value="ILL-2026"; } }
+if(memberBtn) memberBtn.addEventListener("click",()=>{
+  if(memberInput.value.trim().toUpperCase()==="ILL-2026"){
+    localStorage.setItem("illumi_member","ILL-2026");
+    alert("Welcome Member! Testament now R650 for you.");
+    refreshMemberUI(); renderProducts(); updateCartUI();
+  } else { alert("Invalid code. Hint: ILL-2026"); }
+});
+refreshMemberUI();
 renderProducts();
 updateCartUI();
 loadAppwriteProducts();
@@ -232,9 +239,10 @@ document.getElementById("whatsappOrder").addEventListener("click", () => {
   let total = 0;
   cart.forEach(item => {
     const p = PRODUCTS.find(x => String(x.id) === String(item.id));
-    const lineTotal = p.price * item.qty;
+    const priceToUse = memberPrice(p);
+    const lineTotal = priceToUse * item.qty;
     total += lineTotal;
-    message += `• ${p.name} x${item.qty} - R ${lineTotal}%0A`;
+    message += `• ${p.name} x${item.qty} - R ${lineTotal} ${isMember()?'(MEMBER PRICE)':''}%0A`;
   });
   message += `%0A----------------%0ATotal: R ${total}%0A%0AName: %0ADelivery City: %0AI found this on DODIS.`;
   window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, "_blank");

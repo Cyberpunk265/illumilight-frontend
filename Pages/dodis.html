@@ -40,6 +40,11 @@
       <!-- SEARCH + FILTER - 3 CATEGORIES 2026 -->
       <div class="dodis-controls">
         <input type="search" id="searchInput" placeholder="Search products...">
+        <div class="member-bar" style="display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap;">
+  <input id="memberCode" placeholder="Member code? Try ILL-2026" style="background:#111;border:1px solid #333;color:#fff;padding:8px 12px;border-radius:6px;">
+  <button id="applyMember" style="background:#d6b36a;border:none;padding:8px 14px;border-radius:6px;font-weight:700;cursor:pointer;">UNLOCK MEMBER PRICE</button>
+  <span id="memberStatus" style="font-size:11px;color:#d6b36a;align-self:center;"></span>
+</div>
         <div class="filter-row">
           <button class="filter-btn active" data-filter="all">All</button>
           <button class="filter-btn" data-filter="materials">Materials</button>

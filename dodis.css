@@ -587,3 +587,7 @@
 .rail-card{ overflow:visible !important; padding-top:12px; }
 .hanger{ display:block !important; overflow:visible; margin-bottom:6px; }
 .product-rail .product-thumb-img{ height:320px !important; object-fit:contain !important; background:#0a0a0a !important; }
+.flip-wrap{position:relative}.flip-badge{position:absolute;bottom:10px;right:10px;background:#d6b36a;color:#000;border:none;padding:6px 12px;border-radius:20px;font-weight:700;font-size:11px;cursor:pointer;z-index:5}
+.member-bar{display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap}.member-bar input{background:#111;border:1px solid #333;color:#fff;padding:8px 12px;border-radius:6px}.member-bar button{background:#d6b36a;border:none;padding:8px 14px;border-radius:6px;font-weight:700;cursor:pointer}
+.flip-wrap{position:relative}
+.flip-badge{position:absolute;bottom:10px;right:10px;background:#d6b36a;color:#000;border:none;padding:6px 12px;border-radius:20px;font-weight:700;font-size:11px;cursor:pointer;z-index:5}
