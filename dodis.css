@@ -577,3 +577,13 @@
 .rail-nav{ display:flex; justify-content:center; gap:16px; align-items:center; margin:10px 0 30px; }
 .rail-nav button{ width:44px; height:44px; border-radius:50%; border:1px solid #d6b36a; background:transparent; color:#d6b36a; cursor:pointer; }
 .rail-track-line{ height:3px; background:#222; margin:-65px 0 0; }
+/* FIX - HANGER CLIP + RAIL POLISH */
+.dodis-hero{ padding-bottom:10px !important; }
+.dodis-controls{ position:relative; z-index:5; margin-top:20px; }
+#searchInput{ margin-top:10px; position:relative; z-index:5; }
+.dodis-grid-wrap{ padding-top:20px !important; overflow:visible !important; }
+.product-rail{ padding-top:70px !important; }
+.rail-track-line{ top:78px !important; }
+.rail-card{ overflow:visible !important; padding-top:12px; }
+.hanger{ display:block !important; overflow:visible; margin-bottom:6px; }
+.product-rail .product-thumb-img{ height:320px !important; object-fit:contain !important; background:#0a0a0a !important; }

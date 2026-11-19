@@ -16,8 +16,6 @@ function normalizeCategory(cat){
 const PRODUCTS = [
   { id:7, name:"Illuminatiam: The First Testament", category:"books", price:750, symbol:"📖", image:"../Images/testament1.jpg", desc:"Illuminatiam: The First Testament - The Book of Light. 300 copies.", stock:"300 in stock", details:"Illuminatiam: The First Testament - Limited first edition. Blue cloth cover with gold foil. The Book of Light." },
   // ADD YOUR LOCAL FALLBACKS HERE - these show even if Appwrite is offline
-  { id:101, name:"Solar Street Light 200W", category:"materials", price:499, symbol:"💡", image:"../images/testament2.jpg", desc:"Solar light for home & community.", stock:"In Stock", details:"Solar light - no electricity bill." },
-  { id:102, name:"DODIS Varsity Jacket", category:"accessories", price:899, symbol:"🧥", image:"../images/testament3.jpg", desc:"Varsity jacket 2026 edition FRONT/BACK.", stock:"In Stock", details:"Varsity jacket - DODIS gold embroidery." },
 ];
 
 async function loadAppwriteProducts(){
