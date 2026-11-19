@@ -16,7 +16,7 @@
   .tab-btn.active { background:#d4c98a; color:#000; border-color:#d4c98a; font-weight:700; }
   .gallery { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:16px; max-width:1100px; margin:0 auto; padding:0 20px 60px; }
   .media-item { background:#111; border:1px solid #222; border-radius:12px; overflow:hidden; }
-  .media-item img, .media-item video { width:100%; height:220px; object-fit:cover; display:block; }
+  .media-item img, .media-item video { width:100%; height:220px; object-fit:cover; display:block; background:#000; }
   .media-item .info { padding:14px; }
   .media-item .info h4 { color:#e8d98a; font-size:14px; margin-bottom:6px; }
   .media-item .info p { color:#999; font-size:13px; line-height:1.5; }
@@ -58,35 +58,55 @@
 </section>
 
 <div class="gallery" id="gallery">
-  <!-- IMAGES - Replace src with your real images -->
-  <div class="media-item" data-cat="images">
-    <img src="../images/dodis-logo.png" alt="DODIS">
-    <div class="info"><h4>DODIS - Department of Distribution</h4><p>Our gold standard logistics arm. From JHB to the world.</p></div>
-  </div>
-  <div class="media-item" data-cat="images">
-    <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&q=80" alt="Logistics">
-    <div class="info"><h4>Gold Fleet Delivery</h4><p>Fast, tracked and secure. DODIS fleet in action.</p></div>
-  </div>
-  <div class="media-item" data-cat="images">
-    <img src="https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800&q=80" alt="Community">
-    <div class="info"><h4>Illumilight Community</h4><p>Members gathering - Beyond the Ordinary.</p></div>
-  </div>
+  <!-- APPWRITE MEDIA WILL LOAD HERE AUTOMATICALLY -->
+  <p id="loadingMsg" style="color:#888;text-align:center;grid-column:1/-1;">Loading your webp + mp4 from Appwrite...</p>
+</div>
 
-  <!-- VIDEOS -->
-  <div class="media-item" data-cat="videos">
-    <video controls poster="https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800&q=80">
-      <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
-    </video>
-    <div class="info"><h4>🎥 What is Illumilight?</h4><p>60 sec intro to our movement and DODIS.</p></div>
-  </div>
-  <div class="media-item" data-cat="videos">
-    <video controls poster="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&q=80">
-      <source src="https://www.w3schools.com/html/movie.mp4" type="video/mp4">
-    </video>
-    <div class="info"><h4>🎥 DODIS Delivery Experience</h4><p>See how we deliver with gold standard care.</p></div>
-  </div>
+<a href="../index.html" class="back-link">← Back to Home</a>
 
-  <!-- TESTIMONIES -->
+<footer>
+  <img src="../images/dodis-icon.png" style="height:36px; width:auto;">
+  <p>© 2026 ILLUMILIGHT • DODIS Department of Distribution</p>
+</footer>
+
+<script>
+// === YOUR APPWRITE 1-BUCKET CONFIG ===
+const PROJECT_ID = "6ae27aad00007b481204";
+const BUCKET_ID = "6aff738b001323f8ed0d"; // Illumilight images
+const ENDPOINT = "https://fra.cloud.appwrite.io/v1";
+
+async function loadAppwriteMedia(){
+  const gallery = document.getElementById("gallery");
+  try{
+    const res = await fetch(`${ENDPOINT}/storage/buckets/${BUCKET_ID}/files?limit=100`, {
+      headers: { "X-Appwrite-Project": PROJECT_ID }
+    });
+    const data = await res.json();
+    const files = data.files || [];
+    
+    let html = "";
+
+    files.forEach(f=>{
+      const url = `${ENDPOINT}/storage/buckets/${BUCKET_ID}/files/${f.$id}/view?project=${PROJECT_ID}`;
+      const isVideo = f.mimeType.includes("video") || f.name.toLowerCase().endsWith(".mp4");
+      const cleanName = f.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ").toUpperCase();
+      if(isVideo){
+        html += `<div class="media-item" data-cat="videos">
+          <video controls playsinline preload="metadata" poster="">
+            <source src="${url}" type="video/mp4">
+          </video>
+          <div class="info"><h4>🎥 ${cleanName}</h4><p>DODIS Media • Illumilight</p></div>
+        </div>`;
+      } else {
+        html += `<div class="media-item" data-cat="images">
+          <img src="${url}" loading="lazy" alt="${f.name}">
+          <div class="info"><h4>${cleanName}</h4><p>DODIS Distribution • Beyond The Ordinary</p></div>
+        </div>`;
+      }
+    });
+
+    // YOUR TESTIMONIES - KEEP THEM ALWAYS
+    html += `
   <div class="media-item testi" data-cat="testimonies">
     <div class="stars">★★★★★</div>
     <p>"I joined Illumilight and got my ILL-2026 code in 2 days. DODIS delivered my order in 24h. This is different."</p>
@@ -106,17 +126,15 @@
     <div class="stars">★★★★★</div>
     <p>"From registration to delivery was seamless. Admin approved me same day. Proud to be Illumilight."</p>
     <strong>LUNGA D.</strong><span>Member • Durban</span>
-  </div>
-</div>
+  </div>`;
 
-<a href="../index.html" class="back-link">← Back to Home</a>
+    gallery.innerHTML = html;
+  }catch(e){
+    console.log(e);
+    document.getElementById("loadingMsg").textContent = "Failed to load - Check bucket is Public: Any -> Read";
+  }
+}
 
-<footer>
-  <img src="../images/dodis-icon.png" style="height:36px; width:auto;">
-  <p>© 2026 ILLUMILIGHT • DODIS Department of Distribution</p>
-</footer>
-
-<script>
 function showTab(cat, btn){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
@@ -125,18 +143,8 @@ function showTab(cat, btn){
     else item.style.display='none';
   });
 }
-</script>
-<script>
-document.getElementById('menuBtn').addEventListener('click', function(e){
-  e.stopPropagation();
-  document.getElementById('navMenu').classList.toggle('active');
-});
-document.addEventListener('click', function(e){
-  const m = document.getElementById('navMenu');
-  if(m && !m.contains(e.target) && !document.getElementById('menuBtn').contains(e.target)){
-    m.classList.remove('active');
-  }
-});
+
+loadAppwriteMedia();
 </script>
 </body>
 </html>
