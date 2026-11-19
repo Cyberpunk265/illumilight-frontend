@@ -1,11 +1,23 @@
-// DODIS - FINAL - Appwrite Live + Local Products + GALLERY
+// DODIS - FINAL - Appwrite Live + Local Products + GALLERY + 2026 RAIL + 3 CATEGORIES
 const PROJECT_ID = "6ae27aad00007b481204";
 const DATABASE_ID = "illumilight-db";
 const TABLE_ID = "6afb96090029e4927ee3";
 const APPWRITE_ENDPOINT = "https://fra.cloud.appwrite.io/v1";
 
+// --- CATEGORY MAPPER: old -> new 3 categories ---
+function normalizeCategory(cat){
+  cat = (cat||"materials").toLowerCase().trim();
+  if(cat==="materials"||cat==="material") return "materials";
+  if(cat==="accessories"||cat==="accessory"||cat==="essentials"||cat==="collection") return "accessories";
+  if(cat==="books"||cat==="book"||cat==="light") return "books"; // light was your books before
+  return "materials";
+}
+
 const PRODUCTS = [
-  { id:7, name:"Illuminatiam: The First Testament", category:"materials", price:750, symbol:"📖", image:"../Images/testament1.jpg", desc:"Illuminatiam: The First Testament - The Book of Light. 300 copies.", stock:"300 in stock", details:"Illuminatiam: The First Testament - Limited first edition. Blue cloth cover with gold foil. The Book of Light." }
+  { id:7, name:"Illuminatiam: The First Testament", category:"books", price:750, symbol:"📖", image:"../Images/testament1.jpg", desc:"Illuminatiam: The First Testament - The Book of Light. 300 copies.", stock:"300 in stock", details:"Illuminatiam: The First Testament - Limited first edition. Blue cloth cover with gold foil. The Book of Light." },
+  // ADD YOUR LOCAL FALLBACKS HERE - these show even if Appwrite is offline
+  { id:101, name:"Solar Street Light 200W", category:"materials", price:499, symbol:"💡", image:"../images/testament2.jpg", desc:"Solar light for home & community.", stock:"In Stock", details:"Solar light - no electricity bill." },
+  { id:102, name:"DODIS Varsity Jacket", category:"accessories", price:899, symbol:"🧥", image:"../images/testament3.jpg", desc:"Varsity jacket 2026 edition FRONT/BACK.", stock:"In Stock", details:"Varsity jacket - DODIS gold embroidery." },
 ];
 
 async function loadAppwriteProducts(){
@@ -19,7 +31,7 @@ async function loadAppwriteProducts(){
       PRODUCTS.push({
         id: doc.$id,
         name: doc.name,
-        category: (doc.category || "materials").toLowerCase(),
+        category: normalizeCategory(doc.category),
         price: Number(doc.price),
         symbol: "📖",
         image: doc.image,
@@ -28,7 +40,6 @@ async function loadAppwriteProducts(){
         details: doc.description || doc.name
       });
     });
-    // Put Testament with images first
     PRODUCTS.sort((a,b) => (b.image ? 1 : 0) - (a.image ? 1 : 0));
     renderProducts();
   }catch(e){
@@ -38,9 +49,8 @@ async function loadAppwriteProducts(){
       const data2 = await res2.json();
       (data2.documents||[]).forEach(doc=>{
         if(PRODUCTS.find(p=>String(p.id)===String(doc.$id))) return;
-        PRODUCTS.push({ id: doc.$id, name: doc.name, category: (doc.category||"materials").toLowerCase(), price: Number(doc.price), symbol:"📖", image: doc.image, desc: doc.description||doc.name, stock: doc.stock+" in stock", details: doc.description||doc.name });
+        PRODUCTS.push({ id: doc.$id, name: doc.name, category: normalizeCategory(doc.category), price: Number(doc.price), symbol:"📖", image: doc.image, desc: doc.description||doc.name, stock: doc.stock+" in stock", details: doc.description||doc.name });
       });
-      PRODUCTS.sort((a,b) => (b.image ? 1 : 0) - (a.image ? 1 : 0));
       renderProducts();
     }catch(e2){ console.log(e2); }
   }
@@ -63,9 +73,12 @@ function renderProducts(){
     return matchFilter && matchSearch;
   });
   emptyState.hidden = filtered.length > 0;
-  grid.innerHTML = filtered.map(p => `
-    <article class="product-card" data-id="${p.id}">
-      ${p.image ? `<img src="${p.image}" class="product-thumb-img" style="width:100%;height:300px;object-fit:contain;background:#000;border-radius:10px;display:block;">` : `<div class="product-thumb">${p.symbol}</div>`}
+  
+  // 2026 RAIL CARD
+  grid.innerHTML = filtered.map((p,i) => `
+    <article class="product-card rail-card ${i===1?'active':''}" data-id="${p.id}">
+      <div class="hanger"><span></span></div>
+      ${p.image ? `<img src="${p.image}" class="product-thumb-img rail-img" style="width:100%;height:300px;object-fit:contain;background:#000;border-radius:10px;display:block;">` : `<div class="product-thumb">${p.symbol}</div>`}
       <span class="product-cat">${p.category.toUpperCase()} · ${String(p.stock).toUpperCase()}</span>
       <h3>${p.name}</h3>
       <p>${p.desc}</p>
@@ -75,7 +88,35 @@ function renderProducts(){
   document.querySelectorAll(".product-card").forEach(card => {
     card.addEventListener("click", () => openModal(card.dataset.id));
   });
+  setupRailScroll();
+  updateRailCounter();
 }
+
+function setupRailScroll(){
+  const cards = [...grid.querySelectorAll(".rail-card")];
+  grid.onscroll = ()=>{
+    let center = grid.scrollLeft + grid.offsetWidth/2;
+    let closest = cards[0];
+    cards.forEach(c=>{
+      if(!closest || Math.abs(c.offsetLeft + c.offsetWidth/2 - center) < Math.abs(closest.offsetLeft + closest.offsetWidth/2 - center)) closest=c;
+    });
+    cards.forEach(c=>c.classList.remove("active"));
+    if(closest) closest.classList.add("active");
+    updateRailCounter();
+  };
+}
+function updateRailCounter(){
+  const el = document.getElementById("railCounter");
+  if(!el) return;
+  const cards = [...grid.querySelectorAll(".rail-card")];
+  const idx = cards.findIndex(c=>c.classList.contains("active"));
+  el.textContent = `${cards.length? idx+1 : 0} / ${cards.length}`;
+}
+
+const prevRail = document.getElementById("railPrev");
+const nextRail = document.getElementById("railNext");
+if(prevRail) prevRail.onclick = ()=> grid.scrollBy({left:-280, behavior:"smooth"});
+if(nextRail) nextRail.onclick = ()=> grid.scrollBy({left:280, behavior:"smooth"});
 
 searchInput.addEventListener("input", e => { searchTerm = e.target.value.toLowerCase().trim(); renderProducts(); });
 document.querySelectorAll(".filter-btn").forEach(btn => {
@@ -83,11 +124,12 @@ document.querySelectorAll(".filter-btn").forEach(btn => {
     document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
     activeFilter = btn.dataset.filter;
+    grid.scrollLeft = 0;
     renderProducts();
   });
 });
 
-// --- GALLERY LOGIC ---
+// --- GALLERY LOGIC (YOUR ORIGINAL - KEPT) ---
 const modal = document.getElementById("productModal");
 let currentProduct = null;
 let galleryImages = [];
@@ -96,8 +138,6 @@ let galleryIndex = 0;
 function openModal(id){
   currentProduct = PRODUCTS.find(p => String(p.id) === String(id));
   if(!currentProduct) return;
-
-  // If Testament -> 3 images, else 1 image, else symbol
   if(currentProduct.image && currentProduct.name.toLowerCase().includes("testament")){
     galleryImages = ["../Images/testament1.jpg","../images/testament2.jpg","../images/testament3.jpg"];
   } else if(currentProduct.image){
@@ -107,7 +147,6 @@ function openModal(id){
   }
   galleryIndex = 0;
   updateGallery();
-
   document.getElementById("modalCategory").textContent = currentProduct.category.toUpperCase() + " · DODIS";
   document.getElementById("modalName").textContent = currentProduct.name;
   document.getElementById("modalDesc").textContent = currentProduct.details;
@@ -123,7 +162,6 @@ function updateGallery(){
   const prevBtn = document.getElementById("prevImg");
   const nextBtn = document.getElementById("nextImg");
   if(!modalImg) return;
-
   if(galleryImages.length === 0){
     modalImg.style.display = "none";
     if(counter) counter.textContent = "";
@@ -132,11 +170,9 @@ function updateGallery(){
     if(nextBtn) nextBtn.style.display = "none";
     return;
   }
-
   modalImg.style.display = "block";
   modalImg.src = galleryImages[galleryIndex];
   if(counter) counter.textContent = `${galleryIndex+1} / ${galleryImages.length}`;
-
   if(galleryImages.length === 1){
     if(prevBtn) prevBtn.style.display = "none";
     if(nextBtn) nextBtn.style.display = "none";
@@ -144,14 +180,9 @@ function updateGallery(){
     if(prevBtn) prevBtn.style.display = "block";
     if(nextBtn) nextBtn.style.display = "block";
   }
-
   if(thumbs){
-    thumbs.innerHTML = galleryImages.map((src, i) => `
-      <img src="${src}" data-idx="${i}" style="width:55px;height:55px;object-fit:cover;border-radius:6px;cursor:pointer;border:${i===galleryIndex?'2px solid #d6b36a':'1px solid #333'};">
-    `).join("");
-    thumbs.querySelectorAll("img").forEach(t => {
-      t.addEventListener("click", () => { galleryIndex = +t.dataset.idx; updateGallery(); });
-    });
+    thumbs.innerHTML = galleryImages.map((src, i) => `<img src="${src}" data-idx="${i}" style="width:55px;height:55px;object-fit:cover;border-radius:6px;cursor:pointer;border:${i===galleryIndex?'2px solid #d6b36a':'1px solid #333'};">`).join("");
+    thumbs.querySelectorAll("img").forEach(t => { t.addEventListener("click", () => { galleryIndex = +t.dataset.idx; updateGallery(); }); });
   }
 }
 
