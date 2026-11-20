@@ -6,30 +6,33 @@
 <link rel="stylesheet" href="../style.css"><link rel="stylesheet" href="../dodis.css">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* SATANIC + BEHANCE */
 body{ background:#050000 !important; }
-.dodis-grid-wrap{ padding:0 16px 110px; background:#050000; }
+.dodis-grid-wrap{ padding:0 16px 120px; background:#050000; }
 #productGrid.behance-grid{ display:grid !important; grid-template-columns:1fr 1fr; gap:14px; overflow:visible !important; padding:0 !important; }
-.behance-card{ background:#0d0000; border:1px solid #2a0000; border-radius:18px; overflow:hidden; padding:0 0 12px; cursor:pointer; transition:.3s; position:relative; }
+.behance-card{ background:#0d0000; border:1px solid #2a0000; border-radius:18px; overflow:hidden; padding:0 0 12px; cursor:pointer; transition:.3s; }
 .behance-card:active{ transform:scale(.97); border-color:#8b0000; }
-.behance-card img{ width:100%; height:190px; object-fit:contain; background:#000; display:block; filter:contrast(1.1); }
-.behance-card h3{ font-size:13px; margin:10px 12px 2px; color:#fff; font-family:Inter; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.behance-card img{ width:100%; height:190px; object-fit:contain; background:#000; display:block; }
+.behance-card h3{ font-size:13px; margin:10px 12px 2px; color:#fff; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .behance-card .b-price{ font-size:13px; font-weight:700; color:#ff1a1a; margin:0 12px; }
 .behance-card .b-cat{ font-size:9px; letter-spacing:2px; color:#8a5555; margin:0 12px; }
-.behance-tabs{ display:flex; gap:8px; overflow-x:auto; padding:12px 16px; scrollbar-width:none; }
+.behance-tabs{ display:flex; gap:8px; overflow-x:auto; padding:12px 16px; scrollbar-width:none; background:#050000; }
 .behance-tabs button{ background:#140000; border:1px solid #3a0000; color:#aaa; padding:7px 14px; border-radius:20px; font-size:11px; letter-spacing:1px; white-space:nowrap; cursor:pointer; }
 .behance-tabs button.active{ background:#8b0000; color:#fff; border-color:#ff1a1a; font-weight:700; }
-.behance-pill{ position:fixed; bottom:16px; left:50%; transform:translateX(-50%); width:min(420px,92vw); background:#0d0000; color:#fff; border:1px solid #8b0000; border-radius:50px; z-index:9999; display:flex; align-items:center; padding:6px 6px 6px 12px; gap:10px; box-shadow:0 15px 40px rgba(0,0,0,.8), 0 0 20px rgba(255,0,0,.2); }
+/* PILL - FIXED */
+.behance-pill{ position:fixed; bottom:16px; left:50%; transform:translateX(-50%); width:min(420px,92vw); background:#0d0000; color:#fff; border:1px solid #8b0000; border-radius:50px; z-index:9999; display:flex; align-items:center; padding:6px 6px 6px 12px; gap:10px; box-shadow:0 15px 40px rgba(0,0,0,.8), 0 0 20px rgba(255,0,0,.2); transition:.35s; }
+.behance-pill.hidden{ transform:translate(-50%,150%); opacity:0; pointer-events:none; }
 .behance-pill .pill-thumbs{ display:flex; align-items:center; }
 .behance-pill .pill-thumbs img{ width:28px; height:28px; border-radius:50%; border:2px solid #0d0000; object-fit:cover; margin-left:-8px; background:#000; }
 .behance-pill .pill-thumbs img:first-child{ margin-left:0; }
 .behance-pill .pill-total{ flex:1; line-height:1.1; }
 .behance-pill .pill-total small{ font-size:8px; letter-spacing:1px; color:#8a5555; }
 .behance-pill .pill-total b{ font-size:13px; color:#fff; }
-.behance-pill .pill-expand{ width:36px; height:36px; border-radius:50%; background:#8b0000; color:#fff; border:1px solid #ff1a1a; font-size:16px; cursor:pointer; }
-.behance-sheet{ position:fixed; bottom:0; left:50%; transform:translate(-50%,105%); width:min(480px,100vw); max-height:82dvh; background:#0d0000; color:#fff; border:1px solid #8b0000; border-bottom:none; border-radius:24px 24px 0 0; z-index:9998; transition:.45s cubic-bezier(.22,1,.36,1); display:flex; flex-direction:column; overflow:hidden; }
+.behance-pill .pill-expand{ width:36px; height:36px; border-radius:50%; background:#8b0000; color:#fff; border:1px solid #ff1a1a; font-size:16px; cursor:pointer; flex-shrink:0; }
+/* SHEET - FIXED */
+.behance-sheet{ position:fixed; bottom:0; left:50%; transform:translate(-50%,105%); width:min(480px,100vw); max-height:86dvh; background:#0d0000; color:#fff; border:1px solid #8b0000; border-bottom:none; border-radius:24px 24px 0 0; z-index:9998; transition:.45s cubic-bezier(.22,1,.36,1); display:flex; flex-direction:column; overflow:hidden; }
 .behance-sheet.show{ transform:translate(-50%,0); }
 .qty-btn{ width:28px; height:28px; border-radius:50%; border:1px solid #8b0000; background:transparent; color:#ff1a1a; cursor:pointer; }
+#cartItems{ flex:1; overflow-y:auto; padding:16px; }
 </style>
 </head>
 <body>
@@ -49,7 +52,7 @@ body{ background:#050000 !important; }
 <p id="memberStatus" style="font-size:11px;color:#ff1a1a;"></p>
 </section>
 
-<div class="behance-tabs" style="background:#050000;">
+<div class="behance-tabs">
 <input type="search" id="searchInput" placeholder="🔍 Search the void" style="background:#140000;border:1px solid #3a0000;color:#fff;padding:7px 14px;border-radius:20px;font-size:12px;min-width:110px;">
 <button class="filter-btn active" data-filter="all">ALL</button>
 <button class="filter-btn" data-filter="books">BOOKS</button>
@@ -82,7 +85,7 @@ body{ background:#050000 !important; }
 <div class="modal-price-row"><span class="modal-price" id="modalPrice" style="color:#fff;font-weight:800;">R 0</span> <span id="modalStock" style="font-size:11px;color:#888;"></span></div>
 <div style="display:flex;gap:8px;margin-top:12px;">
 <select style="flex:1;padding:10px;border:1px solid #3a0000;background:#000;color:#fff;border-radius:20px;"><option>QTY: 1</option><option>QTY: 2</option></select>
-<button class="button button-gold" id="modalBuyBtn" style="flex:2;background:#8b0000;color:#fff;border:1px solid #ff1a1a;padding:12px;border-radius:20px;font-weight:700;cursor:pointer;">ADD TO CART ⛧</button>
+<button id="modalBuyBtn" style="flex:2;background:#8b0000;color:#fff;border:1px solid #ff1a1a;padding:12px;border-radius:20px;font-weight:700;cursor:pointer;">ADD TO CART ⛧</button>
 </div>
 <p class="modal-note" style="font-size:11px;color:#666;margin-top:8px;">Member code ILL-2026 = R650 Testament</p>
 </div>
@@ -92,13 +95,13 @@ body{ background:#050000 !important; }
 <div class="behance-pill" id="behancePill">
 <div class="pill-thumbs" id="pillThumbs"><span>⛧</span></div>
 <div class="pill-total"><small>TOTAL</small><br><b id="pillTotal">R 0</b> <span id="pillCount" style="font-size:11px;color:#ff1a1a;"></span></div>
-<button class="pill-expand" id="pillExpand">⌄</button>
+<button class="pill-expand" id="pillExpand">⌃</button>
 </div>
 <div class="behance-sheet" id="behanceSheet">
-<div style="padding:18px 20px 8px;display:flex;justify-content:space-between;"><b style="font-size:14px;font-family:Cinzel,serif;letter-spacing:1px;">YOUR VAULT ⛧</b><button id="sheetClose" style="background:#1a0000;border:1px solid #8b0000;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;">✕</button></div>
-<div style="padding:0 20px;"><div style="height:5px;background:#220000;border-radius:99px;overflow:hidden;"><div id="freeBar" style="height:100%;background:#ff1a1a;width:0%;"></div></div><div id="freeMsg" style="font-size:11px;color:#ff1a1a;margin-top:6px;"></div></div>
-<div id="cartItems" style="flex:1;overflow-y:auto;padding:16px;"></div>
-<div style="padding:16px;border-top:1px solid #2a0000;background:#0a0000;"><div style="display:flex;justify-content:space-between;font-weight:700;margin-bottom:10px;"><span>Total</span><span id="cartTotal">R 0</span></div><button id="whatsappOrder" style="width:100%;background:#8b0000;color:#fff;padding:14px;border-radius:20px;font-weight:700;border:1px solid #ff1a1a;cursor:pointer;">Checkout via WhatsApp ↗</button><button id="clearCart" style="width:100%;background:none;border:none;color:#777;margin-top:8px;cursor:pointer;font-size:12px;">Clear vault</button></div>
+<div style="padding:18px 20px 8px;display:flex;justify-content:space-between;align-items:center;"><b style="font-size:14px;font-family:Cinzel,serif;letter-spacing:1px;">YOUR VAULT ⛧</b><button id="sheetClose" style="background:#1a0000;border:1px solid #8b0000;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;">✕</button></div>
+<div style="padding:0 20px;"><div style="height:5px;background:#220000;border-radius:99px;overflow:hidden;"><div id="freeBar" style="height:100%;background:#ff1a1a;width:0%;transition:.3s;"></div></div><div id="freeMsg" style="font-size:11px;color:#ff1a1a;margin-top:6px;"></div></div>
+<div id="cartItems"></div>
+<div style="padding:16px;border-top:1px solid #2a0000;background:#0a0000;padding-bottom:24px;"><div style="display:flex;justify-content:space-between;font-weight:700;margin-bottom:10px;"><span>Total</span><span id="cartTotal">R 0</span></div><button id="whatsappOrder" style="width:100%;background:#8b0000;color:#fff;padding:14px;border-radius:20px;font-weight:700;border:1px solid #ff1a1a;cursor:pointer;">Checkout via WhatsApp ↗</button><button id="clearCart" style="width:100%;background:none;border:none;color:#777;margin-top:8px;cursor:pointer;font-size:12px;">Clear vault</button></div>
 </div>
 </main>
 <footer class="footer" style="background:#050000;"><a href="../index.html" class="footer-brand">illum<span style="color:#ff1a1a;">⛧</span>light</a><p>© <span id="year"></span> Illumilight.</p></footer>

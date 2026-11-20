@@ -4,7 +4,7 @@ function normalizeCategory(c){c=(c||"materials").toLowerCase().trim();if(c.inclu
 function isMember(){return localStorage.getItem("illumi_member")==="ILL-2026";}
 function memberPrice(p){if(!isMember())return Number(p.price);if(p.category==="books")return 650;return Math.round(Number(p.price)*0.9);}
 const PRODUCTS=[];
-async function loadAppwriteProducts(){try{const res=await fetch(`${APPWRITE_ENDPOINT}/tablesdb/${DATABASE_ID}/tables/${TABLE_ID}/rows`,{headers:{"X-Appwrite-Project":PROJECT_ID}});const data=await res.json();const rows=data.rows||data.documents||[];rows.forEach(doc=>{if(PRODUCTS.find(p=>String(p.id)===String(doc.$id)))return;let imgs=[];if(doc.image)imgs.push(storageUrl(doc.image));if(doc.image2)imgs.push(storageUrl(doc.image2));if(doc.image3)imgs.push(storageUrl(doc.image3));PRODUCTS.push({id:doc.$id,name:doc.name,category:normalizeCategory(doc.category),price:Number(doc.price),symbol:"⛧",image:imgs[0]||"",images:imgs.length?imgs:[],video:doc.video?storageUrl(doc.video):null,desc:doc.description||doc.name,stock:doc.stock?doc.stock+" in stock":"In Stock",details:doc.description||doc.name});});renderProducts();}catch(e){}}
+async function loadAppwriteProducts(){try{const res=await fetch(`${APPWRITE_ENDPOINT}/tablesdb/${DATABASE_ID}/tables/${TABLE_ID}/rows`,{headers:{"X-Appwrite-Project":PROJECT_ID}});const data=await res.json();const rows=data.rows||data.documents||[];rows.forEach(doc=>{if(PRODUCTS.find(p=>String(p.id)===String(doc.$id)))return;let imgs=[];if(doc.image)imgs.push(storageUrl(doc.image));if(doc.image2)imgs.push(storageUrl(doc.image2));if(doc.image3)imgs.push(storageUrl(doc.image3));PRODUCTS.push({id:doc.$id,name:doc.name,category:normalizeCategory(doc.category),price:Number(doc.price),symbol:"⛧",image:imgs[0]||"",images:imgs.length?imgs:[],video:doc.video?storageUrl(doc.video):null,desc:doc.description||doc.name,stock:doc.stock?doc.stock+" in stock":"In Stock",details:doc.description||doc.name});});renderProducts();updateCartUI();}catch(e){console.log(e);}}
 let activeFilter="all";let searchTerm="";let cart=JSON.parse(localStorage.getItem("dodis_cart")||"[]");
 const grid=document.getElementById("productGrid");const emptyState=document.getElementById("emptyState");const searchInput=document.getElementById("searchInput");
 function formatPrice(n){return"R "+Number(n).toLocaleString();}
@@ -29,30 +29,72 @@ function updateGallery(){const img=document.getElementById("modalImage");const c
 document.getElementById("prevImg").addEventListener("click",()=>{galleryIndex=(galleryIndex-1+galleryImages.length)%galleryImages.length;updateGallery();});
 document.getElementById("nextImg").addEventListener("click",()=>{galleryIndex=(galleryIndex+1)%galleryImages.length;updateGallery();});
 document.getElementById("modalClose").addEventListener("click",()=>modal.hidden=true);modal.addEventListener("click",e=>{if(e.target===modal)modal.hidden=true;});
-document.getElementById("modalBuyBtn").addEventListener("click",()=>{addToCart(currentProduct.id);modal.hidden=true;document.getElementById("behanceSheet").classList.add("show");});
+
+// CART - FIXED R0 + OVERLAP
 function saveCart(){localStorage.setItem("dodis_cart",JSON.stringify(cart));updateCartUI();}
-function addToCart(id){const ex=cart.find(i=>String(i.id)===String(id));if(ex)ex.qty++;else cart.push({id,qty:1});saveCart();}
+function addToCart(id){
+  const p=PRODUCTS.find(x=>String(x.id)===String(id));
+  const ex=cart.find(i=>String(i.id)===String(id));
+  if(ex) ex.qty++;
+  else cart.push({id,qty:1,price:p?Number(p.price):0,name:p?p.name:"",image:p?p.image:""});
+  saveCart();
+}
 function changeQty(id,d){const it=cart.find(i=>String(i.id)===String(id));if(!it)return;it.qty+=d;if(it.qty<=0)cart=cart.filter(i=>String(i.id)!==String(id));saveCart();}
 function removeItem(id){cart=cart.filter(i=>String(i.id)!==String(id));saveCart();}
-function updateCartUI(){
-const count=cart.reduce((s,i)=>s+i.qty,0);const total=cart.reduce((s,i)=>{const p=PRODUCTS.find(x=>String(x.id)===String(i.id));return p?s+memberPrice(p)*i.qty:s;},0);
-document.getElementById("pillTotal").textContent=formatPrice(total);
-document.getElementById("pillCount").textContent=count?`· ${count}`:"";
-document.getElementById("cartTotal").textContent=formatPrice(total);
-document.getElementById("freeBar").style.width=Math.min(100,total/1500*100)+"%";
-document.getElementById("freeMsg").textContent=total>=1500?"✓ FREE DELIVERY UNLOCKED":total===0?"":`Add ${formatPrice(1500-total)} for FREE delivery`;
-const thumbs=document.getElementById("pillThumbs");
-thumbs.innerHTML=cart.length===0?`<span>⛧</span>`:cart.slice(0,3).map(it=>{const p=PRODUCTS.find(x=>String(x.id)===String(it.id));return p&&p.image?`<img src="${p.image}">`:"";}).join("");
-const box=document.getElementById("cartItems");
-if(cart.length===0)box.innerHTML=`<div style="text-align:center;padding:30px;color:#777;">Your vault is empty ⛧</div>`;
-else box.innerHTML=cart.map(it=>{const p=PRODUCTS.find(x=>String(x.id)===String(it.id));if(!p)return"";const pr=memberPrice(p);return`<div style="display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid #2a0000;"><img src="${p.image||''}" style="width:56px;height:56px;object-fit:cover;border-radius:10px;background:#000;"><div style="flex:1;"><b style="font-size:13px;">${p.name}</b><br><small style="color:#ff1a1a;">${formatPrice(pr)}</small><div style="display:flex;gap:8px;margin-top:6px;align-items:center;"><button class="qty-btn" onclick="changeQty('${p.id}',-1)">−</button><span>${it.qty}</span><button class="qty-btn" onclick="changeQty('${p.id}',1)">+</button></div></div><div style="text-align:right;"><b>${formatPrice(pr*it.qty)}</b><br><button onclick="removeItem('${p.id}')" style="background:none;border:none;color:#888;font-size:11px;cursor:pointer;">✕ Remove</button></div></div>`;}).join("");
+function getItemPrice(item){
+  const p=PRODUCTS.find(x=>String(x.id)===String(item.id));
+  if(p) return memberPrice(p);
+  if(item.price) {
+    if(isMember() && item.name && item.name.toLowerCase().includes("testament")) return 650;
+    return Number(item.price);
+  }
+  return 0;
 }
-document.getElementById("pillExpand").addEventListener("click",()=>document.getElementById("behanceSheet").classList.toggle("show"));
-document.getElementById("sheetClose").addEventListener("click",()=>document.getElementById("behanceSheet").classList.remove("show"));
+function updateCartUI(){
+const count=cart.reduce((s,i)=>s+i.qty,0);
+const total=cart.reduce((s,i)=>s+getItemPrice(i)*i.qty,0);
+const pillTotal=document.getElementById("pillTotal"); if(pillTotal) pillTotal.textContent=formatPrice(total);
+const pillCount=document.getElementById("pillCount"); if(pillCount) pillCount.textContent=count?`· ${count} item${count>1?'s':''}`:"";
+const cartTotal=document.getElementById("cartTotal"); if(cartTotal) cartTotal.textContent=formatPrice(total);
+const bar=document.getElementById("freeBar"); if(bar) bar.style.width=Math.min(100,total/1500*100)+"%";
+const msg=document.getElementById("freeMsg"); if(msg) msg.textContent=total>=1500?"✓ FREE DELIVERY UNLOCKED":total===0?"":`Add ${formatPrice(1500-total)} for FREE delivery`;
+const thumbs=document.getElementById("pillThumbs");
+if(thumbs){
+  if(cart.length===0) thumbs.innerHTML=`<span>⛧</span>`;
+  else thumbs.innerHTML=cart.slice(0,3).map(it=>{
+    const p=PRODUCTS.find(x=>String(x.id)===String(it.id));
+    const src=p&&p.image?p.image:it.image;
+    return src?`<img src="${src}">`:"";
+  }).join("");
+}
+const box=document.getElementById("cartItems"); if(!box) return;
+if(cart.length===0)box.innerHTML=`<div style="text-align:center;padding:30px;color:#777;">Your vault is empty ⛧<br><small>Add a relic</small></div>`;
+else box.innerHTML=cart.map(it=>{
+  const p=PRODUCTS.find(x=>String(x.id)===String(it.id));
+  const pr=getItemPrice(it);
+  const name=p?p.name:(it.name||"Relic");
+  const imgSrc=p&&p.image?p.image:it.image;
+  return`<div style="display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid #2a0000;"><img src="${imgSrc||''}" style="width:56px;height:56px;object-fit:cover;border-radius:10px;background:#000;"><div style="flex:1;min-width:0;"><b style="font-size:13px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</b><small style="color:#ff1a1a;">${formatPrice(pr)}</small><div style="display:flex;gap:8px;margin-top:6px;align-items:center;"><button class="qty-btn" onclick="changeQty('${it.id}',-1)">−</button><span>${it.qty}</span><button class="qty-btn" onclick="changeQty('${it.id}',1)">+</button></div></div><div style="text-align:right;flex-shrink:0;"><b>${formatPrice(pr*it.qty)}</b><br><button onclick="removeItem('${it.id}')" style="background:none;border:none;color:#888;font-size:11px;cursor:pointer;">✕ Remove</button></div></div>`;}).join("");
+}
+// PILL / SHEET TOGGLE - FIXED OVERLAP
+const pillEl=document.getElementById("behancePill");
+const sheetEl=document.getElementById("behanceSheet");
+const pillBtn=document.getElementById("pillExpand");
+function toggleSheet(force){
+  const willShow=force!==undefined?force:!sheetEl.classList.contains("show");
+  sheetEl.classList.toggle("show",willShow);
+  pillEl.classList.toggle("hidden",willShow);
+  if(pillBtn) pillBtn.textContent=willShow?"⌄":"⌃";
+}
+if(pillBtn) pillBtn.addEventListener("click",()=>toggleSheet());
+document.getElementById("sheetClose").addEventListener("click",()=>toggleSheet(false));
+document.getElementById("modalBuyBtn").addEventListener("click",()=>{addToCart(currentProduct.id);modal.hidden=true;toggleSheet(true);});
 document.getElementById("clearCart").addEventListener("click",()=>{cart=[];saveCart();});
+
 const memberInput=document.getElementById("memberCode");const memberBtn=document.getElementById("applyMember");const memberStatus=document.getElementById("memberStatus");
 function refreshMemberUI(){if(isMember()){memberStatus.textContent="● MEMBER - R650 TESTAMENT ⛧";memberInput.value="ILL-2026";}}
-if(memberBtn)memberBtn.addEventListener("click",()=>{if(memberInput.value.trim().toUpperCase()==="ILL-2026"){localStorage.setItem("illumi_member","ILL-2026");refreshMemberUI();renderProducts();updateCartUI();alert("Welcome to the Order");}else alert("Try ILL-2026");});
+if(memberBtn)memberBtn.addEventListener("click",()=>{if(memberInput.value.trim().toUpperCase()==="ILL-2026"){localStorage.setItem("illumi_member","ILL-2026");refreshMemberUI();renderProducts();updateCartUI();alert("Welcome to the Order ⛧");}else alert("Try ILL-2026");});
 refreshMemberUI();renderProducts();updateCartUI();loadAppwriteProducts();
+
 const WHATSAPP_NUMBER="19304651058";
-document.getElementById("whatsappOrder").addEventListener("click",()=>{if(cart.length===0){alert("Vault empty");return;}let msg="Hello Illumilight / DODIS,%0A%0AI would like to order:%0A%0A";let total=0;cart.forEach(it=>{const p=PRODUCTS.find(x=>String(x.id)===String(it.id));if(!p)return;const pr=memberPrice(p);const lt=pr*it.qty;total+=lt;msg+=`• ${p.name} x${it.qty} - R ${lt}%0A`;});msg+=`%0ATotal: R ${total}%0A%0AName: %0ACity: %0A`;window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`,"_blank");});
+document.getElementById("whatsappOrder").addEventListener("click",()=>{if(cart.length===0){alert("Vault empty");return;}let msg="Hello Illumilight / DODIS,%0A%0AI would like to order:%0A%0A";let total=0;cart.forEach(it=>{const pr=getItemPrice(it);const lt=pr*it.qty;total+=lt;const p=PRODUCTS.find(x=>String(x.id)===String(it.id));const nm=p?p.name:it.name;msg+=`• ${nm} x${it.qty} - R ${lt}%0A`;});msg+=`%0ATotal: R ${total}%0A%0AName: %0ACity: %0A`;window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`,"_blank");});
