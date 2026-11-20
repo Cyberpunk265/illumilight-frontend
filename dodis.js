@@ -2,14 +2,19 @@
 const PROJECT_ID = "6ae27aad00007b481204";
 const DATABASE_ID = "illumilight-db";
 const TABLE_ID = "6afb96090029e4927ee3";
-const BUCKET_ID = "6aff738b001323f8ed0d"; // your 1 free bucket - Illumilight images
+const BUCKET_ID = "6aff738b001323f8ed0d";
 const APPWRITE_ENDPOINT = "https://fra.cloud.appwrite.io/v1";
 
-// Build URL from Appwrite file - works for webp + mp4
+// Build URL from Appwrite file - works for webp + mp4 - auto cleans &mode=admin junk
 function storageUrl(fileIdOrUrl){
   if(!fileIdOrUrl) return "";
-  if(fileIdOrUrl.startsWith("http")) return fileIdOrUrl;
-  // if it's just an ID like 67xx...
+  if(fileIdOrUrl.startsWith("http")){
+    try{
+      const u = new URL(fileIdOrUrl);
+      const fileId = u.pathname.split("/files/")[1].split("/")[0];
+      return `${APPWRITE_ENDPOINT}/storage/buckets/${BUCKET_ID}/files/${fileId}/view?project=${PROJECT_ID}`;
+    }catch(e){ return fileIdOrUrl.split("?")[0] + "?project=" + PROJECT_ID; }
+  }
   return `${APPWRITE_ENDPOINT}/storage/buckets/${BUCKET_ID}/files/${fileIdOrUrl}/view?project=${PROJECT_ID}`;
 }
 
@@ -29,29 +34,22 @@ function memberPrice(p){
   return Math.round(Number(p.price)*0.9);
 }
 
-const PRODUCTS = [
-  { id:7, name:"Illuminatiam: The First Testament", category:"books", price:750, symbol:"📖", image:"https://fra.cloud.appwrite.io/v1/storage/buckets/6aff738b001323f8ed0d/files/YOUR_TESTAMENT_WEBP_ID/view?project=6ae27aad00007b481204", images:[], desc:"Illuminatiam: The First Testament - The Book of Light. 300 copies.", stock:"300 in stock", details:"Illuminatiam: The First Testament - Limited first edition. Blue cloth cover with gold foil. The Book of Light." },
-];
-
-// fix first product images array
-PRODUCTS[0].images = [PRODUCTS[0].image];
+const PRODUCTS = [];
 
 async function loadAppwriteProducts(){
   try{
     const url = `${APPWRITE_ENDPOINT}/tablesdb/${DATABASE_ID}/tables/${TABLE_ID}/rows`;
     const res = await fetch(url, { headers: { "X-Appwrite-Project": PROJECT_ID } });
     const data = await res.json();
+    console.log("DB DATA:", data);
     const rows = data.rows || data.documents || [];
     rows.forEach(doc => {
       if(PRODUCTS.find(p => String(p.id) === String(doc.$id))) return;
       let imgs = [];
-      // image, image2, image3 can be URL or File ID - both work
       if(doc.image) imgs.push(storageUrl(doc.image));
       if(doc.image2) imgs.push(storageUrl(doc.image2));
       if(doc.image3) imgs.push(storageUrl(doc.image3));
-      // fallback for old ../Images/ paths -> try to keep but prefer Appwrite
       let mainImg = imgs[0] || "";
-      // if doc has video field for product, add it
       PRODUCTS.push({ 
         id: doc.$id, 
         name: doc.name, 
@@ -71,13 +69,11 @@ async function loadAppwriteProducts(){
   }catch(e){ console.log("Appwrite error", e); }
 }
 
-// MEDIA SECTION - loads from same bucket via DB or direct list
 async function loadMedia(){
   const mediaGrid = document.getElementById("mediaGrid");
   if(!mediaGrid) return;
   try{
-    // Try to load from media table if you create one, else skip
-    const mediaTableId = "media"; // change if your media table ID different
+    const mediaTableId = "media";
     const url = `${APPWRITE_ENDPOINT}/tablesdb/${DATABASE_ID}/tables/${mediaTableId}/rows`;
     const res = await fetch(url, { headers: { "X-Appwrite-Project": PROJECT_ID } });
     const data = await res.json();
@@ -201,7 +197,6 @@ function openModal(id){
     document.getElementById("modalPrice").textContent = formatPrice(currentProduct.price);
   }
   document.getElementById("modalStock").textContent = "● " + currentProduct.stock;
-  // video in modal
   let vidWrap = document.getElementById("modalVideoWrap");
   if(currentProduct.video){
     if(!vidWrap){
@@ -289,7 +284,6 @@ if(cartClose) cartClose.addEventListener("click", () => cartDrawer.hidden = true
 const clearCart = document.getElementById("clearCart");
 if(clearCart) clearCart.addEventListener("click", () => { cart = []; saveCart(); });
 
-// MEMBER BAR
 const memberInput = document.getElementById("memberCode");
 const memberBtn = document.getElementById("applyMember");
 const memberStatus = document.getElementById("memberStatus");
