@@ -1,133 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DODIS | Department of Distribution - Illumilight</title>
-  <meta name="description" content="DODIS - Your destination for products worth discovering.">
-  <link rel="stylesheet" href="../style.css">
-  <link rel="stylesheet" href="../dodis.css">
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DODIS | Illumilight</title>
+<link rel="stylesheet" href="../style.css"><link rel="stylesheet" href="../dodis.css">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* SATANIC + BEHANCE */
+body{ background:#050000 !important; }
+.dodis-grid-wrap{ padding:0 16px 110px; background:#050000; }
+#productGrid.behance-grid{ display:grid !important; grid-template-columns:1fr 1fr; gap:14px; overflow:visible !important; padding:0 !important; }
+.behance-card{ background:#0d0000; border:1px solid #2a0000; border-radius:18px; overflow:hidden; padding:0 0 12px; cursor:pointer; transition:.3s; position:relative; }
+.behance-card:active{ transform:scale(.97); border-color:#8b0000; }
+.behance-card img{ width:100%; height:190px; object-fit:contain; background:#000; display:block; filter:contrast(1.1); }
+.behance-card h3{ font-size:13px; margin:10px 12px 2px; color:#fff; font-family:Inter; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.behance-card .b-price{ font-size:13px; font-weight:700; color:#ff1a1a; margin:0 12px; }
+.behance-card .b-cat{ font-size:9px; letter-spacing:2px; color:#8a5555; margin:0 12px; }
+.behance-tabs{ display:flex; gap:8px; overflow-x:auto; padding:12px 16px; scrollbar-width:none; }
+.behance-tabs button{ background:#140000; border:1px solid #3a0000; color:#aaa; padding:7px 14px; border-radius:20px; font-size:11px; letter-spacing:1px; white-space:nowrap; cursor:pointer; }
+.behance-tabs button.active{ background:#8b0000; color:#fff; border-color:#ff1a1a; font-weight:700; }
+.behance-pill{ position:fixed; bottom:16px; left:50%; transform:translateX(-50%); width:min(420px,92vw); background:#0d0000; color:#fff; border:1px solid #8b0000; border-radius:50px; z-index:9999; display:flex; align-items:center; padding:6px 6px 6px 12px; gap:10px; box-shadow:0 15px 40px rgba(0,0,0,.8), 0 0 20px rgba(255,0,0,.2); }
+.behance-pill .pill-thumbs{ display:flex; align-items:center; }
+.behance-pill .pill-thumbs img{ width:28px; height:28px; border-radius:50%; border:2px solid #0d0000; object-fit:cover; margin-left:-8px; background:#000; }
+.behance-pill .pill-thumbs img:first-child{ margin-left:0; }
+.behance-pill .pill-total{ flex:1; line-height:1.1; }
+.behance-pill .pill-total small{ font-size:8px; letter-spacing:1px; color:#8a5555; }
+.behance-pill .pill-total b{ font-size:13px; color:#fff; }
+.behance-pill .pill-expand{ width:36px; height:36px; border-radius:50%; background:#8b0000; color:#fff; border:1px solid #ff1a1a; font-size:16px; cursor:pointer; }
+.behance-sheet{ position:fixed; bottom:0; left:50%; transform:translate(-50%,105%); width:min(480px,100vw); max-height:82dvh; background:#0d0000; color:#fff; border:1px solid #8b0000; border-bottom:none; border-radius:24px 24px 0 0; z-index:9998; transition:.45s cubic-bezier(.22,1,.36,1); display:flex; flex-direction:column; overflow:hidden; }
+.behance-sheet.show{ transform:translate(-50%,0); }
+.qty-btn{ width:28px; height:28px; border-radius:50%; border:1px solid #8b0000; background:transparent; color:#ff1a1a; cursor:pointer; }
+</style>
 </head>
 <body>
-  <div class="ambient-glow"></div>
-
-  <!-- NAV -->
-  <header class="navbar">
-  <a href="../index.html" class="brand">
-    <img src="../images/illumilight-logo.png" class="brand-logo" alt="Illumilight">
-  </a>
-  <input type="checkbox" id="nav-toggle">
-  <label for="nav-toggle" class="hamburger">☰</label>
-  <nav class="nav-links">
-    <a href="../index.html">Home</a>
-    <a href="dodis.html">DODIS</a>
-    <a href="media.html">Media</a>
-    <a href="community.html">Community</a>
-    <a href="login.html">Member Login</a>
-  </nav>
+<header class="navbar" style="background:#050000;border-bottom:1px solid #2a0000;">
+<a href="../index.html" class="brand"><img src="../images/illumilight-logo.png" class="brand-logo" alt="Illumilight"></a>
+<input type="checkbox" id="nav-toggle"><label for="nav-toggle" class="hamburger">☰</label>
+<nav class="nav-links"><a href="../index.html">Home</a><a href="dodis.html">DODIS</a><a href="media.html">Media</a><a href="community.html">Community</a><a href="login.html">Member Login</a></nav>
 </header>
-
-  <main>
-    <!-- HERO -->
-    <section class="dodis-hero section-padding">
-      <div class="section-label">02 / COMMERCE</div>
-      <div class="dodis-badge">DEPARTMENT OF DISTRIBUTION</div>
-      <h1>Meet <span class="gold-text">DODIS.</span></h1>
-      <p>Your destination for products worth discovering. Browse the collection, explore product details, and find something that belongs in your world.</p>
-      <div class="store-note">OPEN TO EVERYONE · ACCOUNT REQUIRED TO PURCHASE</div>
-
-      <!-- SEARCH + FILTER - 3 CATEGORIES 2026 -->
-      <div class="dodis-controls">
-        <input type="search" id="searchInput" placeholder="Search products...">
-        <div class="member-bar" style="display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap;">
-  <input id="memberCode" placeholder="Member code? Try ILL-2026" style="background:#111;border:1px solid #333;color:#fff;padding:8px 12px;border-radius:6px;">
-  <button id="applyMember" style="background:#d6b36a;border:none;padding:8px 14px;border-radius:6px;font-weight:700;cursor:pointer;">UNLOCK MEMBER PRICE</button>
-  <span id="memberStatus" style="font-size:11px;color:#d6b36a;align-self:center;"></span>
+<main>
+<section class="dodis-hero" style="padding:30px 16px 10px; text-align:center; background:#050000;">
+<div class="section-label" style="color:#8b0000;">02 / COMMERCE ⛧</div>
+<h1 style="font-family:Cinzel,serif;color:#fff;">DODIS <span style="color:#ff1a1a;">⛧</span></h1>
+<p style="color:#8a5555;font-size:13px;">From the depths, relics arise.</p>
+<div style="display:flex;gap:8px;justify-content:center;margin-top:12px;">
+<input id="memberCode" placeholder="Member ILL-2026" style="background:#140000;border:1px solid #3a0000;color:#fff;padding:8px 12px;border-radius:20px;font-size:12px;"><button id="applyMember" style="background:#8b0000;border:1px solid #ff1a1a;color:#fff;padding:8px 14px;border-radius:20px;font-weight:700;cursor:pointer;font-size:12px;">UNLOCK ⛧</button>
 </div>
-        <div class="filter-row">
-          <button class="filter-btn active" data-filter="all">All</button>
-          <button class="filter-btn" data-filter="materials">Materials</button>
-          <button class="filter-btn" data-filter="accessories">Accessories</button>
-          <button class="filter-btn" data-filter="books">Books</button>
-        </div>
-        <p class="rail-hint" style="text-align:center;letter-spacing:3px;font-size:11px;color:#d6b36a;margin-top:16px;">← SWIPE THE RAIL →</p>
-      </div>
-    </section>
+<p id="memberStatus" style="font-size:11px;color:#ff1a1a;"></p>
+</section>
 
-    <!-- 2026 RAIL GRID -->
-    <section class="dodis-grid-wrap" style="position:relative;">
-      <div class="rail-track-line" style="position:absolute;top:34px;left:0;right:0;height:3px;background:#222;z-index:0;"></div>
-      <div id="productGrid" class="product-rail"></div>
-      <p id="emptyState" class="empty-state" hidden>No products match your search.</p>
-      <div class="rail-nav" style="display:flex;justify-content:center;align-items:center;gap:16px;margin:10px 0 40px;">
-        <button id="railPrev" style="width:44px;height:44px;border-radius:50%;border:1px solid #d6b36a;background:transparent;color:#d6b36a;cursor:pointer;">←</button>
-        <span id="railCounter" style="color:#d6b36a;font-size:12px;letter-spacing:1px;">1 / 1</span>
-        <button id="railNext" style="width:44px;height:44px;border-radius:50%;border:1px solid #d6b36a;background:transparent;color:#d6b36a;cursor:pointer;">→</button>
-      </div>
-    </section>
-
-    <!-- PRODUCT MODAL - FIXED DUPLICATE -->
-    <div id="productModal" class="modal" hidden>
-      <div class="modal-card">
-        <button class="modal-close" id="modalClose">✕</button>
-        <div class="modal-gallery">
-          <img id="modalImage" src="" alt="" style="width:100%;height:340px;object-fit:contain;background:#000;border-radius:8px;">
-          <div style="display:flex;justify-content:space-between;margin-top:8px;">
-            <button id="prevImg" class="button button-outline" style="padding:6px 14px;">← PREV</button>
-            <span id="imgCounter" style="color:#d6b36a;font-size:12px;align-self:center;">1 / 3</span>
-            <button id="nextImg" class="button button-outline" style="padding:6px 14px;">NEXT →</button>
-          </div>
-          <div id="thumbRow" style="display:flex;gap:8px;margin-top:10px;justify-content:center;"></div>
-        </div>
-        <div class="modal-info">
-          <span class="modal-category" id="modalCategory">BOOKS</span>
-          <h2 id="modalName">Product Name</h2>
-          <p class="modal-desc" id="modalDesc"></p>
-          <div class="modal-price-row">
-            <span class="modal-price" id="modalPrice">R 0</span>
-            <span class="modal-stock" id="modalStock"></span>
-          </div>
-          <button class="button button-gold" id="modalBuyBtn">Add to Interest List ↗</button>
-          <p class="modal-note">Membership account required to complete purchase.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- CART DRAWER -->
-    <button id="cartFab" class="cart-fab">◈ <span id="cartCount">0</span></button>
-    <div id="cartDrawer" class="cart-drawer" hidden>
-      <div class="cart-head">
-        <h3>Your Interest List</h3>
-        <button id="cartClose">✕</button>
-      </div>
-      <div id="cartItems"></div>
-     <div class="cart-foot">
-  <div class="cart-total"><span>Total</span><span id="cartTotal">R 0</span></div>
-  <button id="whatsappOrder" class="button button-gold" style="width:100%; justify-content:center; margin-bottom:10px;">Order via WhatsApp ↗</button>
-  <a href="register.html" class="button button-outline" style="width:100%; justify-content:center;">Continue to Membership</a>
-  <button id="clearCart" class="clear-cart">Clear list</button>
+<div class="behance-tabs" style="background:#050000;">
+<input type="search" id="searchInput" placeholder="🔍 Search the void" style="background:#140000;border:1px solid #3a0000;color:#fff;padding:7px 14px;border-radius:20px;font-size:12px;min-width:110px;">
+<button class="filter-btn active" data-filter="all">ALL</button>
+<button class="filter-btn" data-filter="books">BOOKS</button>
+<button class="filter-btn" data-filter="accessories">ACCESSORIES</button>
+<button class="filter-btn" data-filter="materials">MATERIALS</button>
 </div>
-    </div>
-  </main>
 
-  <footer class="footer">
-    <a href="../index.html" class="footer-brand">illum<span class="gold-text">🕯️</span>light</a>
-    <p>© <span id="year"></span> Illumilight. All rights reserved.</p>
-    <div class="footer-links">
-      <a href="../index.html#about">About</a>
-      <a href="dodis.html">DODIS</a>
-      <a href="register.html">Membership</a>
-    </div>
-  </footer>
+<section class="dodis-grid-wrap">
+<div id="productGrid" class="behance-grid"></div>
+<p id="emptyState" hidden style="text-align:center;color:#777;">No relics in the void.</p>
+<p style="text-align:center;font-family:Cinzel,serif;font-size:10px;letter-spacing:4px;color:#550000;margin-top:20px;">AVE SATANAS · 666</p>
+</section>
 
-  <script src="../script.js"></script>
-  <script src="../dodis.js"></script>
-  <a href="https://wa.me/19304651058?text=Hi%20Illumilight,%20I%20have%20a%20question" target="_blank" rel="noopener noreferrer" aria-label="Chat with Illumilight on WhatsApp" style="position:fixed;bottom:22px;left:22px;width:56px;height:56px;background:#25D366;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 8px 25px rgba(0,0,0,0.5);z-index:9998;">
-    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2a9.9 9.9 0 0 0-8.51 14.96L2 22l5.2-1.36A9.93 9.93 0 1 0 12.04 2Zm0 18.06a8.1 8.1 0 0 1-4.13-1.13l-.3-.18-3.08.81.82-3-.2-.31a8.13 8.13 0 1 1 6.89 3.81Zm4.46-6.09c-.24-.12-1.43-.7-1.65-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.02-.38-1.95-1.21-.72-.64-1.21-1.43-1.35-1.67-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.47-.4-.4-.54-.41h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.69 2.58 4.1 3.62.57.25 1.02.4 1.37.51.58.18 1.1.15 1.52.09.46-.07 1.43-.58 1.63-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28Z"/></svg>
-  </a>
-  <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
-</body>
-</html>
+<div id="productModal" class="modal" hidden>
+<div class="modal-card" style="background:#0d0000;color:#fff;max-width:480px;border:1px solid #8b0000;">
+<button class="modal-close" id="modalClose" style="color:#fff;">✕</button>
+<div class="modal-gallery">
+<img id="modalImage" src="" style="width:100%;height:320px;object-fit:contain;background:#000;border-radius:14px;border:1px solid #2a0000;">
+<div style="display:flex;justify-content:space-between;margin-top:8px;">
+<button id="prevImg" style="padding:6px 14px;border:1px solid #8b0000;background:#000;color:#fff;border-radius:20px;cursor:pointer;">←</button>
+<span id="imgCounter" style="font-size:12px;align-self:center;color:#ff1a1a;">1 / 1</span>
+<button id="nextImg" style="padding:6px 14px;border:1px solid #8b0000;background:#000;color:#fff;border-radius:20px;cursor:pointer;">→</button>
+</div>
+<div id="thumbRow" style="display:flex;gap:8px;margin-top:10px;justify-content:center;"></div>
+</div>
+<div class="modal-info" style="color:#fff;">
+<span class="modal-category" id="modalCategory" style="color:#ff1a1a;font-size:10px;letter-spacing:2px;">BOOKS</span>
+<h2 id="modalName" style="color:#fff;font-size:18px;margin:6px 0;">Product</h2>
+<p class="modal-desc" id="modalDesc" style="color:#999;font-size:13px;"></p>
+<div class="modal-price-row"><span class="modal-price" id="modalPrice" style="color:#fff;font-weight:800;">R 0</span> <span id="modalStock" style="font-size:11px;color:#888;"></span></div>
+<div style="display:flex;gap:8px;margin-top:12px;">
+<select style="flex:1;padding:10px;border:1px solid #3a0000;background:#000;color:#fff;border-radius:20px;"><option>QTY: 1</option><option>QTY: 2</option></select>
+<button class="button button-gold" id="modalBuyBtn" style="flex:2;background:#8b0000;color:#fff;border:1px solid #ff1a1a;padding:12px;border-radius:20px;font-weight:700;cursor:pointer;">ADD TO CART ⛧</button>
+</div>
+<p class="modal-note" style="font-size:11px;color:#666;margin-top:8px;">Member code ILL-2026 = R650 Testament</p>
+</div>
+</div>
+</div>
+
+<div class="behance-pill" id="behancePill">
+<div class="pill-thumbs" id="pillThumbs"><span>⛧</span></div>
+<div class="pill-total"><small>TOTAL</small><br><b id="pillTotal">R 0</b> <span id="pillCount" style="font-size:11px;color:#ff1a1a;"></span></div>
+<button class="pill-expand" id="pillExpand">⌄</button>
+</div>
+<div class="behance-sheet" id="behanceSheet">
+<div style="padding:18px 20px 8px;display:flex;justify-content:space-between;"><b style="font-size:14px;font-family:Cinzel,serif;letter-spacing:1px;">YOUR VAULT ⛧</b><button id="sheetClose" style="background:#1a0000;border:1px solid #8b0000;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;">✕</button></div>
+<div style="padding:0 20px;"><div style="height:5px;background:#220000;border-radius:99px;overflow:hidden;"><div id="freeBar" style="height:100%;background:#ff1a1a;width:0%;"></div></div><div id="freeMsg" style="font-size:11px;color:#ff1a1a;margin-top:6px;"></div></div>
+<div id="cartItems" style="flex:1;overflow-y:auto;padding:16px;"></div>
+<div style="padding:16px;border-top:1px solid #2a0000;background:#0a0000;"><div style="display:flex;justify-content:space-between;font-weight:700;margin-bottom:10px;"><span>Total</span><span id="cartTotal">R 0</span></div><button id="whatsappOrder" style="width:100%;background:#8b0000;color:#fff;padding:14px;border-radius:20px;font-weight:700;border:1px solid #ff1a1a;cursor:pointer;">Checkout via WhatsApp ↗</button><button id="clearCart" style="width:100%;background:none;border:none;color:#777;margin-top:8px;cursor:pointer;font-size:12px;">Clear vault</button></div>
+</div>
+</main>
+<footer class="footer" style="background:#050000;"><a href="../index.html" class="footer-brand">illum<span style="color:#ff1a1a;">⛧</span>light</a><p>© <span id="year"></span> Illumilight.</p></footer>
+<script src="../script.js"></script><script src="../dodis.js"></script>
+<a href="https://wa.me/19304651058" target="_blank" style="position:fixed;bottom:86px;left:16px;width:52px;height:52px;background:#25D366;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:9997;text-decoration:none;font-size:24px;">✆</a>
+<script>document.getElementById('year').textContent=new Date().getFullYear();</script>
+</body></html>
