@@ -5,7 +5,6 @@ const TABLE_ID = "6afb96090029e4927ee3";
 const BUCKET_ID = "6aff738b001323f8ed0d";
 const APPWRITE_ENDPOINT = "https://fra.cloud.appwrite.io/v1";
 
-// Build URL from Appwrite file - works for webp + mp4 - auto cleans &mode=admin junk
 function storageUrl(fileIdOrUrl){
   if(!fileIdOrUrl) return "";
   if(fileIdOrUrl.startsWith("http")){
@@ -26,7 +25,6 @@ function normalizeCategory(cat){
   return "materials";
 }
 
-// MEMBER LOGIC
 function isMember(){ return localStorage.getItem("illumi_member") === "ILL-2026"; }
 function memberPrice(p){
   if(!isMember()) return Number(p.price);
@@ -41,7 +39,6 @@ async function loadAppwriteProducts(){
     const url = `${APPWRITE_ENDPOINT}/tablesdb/${DATABASE_ID}/tables/${TABLE_ID}/rows`;
     const res = await fetch(url, { headers: { "X-Appwrite-Project": PROJECT_ID } });
     const data = await res.json();
-    console.log("DB DATA:", data);
     const rows = data.rows || data.documents || [];
     rows.forEach(doc => {
       if(PRODUCTS.find(p => String(p.id) === String(doc.$id))) return;
@@ -98,6 +95,11 @@ let cart = JSON.parse(localStorage.getItem("dodis_cart") || "[]");
 const grid = document.getElementById("productGrid");
 const emptyState = document.getElementById("emptyState");
 const searchInput = document.getElementById("searchInput");
+const prevRail = document.getElementById("railPrev");
+const nextRail = document.getElementById("railNext");
+let railIndex = 0;
+let isScrolling = false;
+
 function formatPrice(n){ return "R " + Number(n).toLocaleString(); }
 
 function renderProducts(){
@@ -112,7 +114,7 @@ function renderProducts(){
     const mPrice = memberPrice(p);
     const showMember = isMember() && mPrice !== Number(p.price);
     return `
-    <article class="product-card rail-card ${i===1?'active':''}" data-id="${p.id}">
+    <article class="product-card rail-card ${i===railIndex?'active':''}" data-id="${p.id}">
       <div class="hanger"><span></span></div>
       <div class="flip-wrap">
         ${p.image ? `<img src="${p.image}" class="product-thumb-img rail-img" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" style="width:100%;height:300px;object-fit:contain;background:#000;border-radius:10px;display:block;">` : ``}
@@ -140,38 +142,62 @@ function renderProducts(){
       imgEl.src = p.images[(cur+1)%p.images.length];
     });
   });
-  setupRailScroll(); updateRailCounter();
+  updateRailCounter();
 }
 
-function setupRailScroll(){
-  const cards = [...grid.querySelectorAll(".rail-card")];
-  grid.onscroll = ()=>{
-    let center = grid.scrollLeft + grid.offsetWidth/2;
-    let closest = cards[0];
-    cards.forEach(c=>{ if(!closest || Math.abs(c.offsetLeft + c.offsetWidth/2 - center) < Math.abs(closest.offsetLeft + closest.offsetWidth/2 - center)) closest=c; });
-    cards.forEach(c=>c.classList.remove("active"));
-    if(closest) closest.classList.add("active");
-    updateRailCounter();
-  };
-}
 function updateRailCounter(){
   const el = document.getElementById("railCounter");
   if(!el) return;
   const cards = [...grid.querySelectorAll(".rail-card")];
-  const idx = cards.findIndex(c=>c.classList.contains("active"));
-  el.textContent = `${cards.length? idx+1 : 0} / ${cards.length}`;
+  el.textContent = `${cards.length? railIndex+1 : 0} / ${cards.length}`;
 }
-const prevRail = document.getElementById("railPrev");
-const nextRail = document.getElementById("railNext");
-if(prevRail) prevRail.onclick = ()=> grid.scrollBy({left:-280, behavior:"smooth"});
-if(nextRail) nextRail.onclick = ()=> grid.scrollBy({left:280, behavior:"smooth"});
 
-if(searchInput) searchInput.addEventListener("input", e => { searchTerm = e.target.value.toLowerCase().trim(); renderProducts(); });
+function scrollToCard(dir){
+  const cards = [...grid.querySelectorAll(".rail-card")];
+  if(!cards.length) return;
+  railIndex += dir;
+  if(railIndex < 0) railIndex = 0;
+  if(railIndex >= cards.length) railIndex = cards.length - 1;
+  isScrolling = true;
+  cards.forEach(c=>c.classList.remove("active"));
+  cards[railIndex].classList.add("active");
+  cards[railIndex].scrollIntoView({behavior:"smooth", inline:"center", block:"nearest"});
+  updateRailCounter();
+  setTimeout(()=> isScrolling=false, 500);
+}
+
+// RAIL SCROLL - detect swipe
+if(grid){
+  grid.addEventListener("scroll", ()=>{
+    if(isScrolling) return;
+    clearTimeout(grid._t);
+    grid._t = setTimeout(()=>{
+      const cards = [...grid.querySelectorAll(".rail-card")];
+      let center = grid.scrollLeft + grid.offsetWidth/2;
+      let closestIdx = 0;
+      let closestDist = 999999;
+      cards.forEach((c,i)=>{
+        const d = Math.abs(c.offsetLeft + c.offsetWidth/2 - center);
+        if(d < closestDist){ closestDist = d; closestIdx = i; }
+      });
+      railIndex = closestIdx;
+      cards.forEach(c=>c.classList.remove("active"));
+      if(cards[railIndex]) cards[railIndex].classList.add("active");
+      updateRailCounter();
+    }, 100);
+  });
+}
+
+if(prevRail) prevRail.onclick = ()=> scrollToCard(-1);
+if(nextRail) nextRail.onclick = ()=> scrollToCard(1);
+
+if(searchInput) searchInput.addEventListener("input", e => { searchTerm = e.target.value.toLowerCase().trim(); railIndex=0; renderProducts(); });
 document.querySelectorAll(".filter-btn").forEach(btn => {
   btn.addEventListener("click", () => {
     document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
     activeFilter = btn.dataset.filter;
+    railIndex = 0;
     grid.scrollLeft = 0;
     renderProducts();
   });

@@ -8,11 +8,42 @@
   <link rel="stylesheet" href="../style.css">
   <link rel="stylesheet" href="../dodis.css">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* RAIL FIX 2026 - overrides dodis.css grid */
+    .dodis-grid-wrap{ overflow:hidden; }
+    #productGrid.product-rail{
+      display:flex !important;
+      flex-wrap:nowrap !important;
+      gap:20px !important;
+      overflow-x:auto !important;
+      overflow-y:hidden !important;
+      scroll-snap-type:x mandatory !important;
+      scroll-behavior:smooth !important;
+      padding:20px calc(50% - 160px) 20px !important;
+      scrollbar-width:none !important;
+      -ms-overflow-style:none !important;
+    }
+    #productGrid.product-rail::-webkit-scrollbar{ display:none !important; }
+    .rail-card{
+      flex:0 0 300px !important;
+      min-width:300px !important;
+      max-width:300px !important;
+      scroll-snap-align:center !important;
+      opacity:.55 !important;
+      transform:scale(.94) !important;
+      transition:all .35s ease !important;
+    }
+    .rail-card.active{
+      opacity:1 !important;
+      transform:scale(1) !important;
+      border:1px solid #d6b36a !important;
+      box-shadow:0 10px 40px rgba(214,179,106,.2) !important;
+    }
+    .rail-card img{ pointer-events:none; }
+  </style>
 </head>
 <body>
   <div class="ambient-glow"></div>
-
-  <!-- NAV -->
   <header class="navbar">
   <a href="../index.html" class="brand">
     <img src="../images/illumilight-logo.png" class="brand-logo" alt="Illumilight">
@@ -29,15 +60,12 @@
 </header>
 
   <main>
-    <!-- HERO -->
     <section class="dodis-hero section-padding">
       <div class="section-label">02 / COMMERCE</div>
       <div class="dodis-badge">DEPARTMENT OF DISTRIBUTION</div>
       <h1>Meet <span class="gold-text">DODIS.</span></h1>
       <p>Your destination for products worth discovering. Browse the collection, explore product details, and find something that belongs in your world.</p>
       <div class="store-note">OPEN TO EVERYONE · ACCOUNT REQUIRED TO PURCHASE</div>
-
-      <!-- SEARCH + FILTER - 3 CATEGORIES 2026 -->
       <div class="dodis-controls">
         <input type="search" id="searchInput" placeholder="Search products...">
         <div class="member-bar" style="display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap;">
@@ -55,9 +83,8 @@
       </div>
     </section>
 
-    <!-- 2026 RAIL GRID -->
     <section class="dodis-grid-wrap" style="position:relative;">
-      <div class="rail-track-line" style="position:absolute;top:34px;left:0;right:0;height:3px;background:#222;z-index:0;"></div>
+      <div class="rail-track-line" style="position:absolute;top:34px;left:0;right:0;height:3px;background:#222;z-index:0;pointer-events:none;"></div>
       <div id="productGrid" class="product-rail"></div>
       <p id="emptyState" class="empty-state" hidden>No products match your search.</p>
       <div class="rail-nav" style="display:flex;justify-content:center;align-items:center;gap:16px;margin:10px 0 40px;">
@@ -67,7 +94,6 @@
       </div>
     </section>
 
-    <!-- PRODUCT MODAL - FIXED DUPLICATE -->
     <div id="productModal" class="modal" hidden>
       <div class="modal-card">
         <button class="modal-close" id="modalClose">✕</button>
@@ -94,7 +120,6 @@
       </div>
     </div>
 
-    <!-- CART DRAWER -->
     <button id="cartFab" class="cart-fab">◈ <span id="cartCount">0</span></button>
     <div id="cartDrawer" class="cart-drawer" hidden>
       <div class="cart-head">
