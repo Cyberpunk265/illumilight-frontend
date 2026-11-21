@@ -1,104 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ILLUMILIGHT | Community</title>
 <link rel="stylesheet" href="../style.css">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
-.wrap{max-width:900px;margin:0 auto;padding:40px 20px;}
-.center{text-align:center;}
-h1{font-family:'Cinzel',serif;color:#e8d98a;letter-spacing:3px;font-size:32px;}
-.sec-label{color:#888;font-size:11px;letter-spacing:4px;}
-.social-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0;}
-.soc{border:1px solid #222;background:#0f0f0f;padding:26px 18px;text-align:center;}
-.soc:hover{border-color:#d4c98a;}
-.soc h3{font-family:'Cinzel',serif;color:#e8e0c8;font-size:15px;letter-spacing:1px;margin-top:8px;}
-.soc p{color:#888;font-size:13px;}
-.dash-box{border:1px solid #222;background:#0d0d0d;padding:28px;margin-top:30px;}
-.dash-box h3{font-family:'Cinzel',serif;color:#e8e0c8;letter-spacing:1px;}
-.input{width:100%;background:#0a0a0a;border:1px solid #333;color:#fff;padding:12px;margin:10px 0;}
-.btn-gold{background:linear-gradient(135deg,#d4c98a,#b8a95a);color:#000;font-weight:700;padding:13px 20px;border:none;width:100%;cursor:pointer;letter-spacing:1px;}
-.chat-box{background:#0a0a0a;border:1px solid #222;height:220px;overflow-y:auto;padding:14px;margin:12px 0;}
-.msg{font-size:13px;margin-bottom:12px;line-height:1.5;color:#ccc;}
-.msg b{color:#d4c98a;}
-.locked{opacity:0.6;filter:blur(1px);pointer-events:none;user-select:none;}
-@media(max-width:700px){.social-grid{grid-template-columns:1fr 1fr;}}
+body{background:#050000!important;font-family:Inter,sans-serif}
+.wrap{max-width:900px;margin:0 auto;padding:20px 14px 80px}
+h1{font-family:Cinzel,serif;color:#fff;letter-spacing:1px;font-size:34px;line-height:1.1}
+h1 span{color:#ff1a1a}
+.sec-label{color:#8b0000;font-size:10px;letter-spacing:4px;font-weight:700}
+.social-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0 6px}
+.soc{border:1px solid #2a0a0a;background:#0e0202;padding:24px 16px;text-align:center;border-radius:20px;text-decoration:none;transition:.25s;display:block}
+.soc:active{transform:scale(.97);border-color:#ff1a1a}
+.soc div{font-size:26px}
+.soc h3{font-family:Cinzel,serif;color:#fff;font-size:15px;letter-spacing:1px;margin-top:8px}
+.soc p{color:#8a5555;font-size:12px;margin-top:4px}
+.dash-box{border:1px solid #ff1a1a33;background:#0d0000;padding:22px;border-radius:26px;margin-top:26px;box-shadow:0 10px 40px rgba(0,0,0,.6)}
+.input{width:100%;background:#140000;border:1px solid #3a0000;color:#fff;padding:14px 16px;margin:10px 0;border-radius:16px;font-size:14px;box-sizing:border-box;outline:none}
+.input:focus{border-color:#ff1a1a}
+.btn-gold{background:linear-gradient(135deg,#ff1a1a,#8b0000);color:#fff;font-weight:800;padding:14px 20px;border:none;width:100%;cursor:pointer;letter-spacing:.5px;border-radius:16px;box-shadow:0 8px 20px rgba(255,0,0,.3);font-size:14px}
+.chat-box{background:#050000;border:1px solid #2a0a0a;height:280px;overflow-y:auto;padding:14px;margin:12px 0;border-radius:18px}
+.msg{font-size:13px;margin-bottom:14px;line-height:1.5;color:#ddd;max-width:85%;padding:10px 13px;border-radius:14px;background:#1a0000;border:1px solid #2a0a0a}
+.msg b{color:#ff6a6a;font-size:11px;letter-spacing:1px;display:block;margin-bottom:3px}
+.msg.admin{background:#140000;border-color:#ff1a1a33;margin-left:auto;border-bottom-right-radius:4px}
+.msg.me{background:#1e0000;margin-left:0;border-bottom-left-radius:4px}
+.locked{opacity:.6;filter:blur(3px);pointer-events:none;user-select:none}
+.pill-top{display:inline-flex;gap:6px;align-items:center;background:#140000;border:1px solid #ff1a1a44;padding:6px 14px;border-radius:99px;font-size:11px;color:#ff8a8a;font-weight:600}
 </style>
 </head>
 <body>
-<header class="navbar">
-  <a href="../index.html" class="brand">
-    <img src="../images/illumilight-logo.png" class="brand-logo" alt="Illumilight">
-  </a>
-  <input type="checkbox" id="nav-toggle">
-  <label for="nav-toggle" class="hamburger">☰</label>
+<header class="navbar" style="background:#050000;border-bottom:1px solid #2a0000;">
+  <a href="../index.html" class="brand"><img src="../images/illumilight-logo.png" class="brand-logo" alt="Illumilight"></a>
+  <input type="checkbox" id="nav-toggle"><label for="nav-toggle" class="hamburger">☰</label>
   <nav class="nav-links">
-    <a href="../index.html">Home</a>
-    <a href="dodis.html">DODIS</a>
-    <a href="media.html">Media</a>
-    <a href="community.html">Community</a>
-    <a href="login.html">Member Login</a>
+    <a href="../index.html">Home</a><a href="dodis.html">DODIS</a><a href="media.html">Media</a><a href="community.html">Community</a><a href="login.html">Member Login</a>
   </nav>
 </header>
 
 <div class="wrap">
-  <div class="center">
-    <div class="sec-label">03 / COMMUNITY</div>
-    <h1>Find Your Light.<br>Find Your People.</h1>
-    <p style="color:#999;margin-top:10px;">Everyone can connect. Members can go deeper.</p>
+  <div style="text-align:center;padding:22px 0 6px;">
+    <div class="sec-label">03 / COMMUNITY ⛧</div>
+    <h1>Find Your Light.<br>Find Your <span>People.</span></h1>
+    <p style="color:#9a6a6a;margin-top:10px;font-size:13px;line-height:1.6;">Everyone can connect. Members go deeper.<br>Your DODIS code works here too.</p>
+    <div style="margin-top:14px;"><span class="pill-top">⛧ 1,247 SEEKERS ONLINE</span></div>
   </div>
 
-  <!-- 1. SOCIALS - EVERYONE -->
-  <div style="margin-top:32px;">
+  <div style="margin-top:18px;">
     <div class="sec-label">✦ SOCIALS — OPEN TO ALL</div>
     <div class="social-grid">
-      <a href="https://www.facebook.com/share/14u1EhmTz7R/" target="_blank" class="soc"><div style="font-size:24px;">◎</div><h3>Facebook</h3><p>Announcements & Circles</p></a>
-      <a href="https://wa.me/19304651058" target="_blank" class="soc"><div style="font-size:24px;">✦</div><h3>WhatsApp</h3><p>Direct line to team</p></a>
-      <a href="https://instagram.com/illumilight" target="_blank" class="soc"><div style="font-size:24px;">◇</div><h3>Instagram</h3><p>Visual drops</p></a>
-      <a href="https://tiktok.com/@illumilight" target="_blank" class="soc"><div style="font-size:24px;">○</div><h3>TikTok</h3><p>Light stories</p></a>
+      <a href="https://www.facebook.com/share/14u1EhmTz7R/" target="_blank" class="soc"><div>◎</div><h3>Facebook</h3><p>Announcements & Circles</p></a>
+      <a href="https://wa.me/19304651058" target="_blank" class="soc"><div style="color:#25D366;">✆</div><h3>WhatsApp</h3><p>Direct line to team</p></a>
+      <a href="https://instagram.com/illumilight" target="_blank" class="soc"><div>◇</div><h3>Instagram</h3><p>Visual drops</p></a>
+      <a href="https://tiktok.com/@illumilight" target="_blank" class="soc"><div>○</div><h3>TikTok</h3><p>Light stories</p></a>
     </div>
   </div>
 
-  <!-- 2. DASHBOARD - APPROVED ONLY -->
   <div class="dash-box" id="dashboardSection">
     <div class="sec-label">✦ MEMBER DASHBOARD — APPROVED MEMBERS ONLY</div>
-    <h3 style="margin-top:10px;">Chat with Admin</h3>
-    <p style="color:#999;font-size:14px;">Enter your ILL code. If you are approved, chat unlocks. If not, you still keep socials above.</p>
+    <h3 style="margin-top:10px;font-family:Cinzel,serif;color:#fff;font-size:18px;">Chat with Admin ⛧</h3>
+    <p style="color:#9a6a6a;font-size:13px;line-height:1.5;">Enter your ILL code. DODIS code <b style="color:#fff;">ILL-2026</b> also works here now.</p>
 
-    <!-- LOGIN FORM -->
     <div id="loginArea">
-      <input id="illCode" class="input" placeholder="Enter your ILL code e.g. ILL-2026-001">
+      <input id="illCode" class="input" placeholder="Enter ILL code e.g. ILL-2026">
       <p id="loginError" style="display:none;color:#ff6b6b;font-size:13px;"></p>
-      <button class="btn-gold" onclick="tryLogin()">Unlock Dashboard</button>
-      <p style="font-size:13px;color:#777;margin-top:10px;">No code? <a href="register.html" style="color:#d4c98a;">Apply for Membership</a></p>
+      <button class="btn-gold" onclick="tryLogin()">UNLOCK DASHBOARD ⛧</button>
+      <p style="font-size:13px;color:#777;margin-top:12px;text-align:center;">No code? <a href="register.html" style="color:#ff1a1a;font-weight:600;">Apply for Membership</a> • <a href="https://wa.me/19304651058" style="color:#ff1a1a;">Get code on WhatsApp</a></p>
     </div>
 
-    <!-- CHAT AREA - HIDDEN UNTIL APPROVED -->
     <div id="chatArea" style="display:none;">
       <p style="color:#7ddb8a;font-size:13px;">● Verified as <b id="showCode" style="color:#fff;"></b> — You can now chat with Admin</p>
       <div class="chat-box" id="chatBox"></div>
-      <input id="chatInput" class="input" placeholder="Message Admin...">
-      <button class="btn-gold" onclick="sendMsg()">Send to Admin</button>
-      <button onclick="logoutDash()" style="background:none;border:none;color:#888;margin-top:10px;cursor:pointer;font-size:12px;text-decoration:underline;">Logout</button>
+      <div style="display:flex;gap:8px;">
+        <input id="chatInput" class="input" placeholder="Message Admin..." style="margin:0;flex:1;" onkeypress="if(event.key==='Enter')sendMsg()">
+        <button class="btn-gold" onclick="sendMsg()" style="width:90px;flex-shrink:0;">SEND</button>
+      </div>
+      <button onclick="logoutDash()" style="background:none;border:none;color:#777;margin-top:12px;cursor:pointer;font-size:12px;text-decoration:underline;width:100%;">Logout</button>
     </div>
 
-    <!-- LOCKED PREVIEW FOR NON-APPROVED -->
     <div id="lockedPreview" style="margin-top:16px;">
-      <div class="locked">
-        <div class="chat-box" style="height:80px;">Admin: Welcome to the private circle...<br>Admin: Your message here...</div>
-      </div>
-      <p style="color:#666;font-size:12px;text-align:center;margin-top:8px;">🔒 Locked — Approved members only. Socials above are always open to you.</p>
+      <div class="locked"><div class="chat-box" style="height:70px;margin:0;">Admin: Welcome to the private circle...<br>Admin: Your message here...</div></div>
+      <p style="color:#666;font-size:12px;text-align:center;margin-top:10px;">🔒 Locked — Approved members only. Socials above are always open to you.</p>
     </div>
   </div>
 
+  <div style="text-align:center;margin-top:28px;">
+    <a href="dodis.html" style="display:inline-block;background:#fff;color:#000;padding:13px 28px;border-radius:99px;font-weight:800;text-decoration:none;font-size:13px;">SHOP DODIS RELICS →</a>
+  </div>
 </div>
+
+<footer class="footer" style="background:#050000;border-top:1px solid #1a0000;">
+<a href="../index.html" class="footer-brand">illum<span style="color:#ff1a1a;">⛧</span>light</a><p>© <span id="year"></span> Illumilight.</p>
+</footer>
 
 <script>
   function getApproved(){
-    // Admin approves codes here. For now test with ILL-2026-001
-    return JSON.parse(localStorage.getItem('illumilight_approved') || '["ILL-2026-001","ILL-TEST","ILL-1111"]');
+    // Now accepts BOTH old codes + your DODIS code ILL-2026
+    let base=JSON.parse(localStorage.getItem('illumilight_approved') || '["ILL-2026-001","ILL-TEST","ILL-1111"]');
+    if(!base.includes("ILL-2026")) base.push("ILL-2026");
+    if(!base.includes("ILL-2026-001")) base.push("ILL-2026-001");
+    return base;
   }
   function checkLogin(){
     const code = localStorage.getItem('illumilight_code');
@@ -111,9 +113,8 @@ h1{font-family:'Cinzel',serif;color:#e8d98a;letter-spacing:3px;font-size:32px;}
     }
   }
   checkLogin();
-
   function tryLogin(){
-    const code = document.getElementById('illCode').value.trim();
+    const code = document.getElementById('illCode').value.trim().toUpperCase();
     const err = document.getElementById('loginError');
     if(!code){ err.style.display='block'; err.textContent='Enter your ILL code'; return; }
     if(!getApproved().includes(code)){
@@ -122,6 +123,8 @@ h1{font-family:'Cinzel',serif;color:#e8d98a;letter-spacing:3px;font-size:32px;}
       return;
     }
     localStorage.setItem('illumilight_code', code);
+    // Also sync with DODIS member system
+    if(code==="ILL-2026") localStorage.setItem("illumi_member","ILL-2026");
     checkLogin();
   }
   function logoutDash(){ localStorage.removeItem('illumilight_code'); location.reload(); }
@@ -136,22 +139,11 @@ h1{font-family:'Cinzel',serif;color:#e8d98a;letter-spacing:3px;font-size:32px;}
   function loadMsgs(){
     const msgs=JSON.parse(localStorage.getItem('illumilight_chats')||'[]');
     const box=document.getElementById('chatBox');
-    box.innerHTML='<div class="msg"><b>Admin:</b> Welcome to the Circle 🕯️ You are verified.</div>';
-    msgs.forEach(m=>{ box.innerHTML+=`<div class="msg"><b>${m.from}:</b> ${m.text}<br><span style="color:#555;font-size:11px;">${m.time}</span></div>`; });
+    box.innerHTML='<div class="msg admin"><b>ADMIN ⛧</b>Welcome to the Circle 🕯️ You are verified. What relic are you seeking?</div>';
+    msgs.forEach(m=>{ box.innerHTML+=`<div class="msg me"><b>${m.from}</b>${m.text}<br><span style="color:#666;font-size:11px;">${m.time}</span></div>`; });
     box.scrollTop=box.scrollHeight;
   }
-</script>
-<script>
-document.getElementById('menuBtn').addEventListener('click', function(e){
-  e.stopPropagation();
-  document.getElementById('navMenu').classList.toggle('active');
-});
-document.addEventListener('click', function(e){
-  const m = document.getElementById('navMenu');
-  if(m && !m.contains(e.target) && !document.getElementById('menuBtn').contains(e.target)){
-    m.classList.remove('active');
-  }
-});
+  document.getElementById('year').textContent=new Date().getFullYear();
 </script>
 </body>
 </html>
