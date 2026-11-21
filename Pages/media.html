@@ -1,150 +1,105 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Discover Media | Illumilight</title>
-<link rel="icon" type="image/png" href="../images/dodis-favicon.png">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../style.css">
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Media & Stories | Illumilight</title>
+<link rel="stylesheet" href="../style.css"><link rel="stylesheet" href="../dodis.css">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
-  .media-hero { text-align:center; padding:60px 20px 30px; }
-  .media-hero h1 { font-family:'Cinzel', serif; font-size:42px; letter-spacing:5px; color:#e8d98a; }
-  .media-hero p { color:#aaa; margin-top:10px; }
-  .tabs { display:flex; gap:10px; justify-content:center; margin:25px 0; flex-wrap:wrap; }
-  .tab-btn { background:#111; color:#ccc; border:1px solid #333; padding:10px 22px; border-radius:25px; cursor:pointer; font-size:13px; letter-spacing:1px; }
-  .tab-btn.active { background:#d4c98a; color:#000; border-color:#d4c98a; font-weight:700; }
-  .gallery { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:16px; max-width:1100px; margin:0 auto; padding:0 20px 60px; }
-  .media-item { background:#111; border:1px solid #222; border-radius:12px; overflow:hidden; }
-  .media-item img, .media-item video { width:100%; height:220px; object-fit:cover; display:block; background:#000; }
-  .media-item .info { padding:14px; }
-  .media-item .info h4 { color:#e8d98a; font-size:14px; margin-bottom:6px; }
-  .media-item .info p { color:#999; font-size:13px; line-height:1.5; }
-  .testi { background:#111; border:1px solid #222; border-radius:12px; padding:24px; }
-  .testi .stars { color:#d4c98a; letter-spacing:2px; }
-  .testi p { color:#ccc; font-style:italic; margin:10px 0; line-height:1.6; }
-  .testi strong { color:#e8d98a; font-size:13px; letter-spacing:1px; }
-  .testi span { color:#777; font-size:12px; display:block; }
-  .back-link { display:block; text-align:center; margin:20px; color:#d4c98a; }
-</style>
-</head>
+body{background:#050000!important}
+.media-hero{padding:40px 16px 10px;text-align:center;background:#050000}
+.media-hero h1{font-family:Cinzel,serif;font-size:42px;color:#e8d27a;letter-spacing:2px;line-height:1.05}
+.media-hero p{color:#9a9a9a;font-size:14px;margin-top:10px}
+.media-tabs{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:18px 14px}
+.media-tabs button{background:#111;border:1px solid #2a2a2a;color:#ccc;padding:10px 22px;border-radius:30px;font-size:14px;cursor:pointer}
+.media-tabs button.active{background:#e8d27a;color:#000;font-weight:700;border-color:#e8d27a}
+#mediaGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:10px 14px 100px;background:#050000}
+.media-card{border-radius:18px;overflow:hidden;background:#0e0e0e;border:1px solid #222;position:relative}
+.media-card img{width:100%;height:180px;object-fit:cover;display:block}
+.media-card video{width:100%;height:220px;object-fit:cover;display:block;background:#000}
+.media-card .m-info{padding:10px 12px}
+.media-card .m-info b{font-size:13px;color:#fff;display:block}
+.media-card .m-info small{font-size:11px;color:#888}
+.testi-card{grid-column:span 2;background:#0d0d00;border:1px solid #3a3000;border-radius:18px;padding:18px}
+.testi-card p{color:#e8d27a;font-style:italic;font-size:14px;line-height:1.6}
+.testi-card b{color:#fff;font-size:12px}
+</style></head>
 <body>
-
-<header class="navbar">
-  <a href="../index.html" class="brand">
-    <img src="../images/illumilight-logo.png" class="brand-logo" alt="Illumilight">
-  </a>
-  <input type="checkbox" id="nav-toggle">
-  <label for="nav-toggle" class="hamburger">☰</label>
-  <nav class="nav-links">
-    <a href="../index.html">Home</a>
-    <a href="dodis.html">DODIS</a>
-    <a href="media.html">Media</a>
-    <a href="community.html">Community</a>
-    <a href="login.html">Member Login</a>
-  </nav>
+<header class="navbar" style="background:#050000;border-bottom:1px solid #222;">
+<a href="../index.html" class="brand"><img src="../images/illumilight-logo.png" class="brand-logo" alt="Illumilight"></a>
+<input type="checkbox" id="nav-toggle"><label for="nav-toggle" class="hamburger">☰</label>
+<nav class="nav-links"><a href="../index.html">Home</a><a href="dodis.html">DODIS</a><a href="media.html">Media</a><a href="community.html">Community</a><a href="login.html">Member Login</a></nav>
 </header>
 
+<main>
 <section class="media-hero">
-  <p style="color:#d4c98a; letter-spacing:3px; font-size:12px;">✦ ILLUMILIGHT DISCOVER ✦</p>
-  <h1>MEDIA & STORIES</h1>
-  <p>Images, videos and testimonies from our community and DODIS distribution.</p>
-  <div class="tabs">
-    <button class="tab-btn active" onclick="showTab('all', this)">All</button>
-    <button class="tab-btn" onclick="showTab('images', this)">Images</button>
-    <button class="tab-btn" onclick="showTab('videos', this)">Videos</button>
-    <button class="tab-btn" onclick="showTab('testimonies', this)">Testimonies</button>
-  </div>
+<div style="color:#e8d27a;font-size:10px;letter-spacing:4px;">✦ ILLUMILIGHT DISCOVER ✦</div>
+<h1>MEDIA &<br>STORIES</h1>
+<p>Images, videos and testimonies from our<br>community and DODIS distribution.</p>
 </section>
 
-<div class="gallery" id="gallery">
-  <!-- APPWRITE MEDIA WILL LOAD HERE AUTOMATICALLY -->
-  <p id="loadingMsg" style="color:#888;text-align:center;grid-column:1/-1;">Loading your webp + mp4 from Appwrite...</p>
+<div class="media-tabs">
+<button class="m-filter active" data-filter="all">All</button>
+<button class="m-filter" data-filter="images">Images</button>
+<button class="m-filter" data-filter="videos">Videos</button>
+<button class="m-filter" data-filter="testimonies">Testimonies</button>
 </div>
 
-<a href="../index.html" class="back-link">← Back to Home</a>
+<div id="mediaGrid"></div>
 
-<footer>
-  <img src="../images/dodis-icon.png" style="height:36px; width:auto;">
-  <p>© 2026 ILLUMILIGHT • DODIS Department of Distribution</p>
+<div style="text-align:center;padding:20px;"><a href="../index.html" style="color:#e8d27a;text-decoration:none;font-size:16px;">← Back to Home</a></div>
+</main>
+
+<footer class="footer" style="background:#050000;border-top:1px solid #222;">
+<a href="../index.html" class="footer-brand">illum<span style="color:#e8d27a;">light</span></a>
+<p>© <span id="year"></span> ILLUMILIGHT • DODIS Department of Distribution</p>
 </footer>
 
 <script>
-// === YOUR APPWRITE 1-BUCKET CONFIG ===
-const PROJECT_ID = "6ae27aad00007b481204";
-const BUCKET_ID = "6aff738b001323f8ed0d"; // Illumilight images
-const ENDPOINT = "https://fra.cloud.appwrite.io/v1";
+const PROJECT_ID="6ae27aad00007b481204";const BUCKET_ID="6aff738b001323f8ed0d";const ENDPOINT="https://fra.cloud.appwrite.io/v1";
+function sUrl(id){return`${ENDPOINT}/storage/buckets/${BUCKET_ID}/files/${id}/view?project=${PROJECT_ID}`;}
 
-async function loadAppwriteMedia(){
-  const gallery = document.getElementById("gallery");
+// YOUR CONTENT - EDIT HERE TO ADD MORE!
+const MEDIA_ITEMS=[
+  {type:"images", title:"Testament - Front", desc:"DODIS Edition • R750", img:"YOUR_FILE_ID_1"},
+  {type:"images", title:"Testament - Detail", desc:"Inside pages", img:"YOUR_FILE_ID_2"},
+  {type:"images", title:"Community Drop JHB", desc:"Johannesburg distribution", img:"YOUR_FILE_ID_3"},
+  {type:"videos", title:"Unboxing the Testament", desc:"Member review", video:"https://www.w3schools.com/html/mov_bbb.mp4"},
+  {type:"videos", title:"DODIS Explained", desc:"What is DODIS?", video:"https://www.w3schools.com/html/mov_bbb.mp4"},
+  {type:"testimonies", quote:"I got my Testament in 2 days in Soweto. Quality is insane, packaging is next level. This is not just a book.", name:"Thabo M. • Soweto • Verified"},
+  {type:"testimonies", quote:"ILL-2026 member price R650 saved me. The community is real.", name:"Sarah K. • Cape Town • Member"},
+];
+
+let activeM="all";
+const grid=document.getElementById("mediaGrid");
+function renderMedia(){
+  const list=MEDIA_ITEMS.filter(m=>activeM==="all"||m.type===activeM);
+  if(list.length===0){grid.innerHTML=`<p style="grid-column:span 2;text-align:center;color:#777;padding:30px;">No ${activeM} yet. Upload in Appwrite Storage.</p>`;return;}
+  grid.innerHTML=list.map(m=>{
+    if(m.type==="testimonies") return`<div class="testi-card"><p>"${m.quote}"</p><b>⛧ ${m.name}</b></div>`;
+    if(m.type==="videos") return`<div class="media-card"><video controls poster=""><source src="${m.video}"></video><div class="m-info"><b>${m.title}</b><small>${m.desc}</small></div></div>`;
+    const src=m.img.startsWith("http")?m.img:(m.img.includes("YOUR_")?"../images/illumilight-logo.png":sUrl(m.img));
+    return`<div class="media-card"><img src="${src}"><div class="m-info"><b>${m.title}</b><small>${m.desc}</small></div></div>`;
+  }).join("");
+}
+document.querySelectorAll(".m-filter").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".m-filter").forEach(x=>x.classList.remove("active"));b.classList.add("active");activeM=b.dataset.filter;renderMedia();}));
+renderMedia();
+document.getElementById("year").textContent=new Date().getFullYear();
+
+// Auto-load images from Appwrite Storage bucket too
+async function loadBucketImages(){
   try{
-    const res = await fetch(`${ENDPOINT}/storage/buckets/${BUCKET_ID}/files?limit=100`, {
-      headers: { "X-Appwrite-Project": PROJECT_ID }
-    });
-    const data = await res.json();
-    const files = data.files || [];
-    
-    let html = "";
-
-    files.forEach(f=>{
-      const url = `${ENDPOINT}/storage/buckets/${BUCKET_ID}/files/${f.$id}/view?project=${PROJECT_ID}`;
-      const isVideo = f.mimeType.includes("video") || f.name.toLowerCase().endsWith(".mp4");
-      const cleanName = f.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ").toUpperCase();
-      if(isVideo){
-        html += `<div class="media-item" data-cat="videos">
-          <video controls playsinline preload="metadata" poster="">
-            <source src="${url}" type="video/mp4">
-          </video>
-          <div class="info"><h4>🎥 ${cleanName}</h4><p>DODIS Media • Illumilight</p></div>
-        </div>`;
-      } else {
-        html += `<div class="media-item" data-cat="images">
-          <img src="${url}" loading="lazy" alt="${f.name}">
-          <div class="info"><h4>${cleanName}</h4><p>DODIS Distribution • Beyond The Ordinary</p></div>
-        </div>`;
-      }
-    });
-
-    // YOUR TESTIMONIES - KEEP THEM ALWAYS
-    html += `
-  <div class="media-item testi" data-cat="testimonies">
-    <div class="stars">★★★★★</div>
-    <p>"I joined Illumilight and got my ILL-2026 code in 2 days. DODIS delivered my order in 24h. This is different."</p>
-    <strong>PRECIOUS K.</strong><span>Member • ILL-2026-0008 • Johannesburg</span>
-  </div>
-  <div class="media-item testi" data-cat="testimonies">
-    <div class="stars">★★★★★</div>
-    <p>"The community is real. I came for the products, I stayed for the people. Beyond the Ordinary is real."</p>
-    <strong>THABO M.</strong><span>Member • Soweto</span>
-  </div>
-  <div class="media-item testi" data-cat="testimonies">
-    <div class="stars">★★★★★</div>
-    <p>"Best distribution I have used in SA. Tracked, fast, and the packaging is luxury. DODIS is the future."</p>
-    <strong>ASIPHE N.</strong><span>Member • Cape Town</span>
-  </div>
-  <div class="media-item testi" data-cat="testimonies">
-    <div class="stars">★★★★★</div>
-    <p>"From registration to delivery was seamless. Admin approved me same day. Proud to be Illumilight."</p>
-    <strong>LUNGA D.</strong><span>Member • Durban</span>
-  </div>`;
-
-    gallery.innerHTML = html;
-  }catch(e){
-    console.log(e);
-    document.getElementById("loadingMsg").textContent = "Failed to load - Check bucket is Public: Any -> Read";
-  }
+    const res=await fetch(`${ENDPOINT}/storage/buckets/${BUCKET_ID}/files?project=${PROJECT_ID}`);
+    const data=await res.json();
+    if(data.files && data.files.length){
+      data.files.forEach(f=>{
+        if(!MEDIA_ITEMS.find(m=>m.img===f.$id)){
+          MEDIA_ITEMS.unshift({type:"images", title:f.name, desc:"From DODIS Vault", img:f.$id});
+        }
+      });
+      renderMedia();
+    }
+  }catch(e){}
 }
-
-function showTab(cat, btn){
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  document.querySelectorAll('.media-item').forEach(item=>{
-    if(cat==='all' || item.dataset.cat===cat) item.style.display='block';
-    else item.style.display='none';
-  });
-}
-
-loadAppwriteMedia();
+loadBucketImages();
 </script>
-</body>
-</html>
+</body></html>
