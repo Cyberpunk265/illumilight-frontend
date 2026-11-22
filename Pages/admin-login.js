@@ -1,53 +1,50 @@
-const { Client, Account } = Appwrite;
+const client = new Appwrite.Client();
+client
+  .setEndpoint("https://fra.cloud.appwrite.io/v1")
+  .setProject("6ae27aad00007b481204");
 
-const client = new Client()
-  .setEndpoint('https://fra.cloud.appwrite.io/v1')
-  .setProject('6ae27aad00007b481204');
+const account = new Appwrite.Account(client);
 
-const account = new Account(client);
+const loginForm = document.getElementById("adminLoginForm");
+const loginButton = document.getElementById("adminLoginButton");
+const loginMessage = document.getElementById("loginMessage");
 
-const form = document.getElementById('adminLoginForm');
-const emailInput = document.getElementById('adminEmail');
-const passInput = document.getElementById('adminPassword');
-const btn = document.getElementById('adminLoginButton');
-const msg = document.getElementById('loginMessage');
-
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const email = emailInput.value.trim().toLowerCase();
-  const password = passInput.value;
-
-  btn.disabled = true;
-  btn.textContent = 'Signing in...';
-  msg.textContent = '';
+loginForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  loginButton.disabled = true;
+  loginButton.textContent = "Verifying...";
+  loginMessage.textContent = "";
 
   try {
-    // 1. Try to logout old session first (avoids 401)
+    const email = document.getElementById("adminEmail").value.trim().toLowerCase();
+    const password = document.getElementById("adminPassword").value;
+
     try { await account.deleteSession('current'); } catch {}
 
-    // 2. Direct Appwrite login - NO FUNCTION NEEDED
     await account.createEmailPasswordSession(email, password);
     const user = await account.get();
-
     console.log("Logged in as:", user.email);
 
-    // 3. Only allow your admin email
-    if (user.email.toLowerCase() === 'pmtraders9@gmail.com') {
-      localStorage.setItem('isAdmin', 'true');
-      localStorage.setItem('adminEmail', user.email);
-      msg.textContent = 'Success! Redirecting...';
-      window.location.href = 'admin-dashboard.html';
-    } else {
+    const allowedAdmins = ['pmtraders9@gmail.com', 'pmtraders96@gmail.com'];
+
+    if (!allowedAdmins.includes(user.email.toLowerCase())) {
       await account.deleteSession('current');
-      throw new Error('This account is not an administrator.');
+      throw new Error("This account is not an administrator.");
     }
 
-  } catch (err) {
-    console.log("LOGIN ERROR:", err);
-    msg.textContent = 'Administrator verification failed. ' + err.message;
-    msg.style.color = '#ff6b6b';
+    localStorage.setItem('isAdmin', 'true');
+    localStorage.setItem('adminEmail', user.email);
+    loginMessage.textContent = "Administrator verified! Redirecting...";
+    loginMessage.style.color = "#4ade80";
+
+    window.location.href = "admin-dashboard.html";
+
+  } catch (error) {
+    console.error("Admin verification error:", error);
+    loginMessage.textContent = error.message || "Sign-in or administrator verification failed.";
+    loginMessage.style.color = "#ff6b6b";
   } finally {
-    btn.disabled = false;
-    btn.textContent = 'Sign In ↗';
+    loginButton.disabled = false;
+    loginButton.textContent = "Sign In ↗";
   }
 });

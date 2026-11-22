@@ -1,168 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Illumilight | Admin Dashboard</title>
-  <link rel="stylesheet" href="../style.css">
-  <style>
-    .admin-container { max-width: 1300px; margin: 40px auto; padding: 20px; }
-    .admin-header { border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px; display:flex; justify-content:space-between; align-items:center; }
-    .admin-panel { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 0; overflow:hidden; }
-    .panel-top { padding: 20px 25px; display:flex; justify-content:space-between; align-items:center; }
-    #logoutButton { background: transparent; color: var(--gold); border: 1px solid var(--gold); padding: 8px 16px; border-radius: 6px; cursor: pointer; }
-    #statusMessage { color: var(--muted); font-size:13px; }
-    .table-wrap { overflow-x:auto; }
-    table { width:100%; border-collapse: collapse; font-size:13px; min-width: 1000px; }
-    thead th { text-align:left; padding:14px 12px; color:var(--gold); border-bottom:1px solid var(--border); background:#0d0d0d; font-size:12px; letter-spacing:0.5px; }
-    tbody td { padding:13px 12px; border-bottom:1px solid #1a1a1a; vertical-align:middle; }
-    tbody tr:hover { background:#111; }
-    .code-cell { color:var(--gold); font-weight:bold; white-space:nowrap; }
-    .status-approved { color:#4ade80; font-weight:bold; }
-    .status-pending { color:#facc15; font-weight:bold; }
-    .status-rejected { color:#f87171; font-weight:bold; }
-    .btn-approve { background:#22c55e; color:#fff; border:none; padding:7px 14px; border-radius:5px; cursor:pointer; font-weight:bold; margin-right:6px; }
-    .btn-reject { background:#ef4444; color:#fff; border:none; padding:7px 14px; border-radius:5px; cursor:pointer; font-weight:bold; }
-    .btn-approve:disabled, .btn-reject:disabled { opacity:0.5; }
-    .search-row { padding:0 25px 15px; }
-    #searchInput { width:100%; padding:10px; background:#000; border:1px solid var(--border); border-radius:6px; color:#fff; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Illumilight | Admin Dashboard</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+.admin-container{max-width:1350px;margin:20px auto;padding:15px}
+.admin-header{border-bottom:1px solid var(--border);padding-bottom:15px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center}
+.admin-panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.panel-top{padding:20px 25px;display:flex;justify-content:space-between;align-items:center}
+#logoutButton{background:transparent;color:var(--gold);border:1px solid var(--gold);padding:8px 16px;border-radius:6px;cursor:pointer}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:1150px;table-layout:fixed}
+thead th{text-align:left;padding:12px 8px;color:var(--gold);border-bottom:1px solid var(--border);background:#0d0d0d;white-space:nowrap}
+thead th:nth-child(1){width:115px}thead th:nth-child(2){width:160px}thead th:nth-child(3){width:170px}thead th:nth-child(4){width:120px}thead th:nth-child(5){width:110px}thead th:nth-child(6){width:70px}thead th:nth-child(7){width:180px}thead th:nth-child(8){width:80px}thead th:nth-child(9){width:100px}thead th:nth-child(10){width:175px}
+tbody td{padding:10px 8px;border-bottom:1px solid #1a1a1a;vertical-align:middle;overflow:hidden}
+.code-cell{color:var(--gold);font-weight:bold;white-space:nowrap}
+.status-approved{color:#4ade80;font-weight:bold}.status-pending{color:#facc15;font-weight:bold}.status-rejected{color:#f87171;font-weight:bold}
+.action-col{white-space:nowrap;position:sticky;right:0;background:#111}
+.btn-approve{background:#22c55e;color:#fff;border:none;padding:8px 12px;border-radius:5px;cursor:pointer;font-weight:bold}
+.btn-reject{background:#ef4444;color:#fff;border:none;padding:8px 12px;border-radius:5px;cursor:pointer;font-weight:bold;margin-left:5px}
+#searchInput{width:100%;padding:10px;background:#000;border:1px solid var(--border);border-radius:6px;color:#fff;box-sizing:border-box}
+.trunc{display:block;width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:#0d0c0a;border:1px solid #222;padding:6px 8px;border-radius:4px;cursor:pointer;color:#ddd;box-sizing:border-box;font-size:12px}
+.trunc:hover{border-color:var(--gold);color:#fff}
+.trunc.reason{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;line-height:1.35;max-height:36px;overflow:hidden}
+.dob-cell{display:block;text-align:center;white-space:nowrap;color:#ccc;background:#0d0c0a;border:1px solid #222;padding:6px 4px;border-radius:4px;font-size:12px}
+#viewModal{position:fixed;inset:0;background:rgba(0,0,0,.88);display:none;z-index:999;align-items:center;justify-content:center;padding:20px}
+#viewModal.open{display:flex}
+.modal-box{background:#13120f;border:1px solid var(--gold);border-radius:8px;max-width:520px;width:100%;padding:28px 25px;position:relative;max-height:80vh;overflow:auto}
+.modal-box h3{margin:0 0 12px;color:var(--gold);font-family:Georgia,serif;letter-spacing:2px;font-size:18px}
+.modal-box p{color:#ddd;line-height:1.7;word-break:break-word;white-space:pre-wrap;font-size:14px;margin:0}
+.modal-close{position:absolute;top:8px;right:12px;background:none;border:none;color:#fff;font-size:24px;cursor:pointer}
+</style>
 </head>
 <body>
-  <main class="admin-container">
-    <div class="admin-header">
-      <div>
-        <h1 style="margin:0;">Illumilight Administration</h1>
-        <p style="color:var(--muted);margin:5px 0 0;">Membership Management Portal</p>
-      </div>
-      <button id="logoutButton" type="button">Sign Out</button>
-    </div>
+<main class="admin-container">
+<div class="admin-header"><div><h1 style="margin:0;">Illumilight Administration</h1><p style="color:var(--muted)">Membership Management</p></div><button id="logoutButton">Sign Out</button></div>
+<section class="admin-panel">
+<div class="panel-top"><h2 style="margin:0;">Membership Applications</h2><p id="statusMessage">Verifying...</p></div>
+<div style="padding:0 25px 15px;"><input id="searchInput" placeholder="Search by name, email, code..."></div>
+<div class="table-wrap"><table><thead><tr><th>Code</th><th>Full Name</th><th>Email</th><th>Phone</th><th>DOB</th><th>Gender</th><th>Reason</th><th>Status</th><th>Date</th><th class="action-col">Actions</th></tr></thead><tbody id="applicationsList"></tbody></table></div>
+</section>
+</main>
+<div id="viewModal"><div class="modal-box"><button class="modal-close" onclick="closeModal()">×</button><h3 id="modalTitle">Details</h3><p id="modalBody"></p></div></div>
+<script src="https://cdn.jsdelivr.net/npm/appwrite@21.0.0"></script>
+<script>
+const client = new Appwrite.Client();
+client.setEndpoint("https://fra.cloud.appwrite.io/v1").setProject("6ae27aad00007b481204");
+const account = new Appwrite.Account(client);
+const databases = new Appwrite.Databases(client);
+const DATABASE_ID = "illumilight-db";
+const COLLECTION_ID = "membership_applications";
+const BREVO_KEY = "YOUR_BREVO_KEY_HERE";
+const statusMessage = document.getElementById("statusMessage");
+const applicationsList = document.getElementById("applicationsList");
+const searchInput = document.getElementById("searchInput");
+let allApps = [];
 
-    <section class="admin-panel">
-      <div class="panel-top">
-        <h2 style="margin:0;">Membership Applications</h2>
-        <p id="statusMessage">Verifying administrator access...</p>
-      </div>
-      <div class="search-row"><input id="searchInput" placeholder="Search by name, email, code..."></div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Code</th>
-              <th>Full Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>DOB</th>
-              <th>Gender</th>
-              <th>Reason</th>
-              <th>Status</th>
-              <th>Date</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="applicationsList"></tbody>
-        </table>
-      </div>
-    </section>
-  </main>
+function getYear(){ const now = new Date(); return now > new Date("2026-12-31T23:59:59") ? "2027" : "2026"; }
+function getFirstName(fullName){ return (fullName || "Member").trim().split(" ")[0]; }
+function generateRandomCode(){ let code; do { code = `ILL-${getYear()}-${Math.floor(1000 + Math.random()*9000)}`; } while (allApps.some(a => a.membership_code === code)); return code; }
+function formatDate(iso){ if(!iso) return "-"; const d = new Date(iso); if(isNaN(d)) return iso; return d.toLocaleDateString('en-ZA',{day:'2-digit',month:'short',year:'numeric'}); }
+function formatDOB(val){ if(!val) return "-"; const d = new Date(val); if(!isNaN(d)) return d.toLocaleDateString('en-ZA',{day:'2-digit',month:'short',year:'numeric'}); return val; }
+function openModal(title, body){ document.getElementById('modalTitle').textContent = title; document.getElementById('modalBody').textContent = body; document.getElementById('viewModal').classList.add('open'); }
+function closeModal(){ document.getElementById('viewModal').classList.remove('open'); }
+document.getElementById('viewModal').addEventListener('click',e=>{ if(e.target.id==='viewModal') closeModal(); });
 
-  <script src="https://cdn.jsdelivr.net/npm/appwrite@21.0.0"></script>
-  <script>
-    const client = new Appwrite.Client();
-    client.setEndpoint("https://fra.cloud.appwrite.io/v1").setProject("6ae27aad00007b481204");
-    const account = new Appwrite.Account(client);
-    const functions = new Appwrite.Functions(client);
-
-    const statusMessage = document.getElementById("statusMessage");
-    const logoutButton = document.getElementById("logoutButton");
-    const applicationsList = document.getElementById("applicationsList");
-    const searchInput = document.getElementById("searchInput");
-    let allApps = [];
-
-    async function runAdminAction(action, rowId = null) {
-      const jwtResponse = await account.createJWT();
-      const execution = await functions.createExecution("verify-admin", JSON.stringify({ jwt: jwtResponse.jwt, action, rowId }), false, "/", "POST");
-      let result;
-      try { result = JSON.parse(execution.responseBody || "{}"); } catch(e){ throw new Error("Invalid server response"); }
-      if (execution.responseStatusCode < 200 || execution.responseStatusCode >= 300 || !result.success) throw new Error(result.message || "Admin request failed");
-      return result;
-    }
-
-    async function verifyAdministrator() {
-      try {
-        await account.getSession("current");
-        await runAdminAction("verify_admin");
-        statusMessage.textContent = "Administrator verified. Loading...";
-        return true;
-      } catch(e){
-        statusMessage.textContent = "Access denied. Redirecting...";
-        try{ await account.deleteSession("current"); }catch(_){}
-        setTimeout(()=> window.location.href="admin-login.html", 1200);
-        return false;
-      }
-    }
-
-    async function processApplication(rowId, action, btn){
-      if(!confirm(`Are you sure you want to ${action} this application?`)) return;
-      btn.disabled = true;
-      try{
-        const result = await runAdminAction(action, rowId);
-        alert(action==="approve" ? `Approved! Membership ID: ${result.application?.membership_code}` : "Rejected successfully.");
-        await loadApplications();
-      }catch(e){ alert(e.message); btn.disabled=false; }
-    }
-
-    function renderTable(apps){
-      applicationsList.innerHTML = "";
-      if(apps.length===0){ applicationsList.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--muted)">No applications found.</td></tr>`; return; }
-      apps.forEach(app=>{
-        const tr = document.createElement("tr");
-        const status = (app.status||"pending").toLowerCase();
-        const date = app.$createdAt ? new Date(app.$createdAt).toISOString().slice(0,10) : "-";
-        tr.innerHTML = `
-          <td class="code-cell">${app.status === "approved" && app.membership_code ? app.membership_code : '<span style="color:#666">— No Code —</span>'}</td>
-          <td>${app.full_name||"-"}</td>
-          <td>${app.email||"-"}</td>
-          <td>${app.phone||app.whatsapp||"-"}</td>
-          <td>${app.date_of_birth||"-"}</td>
-          <td>${app.gender||"-"}</td>
-          <td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${app.reason||""}">${app.reason||"-"}</td>
-          <td class="status-${status}">${status}</td>
-          <td>${date}</td>
-          <td style="white-space:nowrap;">
-            <button class="btn-approve">Approve</button>
-            <button class="btn-reject">Reject</button>
-          </td>
-        `;
-        const [approveBtn, rejectBtn] = tr.querySelectorAll("button");
-        approveBtn.addEventListener("click", ()=> processApplication(app.$id, "approve", approveBtn));
-        rejectBtn.addEventListener("click", ()=> processApplication(app.$id, "reject", rejectBtn));
-        applicationsList.appendChild(tr);
-      });
-    }
-
-    async function loadApplications(){
-      const result = await runAdminAction("get_applications");
-      allApps = result.applications || [];
-      statusMessage.textContent = `Successfully loaded ${allApps.length} application(s).`;
-      renderTable(allApps);
-    }
-
-    searchInput.addEventListener("input", ()=>{
-      const q = searchInput.value.toLowerCase();
-      renderTable(allApps.filter(a=> (a.full_name||"").toLowerCase().includes(q) || (a.email||"").toLowerCase().includes(q) || (a.membership_code||"").toLowerCase().includes(q)));
+// === BREVO TEMPLATE 1 - YOUR RED TEMPLATE ===
+async function sendBrevo(app, code, isApproved){
+  const firstName = getFirstName(app.full_name);
+  if(isApproved){
+    const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: { "accept":"application/json", "api-key": BREVO_KEY, "content-type":"application/json" },
+      body: JSON.stringify({
+        sender: { name: "Illuminati ⛧", email: "illumiafrica975@gmail.com" },
+        to: [{ email: app.email, name: firstName }],
+        templateId: 1,
+        params: { name: firstName, code: code }
+      })
     });
+    const txt = await res.text();
+    console.log("BREVO TEMPLATE 1 RESULT:", res.status, txt);
+    if(!res.ok) throw new Error("Brevo template failed: "+txt);
+    return;
+  }
+  // Reject
+  const res2 = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: { "accept":"application/json", "api-key": BREVO_KEY, "content-type":"application/json" },
+    body: JSON.stringify({
+      sender: { name: "Illuminati ⛧", email: "illumiafrica975@gmail.com" },
+      to: [{ email: app.email, name: firstName }],
+      subject: "Illumilight Application Update",
+      htmlContent: `<div style="background:#050000;color:#fff;font-family:Arial;padding:30px;text-align:center;"><h1>Hello, ${firstName}</h1><p>Your application was not approved at this time.</p><p style="color:#666;font-size:11px;">Illumilight - Johannesburg</p></div>`
+    })
+  });
+  console.log("BREVO REJECT:", res2.status, await res2.text());
+}
 
-    logoutButton.addEventListener("click", async ()=>{
-      try{ await account.deleteSession("current"); }catch(e){}
-      window.location.href="admin-login.html";
-    });
-
-    async function init(){
-      if(!await verifyAdministrator()) return;
-      try{ await loadApplications(); }catch(e){ statusMessage.textContent = e.message; }
-    }
-    init();
-  </script>
+async function processApplication(rowId, action, btn){
+  if(!confirm(`Are you sure you want to ${action} this?`)) return;
+  btn.disabled = true;
+  try{
+    const app = allApps.find(a=>a.$id===rowId);
+    let data = { status: action==='approve'?'approved':'rejected' };
+    let newCode = null;
+    if(action==='approve'){ newCode = generateRandomCode(); data.membership_code = newCode; }
+    await databases.updateDocument(DATABASE_ID, COLLECTION_ID, rowId, data);
+    await sendBrevo(app, newCode, action==='approve');
+    alert(action==='approve' ? `Approved! Code: ${newCode} - RED Template 1 sent to ${getFirstName(app.full_name)}!` : "Rejected + email sent");
+    await loadApplications();
+  }catch(e){ alert("Error: "+e.message); console.log(e); btn.disabled=false; }
+}
+function esc(s){ return String(s||"-").replace(/'/g,"").replace(/"/g,"").replace(/`/g,"").replace(/\n/g," "); }
+function renderTable(apps){
+  applicationsList.innerHTML="";
+  if(apps.length===0){ applicationsList.innerHTML=`<tr><td colspan="10" style="text-align:center;padding:20px;">No applications</td></tr>`; return; }
+  apps.forEach(app=>{
+    const tr=document.createElement("tr");
+    const status=(app.status||"pending").toLowerCase();
+    const date=formatDate(app.$createdAt);
+    const dob=formatDOB(app.date_of_birth);
+    tr.innerHTML=`<td class="code-cell">${app.membership_code ? app.membership_code : '<span style="color:#666">— No Code —</span>'}</td>
+    <td><span class="trunc" data-full="${esc(app.full_name)}" data-title="Full Name">${app.full_name||"-"}</span></td>
+    <td><span class="trunc" data-full="${esc(app.email)}" data-title="Email">${app.email||"-"}</span></td>
+    <td>${app.phone||"-"}</td>
+    <td><span class="dob-cell">${dob}</span></td>
+    <td>${app.gender||"-"}</td>
+    <td><span class="trunc reason" data-full="${esc(app.reason)}" data-title="Reason - ${esc(app.full_name)}">${app.reason||"-"}</span></td>
+    <td class="status-${status}">${status}</td>
+    <td style="white-space:nowrap;">${date}</td>
+    <td class="action-col"><button class="btn-approve">Approve</button><button class="btn-reject">Reject</button></td>`;
+    tr.querySelectorAll('.trunc').forEach(el=>{ el.addEventListener('click',()=> openModal(el.dataset.title, el.dataset.full)); });
+    const btns=tr.querySelectorAll("button.btn-approve, button.btn-reject");
+    btns[0].addEventListener("click",()=>processApplication(app.$id,"approve",btns[0]));
+    btns[1].addEventListener("click",()=>processApplication(app.$id,"reject",btns[1]));
+    applicationsList.appendChild(tr);
+  });
+}
+async function loadApplications(){
+  const res=await databases.listDocuments(DATABASE_ID,COLLECTION_ID,[Appwrite.Query.limit(100),Appwrite.Query.orderDesc('$createdAt')]);
+  allApps=res.documents||[];
+  statusMessage.textContent=`Loaded ${allApps.length} application(s).`;
+  renderTable(allApps);
+}
+searchInput.addEventListener("input",()=>{
+  const q=searchInput.value.toLowerCase();
+  renderTable(allApps.filter(a=>(a.full_name||"").toLowerCase().includes(q)||(a.email||"").toLowerCase().includes(q)||(a.membership_code||"").toLowerCase().includes(q)));
+});
+document.getElementById("logoutButton").addEventListener("click", async ()=>{ try{await account.deleteSession("current");}catch(e){} localStorage.removeItem('isAdmin'); window.location.href="admin-login.html"; });
+(async()=>{
+  try{
+    if(!localStorage.getItem('isAdmin')) throw new Error("no flag");
+    const user = await account.get();
+    const allowed = ['pmtraders9@gmail.com','pmtraders96@gmail.com'];
+    if(!allowed.includes(user.email.toLowerCase())) throw new Error("not admin");
+  }catch(e){ statusMessage.textContent="Access denied."; setTimeout(()=>window.location.href="admin-login.html",1200); return; }
+  await loadApplications();
+})();
+</script>
 </body>
 </html>
