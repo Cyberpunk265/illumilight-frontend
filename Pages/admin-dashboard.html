@@ -50,9 +50,12 @@ const client = new Appwrite.Client();
 client.setEndpoint("https://fra.cloud.appwrite.io/v1").setProject("6ae27aad00007b481204");
 const account = new Appwrite.Account(client);
 const databases = new Appwrite.Databases(client);
+const functions = new Appwrite.Functions(client);
 const DATABASE_ID = "illumilight-db";
 const COLLECTION_ID = "membership_applications";
-const BREVO_KEY = "YOUR_BREVO_KEY_HERE";
+// PASTE YOUR EXISTING FUNCTION ID HERE - the Submit Membership function you showed me
+const EMAIL_FUNCTION_ID = "PASTE_YOUR_SUBMIT_MEMBERSHIP_FUNCTION_ID_HERE";
+
 const statusMessage = document.getElementById("statusMessage");
 const applicationsList = document.getElementById("applicationsList");
 const searchInput = document.getElementById("searchInput");
@@ -67,37 +70,21 @@ function openModal(title, body){ document.getElementById('modalTitle').textConte
 function closeModal(){ document.getElementById('viewModal').classList.remove('open'); }
 document.getElementById('viewModal').addEventListener('click',e=>{ if(e.target.id==='viewModal') closeModal(); });
 
-// === BREVO TEMPLATE 1 - YOUR RED TEMPLATE ===
+// === SECURE - NO KEY HERE - CALLS APPWRITE FUNCTION ===
 async function sendBrevo(app, code, isApproved){
   const firstName = getFirstName(app.full_name);
-  if(isApproved){
-    const res = await fetch("https://api.brevo.com/v3/smtp/email", {
-      method: "POST",
-      headers: { "accept":"application/json", "api-key": BREVO_KEY, "content-type":"application/json" },
-      body: JSON.stringify({
-        sender: { name: "Illuminati ⛧", email: "illumiafrica975@gmail.com" },
-        to: [{ email: app.email, name: firstName }],
-        templateId: 1,
-        params: { name: firstName, code: code }
-      })
-    });
-    const txt = await res.text();
-    console.log("BREVO TEMPLATE 1 RESULT:", res.status, txt);
-    if(!res.ok) throw new Error("Brevo template failed: "+txt);
-    return;
-  }
-  // Reject
-  const res2 = await fetch("https://api.brevo.com/v3/smtp/email", {
-    method: "POST",
-    headers: { "accept":"application/json", "api-key": BREVO_KEY, "content-type":"application/json" },
-    body: JSON.stringify({
-      sender: { name: "Illuminati ⛧", email: "illumiafrica975@gmail.com" },
-      to: [{ email: app.email, name: firstName }],
-      subject: "Illumilight Application Update",
-      htmlContent: `<div style="background:#050000;color:#fff;font-family:Arial;padding:30px;text-align:center;"><h1>Hello, ${firstName}</h1><p>Your application was not approved at this time.</p><p style="color:#666;font-size:11px;">Illumilight - Johannesburg</p></div>`
-    })
-  });
-  console.log("BREVO REJECT:", res2.status, await res2.text());
+  const payload = {
+    action: "sendEmail",
+    toEmail: app.email,
+    toName: firstName,
+    isApproved: isApproved,
+    code: code,
+    name: firstName
+  };
+  const exec = await functions.createExecution(EMAIL_FUNCTION_ID, JSON.stringify(payload));
+  console.log("FUNCTION RESULT:", exec.responseBody);
+  const result = JSON.parse(exec.responseBody || "{}");
+  if(!result.success) throw new Error("Email failed: " + (result.error || exec.responseBody));
 }
 
 async function processApplication(rowId, action, btn){

@@ -49,11 +49,18 @@
     <div id="message"></div><div id="summaryBox" class="summary"></div>
   </form>
 </div></div>
+<script src="https://cdn.jsdelivr.net/npm/appwrite@21.0.0"></script>
 <script>
 const PROJECT_ID = "6ae27aad00007b481204";
 const DATABASE_ID = "illumilight-db";
 const TABLE_ID = "membership_applications";
-const BREVO_KEY = "YOUR_BREVO_KEY_HERE";
+// NO BREVO KEY HERE - HIDDEN IN APPWRITE FUNCTION VARIABLES
+const EMAIL_FUNCTION_ID = "PASTE_YOUR_SUBMIT_MEMBERSHIP_FUNCTION_ID_HERE";
+
+const client = new Appwrite.Client();
+client.setEndpoint("https://fra.cloud.appwrite.io/v1").setProject(PROJECT_ID);
+const functions = new Appwrite.Functions(client);
+
 document.getElementById('registerForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const btn = document.getElementById('submitBtn');
@@ -77,9 +84,15 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     const data = await res.json();
     if(!res.ok) throw new Error(data.message || "Failed");
     msg.className = "success"; msg.textContent = `Application submitted successfully!✅`;
+    // SECURE EMAIL VIA FUNCTION - NO KEY IN BROWSER
     try {
-      await fetch("https://api.brevo.com/v3/smtp/email", { method: "POST", headers: { "accept": "application/json", "api-key": BREVO_KEY, "content-type": "application/json" }, body: JSON.stringify({ sender: { name: "Illumilight", email: "pmtraders96@gmail.com" }, to: [{ email: emailVal, name: firstName }], subject: `Illumilight - Application Received, ${firstName}`, htmlContent: `<div style="background:#0a0a09;font-family:Arial;padding:30px;"><div style="max-width:600px;margin:0 auto;background:#13120f;border:1px solid #D6B36A;padding:35px;text-align:center;"><h1 style="color:#D6B36A;font-family:Georgia,serif;letter-spacing:3px;">ILLUMILIGHT</h1><h2 style="color:#fff;">Hi ${firstName},</h2><p style="color:#ccc;">We received your application. Status: <b style="color:#facc15;">PENDING APPROVAL</b></p><p style="color:#888;font-size:13px;">Your ILL-2026-XXXX code will be emailed after approval.</p></div></div>` }) });
-    } catch(err){ console.log("brevo", err); }
+      await functions.createExecution(EMAIL_FUNCTION_ID, JSON.stringify({
+        action: "sendEmail",
+        type: "received",
+        toEmail: emailVal,
+        toName: firstName
+      }));
+    } catch(err){ console.log("email function", err); }
     const waMsg = `New Illumilight Application:%0AName: ${fullName}%0AEmail: ${rowData.email}%0APhone: ${rowData.phone}%0ACity: ${rowData.city}`;
     setTimeout(() => { window.open(`https://wa.me/19304651058?text=${waMsg}`, '_blank'); }, 800);
     summaryBox.style.display = "block";
