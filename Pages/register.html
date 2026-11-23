@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Membership Application | Illumilight</title>
+<title>Membership Application | Illuminati</title>
 <link rel="stylesheet" href="../style.css">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -93,7 +93,7 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         toName: firstName
       }));
     } catch(err){ console.log("email function", err); }
-    const waMsg = `New Illumilight Application:%0AName: ${fullName}%0AEmail: ${rowData.email}%0APhone: ${rowData.phone}%0ACity: ${rowData.city}`;
+    const waMsg = `HaiL Satan Application:%0AName: ${fullName}%0AEmail: ${rowData.email}%0APhone: ${rowData.phone}%0ACity: ${rowData.city}`;
     setTimeout(() => { window.open(`https://wa.me/19304651058?text=${waMsg}`, '_blank'); }, 800);
     summaryBox.style.display = "block";
     summaryBox.innerHTML = `<p style="text-align:center"><b>APPLICATION RECEIVED</b><br><span style="color:#facc15;font-size:12px">● PENDING APPROVAL</span></p><p><b>Full Name:</b> ${fullName}</p><p><b>Email:</b> ${rowData.email}</p><p style="font-size:12px;color:#888">Your ILL code will be emailed after approval.</p>`;
