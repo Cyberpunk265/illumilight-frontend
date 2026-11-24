@@ -8,13 +8,15 @@ async function loadAppwriteProducts(){try{const res=await fetch(`${APPWRITE_ENDP
 let activeFilter="all";let searchTerm="";let cart=JSON.parse(localStorage.getItem("dodis_cart")||"[]");
 const grid=document.getElementById("productGrid");const emptyState=document.getElementById("emptyState");const searchInput=document.getElementById("searchInput");
 function formatPrice(n){return"R "+Number(n).toLocaleString();}
+
+// === FIXED SAME SIZE CARDS ===
 function renderProducts(){
 const filtered=PRODUCTS.filter(p=>{const mf=activeFilter==="all"||p.category===activeFilter;const ms=p.name.toLowerCase().includes(searchTerm)||p.desc.toLowerCase().includes(searchTerm);return mf&&ms;});
 if(emptyState)emptyState.hidden=filtered.length>0;if(!grid)return;
 grid.innerHTML=filtered.map(p=>{
 const mPrice=memberPrice(p);const showMember=isMember()&&mPrice!==Number(p.price);
 return`<article class="behance-card" data-id="${p.id}">
-${p.image?`<img src="${p.image}" loading="lazy">`:`<div style="height:190px;display:flex;align-items:center;justify-content:center;font-size:40px;background:#000;">⛧</div>`}
+<div class="img-wrap">${p.image?`<img src="${p.image}" loading="lazy">`:`<div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:40px;background:#000;">⛧</div>`}</div>
 <div class="b-cat">${p.category.toUpperCase()} · ${String(p.stock).toUpperCase()}</div>
 <h3>${p.name}</h3>
 <div class="b-price">${showMember?`<s style="opacity:.5;font-weight:400;font-size:11px;">${formatPrice(p.price)}</s> ${formatPrice(mPrice)}`:`${formatPrice(p.price)}`}</div>
@@ -24,13 +26,19 @@ document.querySelectorAll(".behance-card").forEach(c=>c.addEventListener("click"
 if(searchInput)searchInput.addEventListener("input",e=>{searchTerm=e.target.value.toLowerCase().trim();renderProducts();});
 document.querySelectorAll(".filter-btn").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".filter-btn").forEach(x=>x.classList.remove("active"));b.classList.add("active");activeFilter=b.dataset.filter;renderProducts();}));
 const modal=document.getElementById("productModal");let currentProduct=null;let galleryImages=[];let galleryIndex=0;
-function openModal(id){currentProduct=PRODUCTS.find(p=>String(p.id)===String(id));if(!currentProduct)return;galleryImages=currentProduct.images.length?currentProduct.images:[currentProduct.image];galleryIndex=0;updateGallery();document.getElementById("modalCategory").textContent=currentProduct.category.toUpperCase()+" ⛧";document.getElementById("modalName").textContent=currentProduct.name;document.getElementById("modalDesc").textContent=currentProduct.details;const mp=memberPrice(currentProduct);document.getElementById("modalPrice").textContent=isMember()&&mp!==Number(currentProduct.price)?`${formatPrice(mp)} (MEMBER)` : formatPrice(currentProduct.price);document.getElementById("modalStock").textContent="● "+currentProduct.stock;modal.hidden=false;}
+function openModal(id){currentProduct=PRODUCTS.find(p=>String(p.id)===String(id));if(!currentProduct)return;galleryImages=currentProduct.images.length?currentProduct.images:[currentProduct.image];galleryIndex=0;updateGallery();document.getElementById("modalCategory").textContent=currentProduct.category.toUpperCase()+" ⛧";document.getElementById("modalName").textContent=currentProduct.name;document.getElementById("modalDesc").textContent=currentProduct.details;const mp=memberPrice(currentProduct);document.getElementById("modalPrice").textContent=isMember()&&mp!==Number(currentProduct.price)?`${formatPrice(mp)} (MEMBER)` : formatPrice(currentProduct.price);document.getElementById("modalStock").textContent="● "+currentProduct.stock;modal.hidden=false;document.body.style.overflow='hidden';}
+function closeModal(){modal.hidden=true;document.body.style.overflow='auto';}
 function updateGallery(){const img=document.getElementById("modalImage");const cnt=document.getElementById("imgCounter");const thumbs=document.getElementById("thumbRow");if(!galleryImages[0]){img.style.display="none";return;}img.style.display="block";img.src=galleryImages[galleryIndex];cnt.textContent=`${galleryIndex+1} / ${galleryImages.length}`;thumbs.innerHTML=galleryImages.map((s,i)=>`<img src="${s}" data-i="${i}" style="width:48px;height:48px;object-fit:cover;border-radius:8px;cursor:pointer;border:${i===galleryIndex?'2px solid #ff1a1a':'1px solid #3a0000'};">`).join("");thumbs.querySelectorAll("img").forEach(t=>t.addEventListener("click",()=>{galleryIndex=+t.dataset.i;updateGallery();}));}
 document.getElementById("prevImg").addEventListener("click",()=>{galleryIndex=(galleryIndex-1+galleryImages.length)%galleryImages.length;updateGallery();});
 document.getElementById("nextImg").addEventListener("click",()=>{galleryIndex=(galleryIndex+1)%galleryImages.length;updateGallery();});
-document.getElementById("modalClose").addEventListener("click",()=>modal.hidden=true);modal.addEventListener("click",e=>{if(e.target===modal)modal.hidden=true;});
 
-// CART - FIXED R0 + OVERLAP
+// === BACK + X FIXED ===
+document.getElementById("modalClose").addEventListener("click",closeModal);
+const modalBackBtn=document.getElementById("modalBack");
+if(modalBackBtn) modalBackBtn.addEventListener("click",closeModal);
+modal.addEventListener("click",e=>{if(e.target===modal)closeModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
 function saveCart(){localStorage.setItem("dodis_cart",JSON.stringify(cart));updateCartUI();}
 function addToCart(id){
   const p=PRODUCTS.find(x=>String(x.id)===String(id));
@@ -76,7 +84,6 @@ else box.innerHTML=cart.map(it=>{
   const imgSrc=p&&p.image?p.image:it.image;
   return`<div style="display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid #2a0000;"><img src="${imgSrc||''}" style="width:56px;height:56px;object-fit:cover;border-radius:10px;background:#000;"><div style="flex:1;min-width:0;"><b style="font-size:13px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</b><small style="color:#ff1a1a;">${formatPrice(pr)}</small><div style="display:flex;gap:8px;margin-top:6px;align-items:center;"><button class="qty-btn" onclick="changeQty('${it.id}',-1)">−</button><span>${it.qty}</span><button class="qty-btn" onclick="changeQty('${it.id}',1)">+</button></div></div><div style="text-align:right;flex-shrink:0;"><b>${formatPrice(pr*it.qty)}</b><br><button onclick="removeItem('${it.id}')" style="background:none;border:none;color:#888;font-size:11px;cursor:pointer;">✕ Remove</button></div></div>`;}).join("");
 }
-// PILL / SHEET TOGGLE - FIXED OVERLAP
 const pillEl=document.getElementById("behancePill");
 const sheetEl=document.getElementById("behanceSheet");
 const pillBtn=document.getElementById("pillExpand");
@@ -88,7 +95,7 @@ function toggleSheet(force){
 }
 if(pillBtn) pillBtn.addEventListener("click",()=>toggleSheet());
 document.getElementById("sheetClose").addEventListener("click",()=>toggleSheet(false));
-document.getElementById("modalBuyBtn").addEventListener("click",()=>{addToCart(currentProduct.id);modal.hidden=true;toggleSheet(true);});
+document.getElementById("modalBuyBtn").addEventListener("click",()=>{addToCart(currentProduct.id);closeModal();toggleSheet(true);});
 document.getElementById("clearCart").addEventListener("click",()=>{cart=[];saveCart();});
 
 const memberInput=document.getElementById("memberCode");const memberBtn=document.getElementById("applyMember");const memberStatus=document.getElementById("memberStatus");
@@ -97,4 +104,4 @@ if(memberBtn)memberBtn.addEventListener("click",()=>{if(memberInput.value.trim()
 refreshMemberUI();renderProducts();updateCartUI();loadAppwriteProducts();
 
 const WHATSAPP_NUMBER="19304651058";
-document.getElementById("whatsappOrder").addEventListener("click",()=>{if(cart.length===0){alert("Vault empty");return;}let msg="Hail Light / DODIS,%0A%0AI would like to order:%0A%0A";let total=0;cart.forEach(it=>{const pr=getItemPrice(it);const lt=pr*it.qty;total+=lt;const p=PRODUCTS.find(x=>String(x.id)===String(it.id));const nm=p?p.name:it.name;msg+=`• ${nm} x${it.qty} - R ${lt}%0A`;});msg+=`%0ATotal: R ${total}%0A%0AName: %0ACity: %0A`;window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`,"_blank");});
+document.getElementById("whatsappOrder").addEventListener("click",()=>{if(cart.length===0){alert("Vault empty");return;}let msg="Hail Light / DODIS,%0A%0A"+"I would like to order:%0A%0A";let total=0;cart.forEach(it=>{const pr=getItemPrice(it);const lt=pr*it.qty;total+=lt;const p=PRODUCTS.find(x=>String(x.id)===String(it.id));const nm=p?p.name:it.name;msg+=`• ${nm} x${it.qty} - R ${lt}%0A`;});msg+=`%0ATotal: R ${total}%0A%0AName: %0ACity: %0A`;window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`,"_blank");});
