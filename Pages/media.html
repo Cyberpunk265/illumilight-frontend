@@ -17,7 +17,7 @@ body{background:#050000!important}
 .media-card img{width:100%;height:180px;object-fit:cover;display:block}
 .media-card video{width:100%;height:220px;object-fit:cover;display:block;background:#000}
 .media-card .m-info{padding:10px 12px}
-.media-card .m-info b{font-size:13px;color:#fff;display:block}
+.media-card .m-info b{font-size:13px;color:#fff;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .media-card .m-info small{font-size:11px;color:#888}
 .testi-card{grid-column:span 2;background:#0d0d00;border:1px solid #3a3000;border-radius:18px;padding:18px}
 .testi-card p{color:#e8d27a;font-style:italic;font-size:14px;line-height:1.6}
@@ -58,7 +58,25 @@ body{background:#050000!important}
 const PROJECT_ID="6ae27aad00007b481204";const BUCKET_ID="6aff738b001323f8ed0d";const ENDPOINT="https://fra.cloud.appwrite.io/v1";
 function sUrl(id){return`${ENDPOINT}/storage/buckets/${BUCKET_ID}/files/${id}/view?project=${PROJECT_ID}`;}
 
-// YOUR CONTENT - EDIT HERE TO ADD MORE!
+// === FIX: HIDE .webp / .jpg EXTENSION ===
+function cleanTitle(raw){
+  if(!raw) return "From The Vault";
+  let t = raw.replace(/\.(webp|jpg|jpeg|png|heic|mp4)$/i, "");
+  const map = {
+    "oil7": "Evil Eye Ritual Oil ⛧",
+    "mystic": "The Mystic Wine",
+    "neck4": "Illuminati Necklace",
+    "IMG-20261027-WA0073": "Member Delivery - CPT",
+    "IMG-20261027-WA0072": "Member Delivery",
+    "IMG-20261027-WA0071": "DODIS Drop"
+  };
+  if(map[t]) return map[t];
+  if(t.startsWith("IMG-")) return "Member Offering ⛧";
+  if(t.startsWith("VID-")) return "DODIS Video";
+  // oil7 -> Oil 7, my-photo -> My Photo
+  return t.replace(/[-_]+/g, " ").replace(/\b\w/g, c=>c.toUpperCase()).trim() || "From The Vault";
+}
+
 const MEDIA_ITEMS=[
   {type:"images", title:"Testament - Front", desc:"DODIS Edition • R750", img:"YOUR_FILE_ID_1"},
   {type:"images", title:"Testament - Detail", desc:"Inside pages", img:"YOUR_FILE_ID_2"},
@@ -76,9 +94,9 @@ function renderMedia(){
   if(list.length===0){grid.innerHTML=`<p style="grid-column:span 2;text-align:center;color:#777;padding:30px;">No ${activeM} yet. Upload in Appwrite Storage.</p>`;return;}
   grid.innerHTML=list.map(m=>{
     if(m.type==="testimonies") return`<div class="testi-card"><p>"${m.quote}"</p><b>⛧ ${m.name}</b></div>`;
-    if(m.type==="videos") return`<div class="media-card"><video controls poster=""><source src="${m.video}"></video><div class="m-info"><b>${m.title}</b><small>${m.desc}</small></div></div>`;
+    if(m.type==="videos") return`<div class="media-card"><video controls poster=""><source src="${m.video}"></video><div class="m-info"><b>${cleanTitle(m.title)}</b><small>${m.desc}</small></div></div>`;
     const src=m.img.startsWith("http")?m.img:(m.img.includes("YOUR_")?"../images/illumilight-logo.png":sUrl(m.img));
-    return`<div class="media-card"><img src="${src}"><div class="m-info"><b>${m.title}</b><small>${m.desc}</small></div></div>`;
+    return`<div class="media-card"><img src="${src}"><div class="m-info"><b>${cleanTitle(m.title)}</b><small>${m.desc}</small></div></div>`;
   }).join("");
 }
 document.querySelectorAll(".m-filter").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".m-filter").forEach(x=>x.classList.remove("active"));b.classList.add("active");activeM=b.dataset.filter;renderMedia();}));
@@ -93,7 +111,8 @@ async function loadBucketImages(){
     if(data.files && data.files.length){
       data.files.forEach(f=>{
         if(!MEDIA_ITEMS.find(m=>m.img===f.$id)){
-          MEDIA_ITEMS.unshift({type:"images", title:f.name, desc:"From DODIS Vault", img:f.$id});
+          // FIXED: use cleanTitle, not f.name
+          MEDIA_ITEMS.unshift({type:"images", title:cleanTitle(f.name), desc:"From DODIS Vault", img:f.$id});
         }
       });
       renderMedia();
