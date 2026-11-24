@@ -9,22 +9,18 @@
 .admin-container{max-width:1350px;margin:20px auto;padding:15px}
 .admin-header{border-bottom:1px solid var(--border);padding-bottom:15px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center}
 .admin-panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;overflow:hidden}
-.panel-top{padding:20px 25px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.panel-top{padding:20px 25px;display:flex;justify-content:space-between;align-items:center}
 #logoutButton{background:transparent;color:var(--gold);border:1px solid var(--gold);padding:8px 16px;border-radius:6px;cursor:pointer}
 .table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:13px;min-width:1250px;table-layout:fixed}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:1150px;table-layout:fixed}
 thead th{text-align:left;padding:12px 8px;color:var(--gold);border-bottom:1px solid var(--border);background:#0d0d0d;white-space:nowrap}
-thead th:nth-child(1){width:40px}thead th:nth-child(2){width:115px}thead th:nth-child(3){width:160px}thead th:nth-child(4){width:170px}thead th:nth-child(5){width:120px}thead th:nth-child(6){width:110px}thead th:nth-child(7){width:70px}thead th:nth-child(8){width:180px}thead th:nth-child(9){width:80px}thead th:nth-child(10){width:100px}thead th:nth-child(11){width:240px}
+thead th:nth-child(1){width:115px}thead th:nth-child(2){width:160px}thead th:nth-child(3){width:170px}thead th:nth-child(4){width:120px}thead th:nth-child(5){width:110px}thead th:nth-child(6){width:70px}thead th:nth-child(7){width:180px}thead th:nth-child(8){width:80px}thead th:nth-child(9){width:100px}thead th:nth-child(10){width:175px}
 tbody td{padding:10px 8px;border-bottom:1px solid #1a1a1a;vertical-align:middle;overflow:hidden}
-tr.marked{opacity:0.45;background:#1a1000 !important}
 .code-cell{color:var(--gold);font-weight:bold;white-space:nowrap}
 .status-approved{color:#4ade80;font-weight:bold}.status-pending{color:#facc15;font-weight:bold}.status-rejected{color:#f87171;font-weight:bold}
 .action-col{white-space:nowrap;position:sticky;right:0;background:#111}
 .btn-approve{background:#22c55e;color:#fff;border:none;padding:8px 12px;border-radius:5px;cursor:pointer;font-weight:bold}
 .btn-reject{background:#ef4444;color:#fff;border:none;padding:8px 12px;border-radius:5px;cursor:pointer;font-weight:bold;margin-left:5px}
-.btn-delete{background:#7f1d1d;color:#fff;border:1px solid #ef4444;padding:8px 10px;border-radius:5px;cursor:pointer;font-weight:bold;margin-left:5px}
-.btn-bulk{background:#111;color:#fff;border:1px solid #ef4444;padding:8px 14px;border-radius:6px;cursor:pointer;font-weight:bold}
-.btn-bulk2{background:#111;color:#facc15;border:1px solid #facc15;padding:8px 14px;border-radius:6px;cursor:pointer;font-weight:bold}
 #searchInput{width:100%;padding:10px;background:#000;border:1px solid var(--border);border-radius:6px;color:#fff;box-sizing:border-box}
 .trunc{display:block;width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:#0d0c0a;border:1px solid #222;padding:6px 8px;border-radius:4px;cursor:pointer;color:#ddd;box-sizing:border-box;font-size:12px}
 .trunc:hover{border-color:var(--gold);color:#fff}
@@ -42,9 +38,9 @@ tr.marked{opacity:0.45;background:#1a1000 !important}
 <main class="admin-container">
 <div class="admin-header"><div><h1 style="margin:0;">Illumilight Administration</h1><p style="color:var(--muted)">Membership Management</p></div><button id="logoutButton">Sign Out</button></div>
 <section class="admin-panel">
-<div class="panel-top"><h2 style="margin:0;">Membership Applications</h2><div style="display:flex;gap:8px;align-items:center;"><p id="statusMessage" style="margin:0 10px 0 0;">Verifying...</p><button class="btn-bulk2" id="markAllBtn">Mark All / Unmark All</button><button class="btn-bulk" id="deleteMarkedBtn">Delete Marked (<span id="markedCount">0</span>)</button></div></div>
+<div class="panel-top"><h2 style="margin:0;">Membership Applications</h2><p id="statusMessage">Verifying...</p></div>
 <div style="padding:0 25px 15px;"><input id="searchInput" placeholder="Search by name, email, code..."></div>
-<div class="table-wrap"><table><thead><tr><th>✓</th><th>Code</th><th>Full Name</th><th>Email</th><th>Phone</th><th>DOB</th><th>Gender</th><th>Reason</th><th>Status</th><th>Date</th><th class="action-col">Actions</th></tr></thead><tbody id="applicationsList"></tbody></table></div>
+<div class="table-wrap"><table><thead><tr><th>Code</th><th>Full Name</th><th>Email</th><th>Phone</th><th>DOB</th><th>Gender</th><th>Reason</th><th>Status</th><th>Date</th><th class="action-col">Actions</th></tr></thead><tbody id="applicationsList"></tbody></table></div>
 </section>
 </main>
 <div id="viewModal"><div class="modal-box"><button class="modal-close" onclick="closeModal()">×</button><h3 id="modalTitle">Details</h3><p id="modalBody"></p></div></div>
@@ -57,13 +53,13 @@ const databases = new Appwrite.Databases(client);
 const functions = new Appwrite.Functions(client);
 const DATABASE_ID = "illumilight-db";
 const COLLECTION_ID = "membership_applications";
+// PASTE YOUR EXISTING FUNCTION ID HERE - the Submit Membership function you showed me
 const EMAIL_FUNCTION_ID = "submit-membership";
 
 const statusMessage = document.getElementById("statusMessage");
 const applicationsList = document.getElementById("applicationsList");
 const searchInput = document.getElementById("searchInput");
 let allApps = [];
-let markedIds = new Set();
 
 function getYear(){ const now = new Date(); return now > new Date("2026-12-31T23:59:59") ? "2027" : "2026"; }
 function getFirstName(fullName){ return (fullName || "Member").trim().split(" ")[0]; }
@@ -73,12 +69,20 @@ function formatDOB(val){ if(!val) return "-"; const d = new Date(val); if(!isNaN
 function openModal(title, body){ document.getElementById('modalTitle').textContent = title; document.getElementById('modalBody').textContent = body; document.getElementById('viewModal').classList.add('open'); }
 function closeModal(){ document.getElementById('viewModal').classList.remove('open'); }
 document.getElementById('viewModal').addEventListener('click',e=>{ if(e.target.id==='viewModal') closeModal(); });
-function updateMarkedCount(){ document.getElementById('markedCount').textContent = markedIds.size; }
 
+// === SECURE - NO KEY HERE - CALLS APPWRITE FUNCTION ===
 async function sendBrevo(app, code, isApproved){
   const firstName = getFirstName(app.full_name);
-  const payload = { action: "sendEmail", toEmail: app.email, toName: firstName, isApproved: isApproved, code: code, name: firstName };
+  const payload = {
+    action: "sendEmail",
+    toEmail: app.email,
+    toName: firstName,
+    isApproved: isApproved,
+    code: code,
+    name: firstName
+  };
   const exec = await functions.createExecution(EMAIL_FUNCTION_ID, JSON.stringify(payload));
+  console.log("FUNCTION RESULT:", exec.responseBody);
   const result = JSON.parse(exec.responseBody || "{}");
   if(!result.success) throw new Error("Email failed: " + (result.error || exec.responseBody));
 }
@@ -95,46 +99,18 @@ async function processApplication(rowId, action, btn){
     await sendBrevo(app, newCode, action==='approve');
     alert(action==='approve' ? `Approved! Code: ${newCode} - RED Template 1 sent to ${getFirstName(app.full_name)}!` : "Rejected + email sent");
     await loadApplications();
-  }catch(e){ alert("Error: "+e.message); btn.disabled=false; }
+  }catch(e){ alert("Error: "+e.message); console.log(e); btn.disabled=false; }
 }
-
-// === DELETE VIA SECURE FUNCTION - FIXES PERMISSION ISSUE ===
-async function deleteViaFunction(ids){
-  const exec = await functions.createExecution(EMAIL_FUNCTION_ID, JSON.stringify({ action: "deleteApplication", ids: ids }));
-  console.log("DELETE RESULT:", exec.responseBody);
-  const r = JSON.parse(exec.responseBody || "{}");
-  if(!r.success) throw new Error(r.error || exec.responseBody || "Delete failed - did you add delete block to main.js and redeploy?");
-  return r;
-}
-
-async function deleteApplication(rowId, name){
-  if(!confirm(`Delete application for ${name}? This cannot be undone.`)) return;
-  try{
-    await deleteViaFunction([rowId]);
-    markedIds.delete(rowId);
-    await loadApplications();
-  }catch(e){ alert("Delete failed: "+e.message); }
-}
-
-function toggleMark(rowId, tr, checkbox){
-  if(markedIds.has(rowId)){ markedIds.delete(rowId); tr.classList.remove('marked'); checkbox.checked=false; }
-  else { markedIds.add(rowId); tr.classList.add('marked'); checkbox.checked=true; }
-  updateMarkedCount();
-}
-
 function esc(s){ return String(s||"-").replace(/'/g,"").replace(/"/g,"").replace(/`/g,"").replace(/\n/g," "); }
-
 function renderTable(apps){
   applicationsList.innerHTML="";
-  if(apps.length===0){ applicationsList.innerHTML=`<tr><td colspan="11" style="text-align:center;padding:20px;">No applications - All Clean!</td></tr>`; return; }
+  if(apps.length===0){ applicationsList.innerHTML=`<tr><td colspan="10" style="text-align:center;padding:20px;">No applications</td></tr>`; return; }
   apps.forEach(app=>{
     const tr=document.createElement("tr");
-    if(markedIds.has(app.$id)) tr.classList.add('marked');
     const status=(app.status||"pending").toLowerCase();
     const date=formatDate(app.$createdAt);
     const dob=formatDOB(app.date_of_birth);
-    tr.innerHTML=`<td><input type="checkbox" class="row-check" ${markedIds.has(app.$id)?'checked':''} style="width:18px;height:18px;cursor:pointer;accent-color:#facc15;"></td>
-    <td class="code-cell">${app.membership_code ? app.membership_code : '<span style="color:#666">— No Code —</span>'}</td>
+    tr.innerHTML=`<td class="code-cell">${app.membership_code ? app.membership_code : '<span style="color:#666">— No Code —</span>'}</td>
     <td><span class="trunc" data-full="${esc(app.full_name)}" data-title="Full Name">${app.full_name||"-"}</span></td>
     <td><span class="trunc" data-full="${esc(app.email)}" data-title="Email">${app.email||"-"}</span></td>
     <td>${app.phone||"-"}</td>
@@ -143,45 +119,20 @@ function renderTable(apps){
     <td><span class="trunc reason" data-full="${esc(app.reason)}" data-title="Reason - ${esc(app.full_name)}">${app.reason||"-"}</span></td>
     <td class="status-${status}">${status}</td>
     <td style="white-space:nowrap;">${date}</td>
-    <td class="action-col"><button class="btn-approve">Approve</button><button class="btn-reject">Reject</button><button class="btn-delete">Delete</button></td>`;
+    <td class="action-col"><button class="btn-approve">Approve</button><button class="btn-reject">Reject</button></td>`;
     tr.querySelectorAll('.trunc').forEach(el=>{ el.addEventListener('click',()=> openModal(el.dataset.title, el.dataset.full)); });
-    const chk = tr.querySelector('.row-check');
-    chk.addEventListener('change',()=> toggleMark(app.$id, tr, chk));
-    const btns=tr.querySelectorAll("button");
+    const btns=tr.querySelectorAll("button.btn-approve, button.btn-reject");
     btns[0].addEventListener("click",()=>processApplication(app.$id,"approve",btns[0]));
     btns[1].addEventListener("click",()=>processApplication(app.$id,"reject",btns[1]));
-    btns[2].addEventListener("click",()=>deleteApplication(app.$id, app.full_name));
     applicationsList.appendChild(tr);
   });
 }
-
 async function loadApplications(){
   const res=await databases.listDocuments(DATABASE_ID,COLLECTION_ID,[Appwrite.Query.limit(100),Appwrite.Query.orderDesc('$createdAt')]);
   allApps=res.documents||[];
   statusMessage.textContent=`Loaded ${allApps.length} application(s).`;
   renderTable(allApps);
 }
-
-document.getElementById('deleteMarkedBtn').addEventListener('click', async ()=>{
-  if(markedIds.size===0){ alert("No marked items. Tick the boxes first or click Mark All."); return; }
-  if(!confirm(`Delete ${markedIds.size} marked applications? This cannot be undone.`)) return;
-  try{
-    await deleteViaFunction([...markedIds]);
-    markedIds.clear(); updateMarkedCount();
-    await loadApplications();
-    alert("Deleted!");
-  }catch(e){ alert("Delete failed: "+e.message); }
-});
-
-document.getElementById('markAllBtn').addEventListener('click', ()=>{
-  if(markedIds.size === allApps.length && allApps.length>0){
-    markedIds.clear();
-  } else {
-    allApps.forEach(a=> markedIds.add(a.$id));
-  }
-  updateMarkedCount(); renderTable(allApps);
-});
-
 searchInput.addEventListener("input",()=>{
   const q=searchInput.value.toLowerCase();
   renderTable(allApps.filter(a=>(a.full_name||"").toLowerCase().includes(q)||(a.email||"").toLowerCase().includes(q)||(a.membership_code||"").toLowerCase().includes(q)));
